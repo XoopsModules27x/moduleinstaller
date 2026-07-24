@@ -1,7 +1,7 @@
 <div id="help-template" class="outer">
     <h1 class="head">Help:
         <a class="ui-corner-all tooltip" href="<{$xoops_url}>/modules/moduleinstaller/admin/index.php"
-           title="Back to the administration of Module Installer"> Module Installer <img src="<{xoAdminIcons 'home.png'}>"
+           title="Back to the administration of Module Installer"> Module Installer <img src="<{xoAdminIcons home.png}>"
                                                                                          alt="Back to the Administration of Module Installer">
         </a></h1>
     <!-- -----Help Content ---------- -->
@@ -9,15 +9,14 @@
     <h4 class="odd">Description</h4>
 
     <p class="even">
-        Module Installer installs, uninstalls, updates, activates, and deactivates XOOPS modules in bulk.
-        It also manages <strong>Module Sets</strong> — named lists of modules for focused testing.
-    </p>
+        Module Installer is a XOOPS module to install and uninstall XOOPS modules at once. You can select several of the
+        modules and install or unistall them at once. </p>
 
     <h4 class="odd">Install/uninstall</h4>
 
-    Install and enable (or at least install) the <strong>mtools</strong> module (1.2.0+) first.
-    Then extract the /moduleinstaller folder into the ../modules directory and install through
-    Admin -> System Module -> Modules. <br><br>
+    No special measures necessary, follow the standard installation process â€“ extract the /moduleinstaller folder into
+    the ../modules directory. Install the module through Admin -> System Module ->
+    Modules. <br><br>
     Detailed instructions on installing modules are available in the <a
         href="https://xoops.gitbook.io/xoops-operations-guide/" target="_blank">Chapter 2.12 of our XOOPS
     Operations
@@ -26,22 +25,10 @@
     <p class="even">
     <h4 class="odd">Operating instructions</h4>
     This module and its operations are very simple:<br><br>
-    i) select the tab for desired operation: install, uninstall, update, activate, or deactivate modules<br><br>
+    i) select the tab for desired operation: install or unistall modules<br><br>
     ii) select modules<br><br>
     iii) click on Next button<br><br>
     iv) Review the messages for errors, and click on Next Button<br><br>
-
-    <h4 class="odd">Module Sets (testing)</h4>
-    <p class="even">
-        Use <strong>Module Sets</strong> to save named collections of modules (stored as YAML under
-        <code>XOOPS_VAR_PATH/configs/moduleinstaller/sets/</code>).<br><br>
-        - Create, edit, duplicate, or delete sets<br>
-        - Snapshot currently active modules<br>
-        - Apply: Activate / Deactivate / Install / Uninstall set members<br>
-        - <strong>Focus</strong>: activate set members and deactivate everything else except protected modules
-          (<code>system</code>, <code>moduleinstaller</code>). An auto-snapshot is saved first so you can restore.<br>
-        - Modules in a set that are missing on disk are skipped with a notice; operations never fatal on stale entries.
-    </p>
 
     <h4 class="odd">Tutorial</h4>
     <p class="even">

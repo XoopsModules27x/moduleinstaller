@@ -1,139 +1,22 @@
-ModuleInstaller CHANGELOG
-=========================
-Compared to previous public baseline 1.5.1-Final (L:\GitHub\00mambax7\moduleinstaller / 2022-12-15).
-
---------------------------------------------------------------------------------
-1.6.0 Stable  [2026-07-23]
-Dev: XOOPS 2.5.12+, PHP 8.2+, mtools 1.2.0+
---------------------------------------------------------------------------------
-
-Highlights
-- Module Sets for focused testing (named YAML collections of modules).
-- Shared safe bulk-action service for install / uninstall / update / activate /
-  deactivate (skips missing modules; does not fatal mid-batch).
-- mtools 1.2.0 consumer bootstrap and lifecycle hooks.
-- Platform requirements raised to PHP 8.2 and XOOPS 2.5.12.
-- Phase 3: pure CP chrome for bulk tabs; wizard baggage removed.
-- Sample module sets (PM/Profile/Protector); scoped admin.css for UX only.
-
-Features — Module Sets
-- New admin page: Module Sets (admin/sets.php), menu item _MI_MODULEINSTALLER_MENU_06.
-- Create, edit, duplicate, and delete named sets.
-- Snapshot currently active modules into a new set.
-- Apply actions per set:
-  - Activate set members
-  - Deactivate set members
-  - Install set members
-  - Uninstall set members
-  - Focus: activate set members and deactivate all other non-protected modules
-    (system and moduleinstaller are never touched). Auto-snapshot before Focus.
-- Dry-run plan / preview before apply; confirmation for destructive actions.
-- Missing-on-disk members are listed as notices and skipped (never fatal).
-- Storage: YAML under XOOPS_VAR_PATH/configs/moduleinstaller/sets/ (web-denied).
-- Classes under class/Set/:
-  ModuleSet, ModuleSetRepository, ModuleSetResolver, ModuleSetApplier.
-
-Features — bulk actions refactor
-- class/ModuleActionService.php: single service for bulk install/uninstall/
-  activate/deactivate/update.
-- class/ModuleActionResult.php: structured per-module success/skip/fail results.
-- class/ModuleCatalog.php: installed / available / active module inventory.
-- class/AdminBulkPage.php: shared admin UI for bulk tabs.
-- admin/install.php, uninstall.php, activate.php, deactivate.php, update.php
-  rewritten to use the service (much smaller admin scripts).
-- “Apply set” helpers on bulk pages to pre-check set members.
-
-mtools / install lifecycle
-- bootstrap.php: registers module namespace then loads mtools bootstrap.
-- include/mtools_dependency.php: ConsumerRuntime dependency check (API 1.0.0 +
-  module 1.2.0); mtools must be installed (need not be active).
-- xoops_version.php: min_modules mtools >= 1.2.0; min_php 8.2; min_xoops 2.5.12.
-- onInstall / onUpdate / onUninstall registered; mtools Module\Installer pattern.
-- Utility extends mtools SysUtility where applicable.
-
-Security / robustness
-- Xmf\Request for admin input (no raw $_REQUEST for control flow).
-- CSRF checks on set mutations.
-- Null-safety when dirname is missing on activate/deactivate paths.
-- Protected modules (system, moduleinstaller) excluded from destructive bulk /
-  Focus operations.
-- Batch actions continue after individual failures and report notices.
-
-Quality / tooling (new vs 1.5.1)
-- PHPUnit 11 suite (phpunit.xml.dist, tests/bootstrap.php, tests/Unit/…).
-  Coverage for ModuleSet*, ModuleActionResult, InstallWizard, Helper, Common
-  helpers, preloads.
-- phpstan.neon and phpstan analysis notes.
-- Expanded language strings (admin sets UI, apply-set hints).
-
-UX polish (still 1.6.0)
-- Apply Set form: clearer vertical spacing between intro, Action, Preview plan,
-  Set member status, confirm checkbox, and Run/Cancel.
-- Module Set edit: selected members highlighted with light green (#E6EFC2),
-  consistent with bulk Yes rows.
-- Bulk tabs and set edit: click module logo or name/description to toggle
-  selection (same as radio / checkbox).
-- docs/TUTORIAL.md end-user walkthrough.
-
-Phase 1–2 UX (still 1.6.0, 2026-07-23)
-- Bulk + set-edit filter box; keyboard / and A; sticky “N selected” bar;
-  empty Yes selection blocked on submit.
-- Status badges; Apply plan summary counts; Focus/Uninstall confirm copy split;
-  restore last Focus snapshot from result + dashboard.
-- Update tab pre-selects version mismatches; needs_only filter link.
-- Home dashboard (sets, updates, counts, last snapshot).
-- Module set YAML export/import.
-- Tooltips on Apply; CSS --installer-selected; responsive hide descriptions.
-- ModuleCatalog::candidatesFor / needsUpdate helpers.
-- docs/TODO.md updated; docs/MTOOLS-INVESTIGATION.md (Phase 3 prerequisite).
-
-Phase 3 structure & polish (still 1.6.0, 2026-07-23)
-- Bulk tabs: AdminBulkPage::serve() only (no install_tpl / InstallWizard dual chrome).
-- Thin admin wrappers; CSRF on bulk POST; renderReport in presentation layer.
-- Removed extras/, wizard files (InstallWizard, common.inc, install_tpl, page.php,
-  include/config.php, language/english/install.php, prototype.js).
-- admin.css only for .installer-* UX; CP chrome from ModuleAdmin + admin theme.
-- Sample data: TestdataButtons + pm-profile-protector sample set.
-- Language common.php: fixed _CO_MODULEINSTALLER_* constants.
-- UX: Apply set blue panel, set list/edit panels, logos, even/odd rows, sticky
-  Select All, title count without italics, first-row Yes/No layout.
-- Removed local class/Common/* forks and tests; depend on mtools Common only.
-- Adopted module-devops baseline (composer.json QA scripts, phpstan.neon.dist,
-  php-cs-fixer, rector, .github workflows, stubs, sonar opt-in).
-
-Docs
-- README.md, docs/readme.txt, docs/TUTORIAL.md, CHANGELOG.md for 1.6.0 release.
-- This changelog expanded for the 1.5.1 → 1.6.0 delta.
-
---------------------------------------------------------------------------------
-1.5.1 Final  [2022-12-15]
-Dev: XOOPS 2.5.11, PHP 7.4.33, PHP 8.1.13, PHP 8.2.0
---------------------------------------------------------------------------------
+<h5>1.5.1 Final  [2022-12-15]</h5>  Dev: XOOPS 2.5.11, PHP 7.4.33, PHP 8.1.13, PHP 8.2.0
+<hr>
 - PHP 8.2 cosmetics, fixes (mamba)
 
---------------------------------------------------------------------------------
-1.5.1 Beta 1  [2022-02-20]
-Dev: XOOPS 2.5.11, PHP 7.4.27, PHP 8.0.16
---------------------------------------------------------------------------------
+<h5>1.5.1 Beta 1  [2022-02-20]</h5>  Dev: XOOPS 2.5.11, PHP 7.4.27, PHP 8.0.16
+<hr>
 - index.html in /preloads (mamba)
 
---------------------------------------------------------------------------------
-1.05 Final  [2021-08-08]
-Dev: Xoops 2.5.11, PHP 7.4.22, PHP 8.0.8
---------------------------------------------------------------------------------
+<h5>1.05 Final  [2021-08-08]</h5>  Dev: Xoops 2.5.11, PHP 7.4.22, PHP 8.0.8
+<hr>
 - add (float) cast to $module->getInfo('version') in updates
 - 1.05 Final Release
 
---------------------------------------------------------------------------------
-1.04 Final  [2021-08-08]
-Dev: Xoops 2.5.11, PHP 7.4.22, PHP 8.0.8
---------------------------------------------------------------------------------
+<h5>1.04 Final  [2021-08-08]</h5>  Dev: Xoops 2.5.11, PHP 7.4.22, PHP 8.0.8
+<hr>
 - 1.04 Final Release
 
---------------------------------------------------------------------------------
-1.04 RC-2  [2020-12-01]
-Dev: Xoops 2.5.11, PHP 7.4.13, PHP 8.0
---------------------------------------------------------------------------------
+<h5>1.04 RC-2  [2020-12-01]</h5>  Dev: Xoops 2.5.11, PHP 7.4.13, PHP 8.0
+<hr>
 - fixed InstallWizard name (SebT34/mamba)
 - simplify loading of language files (mamba)
 - language updates (mamba)
@@ -143,16 +26,12 @@ Dev: Xoops 2.5.11, PHP 7.4.13, PHP 8.0
 - min PHP 7.3 (mamba)
 - Unqualified function/constant reference (mamba)
 
---------------------------------------------------------------------------------
-1.04 RC-1  [2020-12-01]
-Dev: Xoops 2.5.11, PHP 7.4.13, PHP 8.0
---------------------------------------------------------------------------------
+<h5>1.04 RC-1  [2020-12-01]</h5>  Dev: Xoops 2.5.11, PHP 7.4.13, PHP 8.0
+<hr>
 - updates, fixes (mamba)
 
---------------------------------------------------------------------------------
-1.04 Beta 1  [2020-09-26]
-Dev: Xoops 2.5.11, PHP 7.4.10, PHP 8.0 Beta 4
---------------------------------------------------------------------------------
+<h5>1.04 Beta 1  [2020-09-26]</h5>  Dev: Xoops 2.5.11, PHP 7.4.10, PHP 8.0 Beta 4
+<hr>
 - PHP 8 (mamba)
 - is_dir (mamba)
 - PSR-12 elseif (mamba)
@@ -161,16 +40,13 @@ Dev: Xoops 2.5.11, PHP 7.4.10, PHP 8.0 Beta 4
 - added activate/deactive modules (mamba)
 - replaced index.html with index.php (geekwright/mamba)
 
---------------------------------------------------------------------------------
-1.03 Final  [2020-05-23]
-Dev: Xoops 2.5.10, PHP 7.4.6
---------------------------------------------------------------------------------
+<h5>1.03 Final  [2020-05-23]</h5>  Dev: Xoops 2.5.10, PHP 7.4.6
+<hr>
 - namespaces, autoloading (mamba)
 - fix missing checks for wizard (mamba)
 
---------------------------------------------------------------------------------
-1.02 Final  [2016-07-10]
---------------------------------------------------------------------------------
+1.02 Final        2016-07-10
+=================================
 - code cosmetics (mamba)
 - removed @version (mamba)
 - addNavigation(basename(__FILE__))  (mamba)
@@ -183,27 +59,24 @@ Dev: Xoops 2.5.10, PHP 7.4.6
 - update Help (mamba)
 - updated Prototype.js to 1.7.3
 
---------------------------------------------------------------------------------
-1.02 RC 1  [2016-03-27]
---------------------------------------------------------------------------------
+1.02 RC 1         2016-03-27
+=================================
 - moved all images, CSS, and JS files to /assets (mamba)
 - added tab for bulk Updates (mamba)
 - added patches for Core files, required for "bulk Update" to work, located in /extras (mamba)
 - XOOPS 2.5.8 and PHP 7 (mamba)
 
---------------------------------------------------------------------------------
-1.01 Beta 1  [2014-03-18]
---------------------------------------------------------------------------------
+1.01 Beta 1         2014-03-18
+=================================
 - added option to select and un-select ALL modules (mamba)
 
---------------------------------------------------------------------------------
-1.00 Final  [2014-02-15]
---------------------------------------------------------------------------------
+1.00 Final          2014-02-15
+=================================
 - fixed highlight of selected modules (mamba)
 - removed System and ModuleInstaller from the list of modules that can be uninstalled (mamba)
 - updated to prototype.js 1.71
 
---------------------------------------------------------------------------------
-1.00 Beta  [2011-07-22]
---------------------------------------------------------------------------------
-First beta release (Mamba)
+
+1.00 Beta           2011-07-22
+=================================
+First beta release    (Mamba)

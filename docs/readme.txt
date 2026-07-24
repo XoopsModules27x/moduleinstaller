@@ -1,88 +1,40 @@
 README
 ===========
 
-ModuleInstaller is a XOOPS admin module to install, uninstall, update, activate,
-and deactivate modules in bulk, and to manage Module Sets for focused testing.
+ModuleInstaller is a XOOPS module to install and uninstall XOOPS Modules in bulk, instead of doing it one by one.
 
-Version
--------
-1.6.0 Stable (2026-07-23)
-Previous public baseline: 1.5.1 Final (2022-12-15)
+ Requirements
+ _____________________________________________________________________
 
-See CHANGELOG.md and docs/changelog.txt for the full 1.5.1 → 1.6.0 delta.
+- XOOPS >= 2.5.8
+- PHP version >= 5.5
 
 
-Requirements
-------------
-- XOOPS >= 2.5.12
-- PHP >= 8.2
-- mtools module >= 1.2.0 (installed; active not required)
-- MySQL >= 5.5
+Install/uninstall
+---------------------
+No special measures necessary, follow the standard installation process – extract the module folder into the ../modules directory. Install the module through Admin -> System Module -> Modules.
+
+Detailed instructions on installing modules are available in the XOOPS Operations Manual: https://goo.gl/adT2i
+
+If you would like to use the "Update" Tab, you need to copy the files from /extras folder to this folder:
+
+/modules/system/admin/modulesadmin
 
 
-Install / uninstall
--------------------
-1. Install mtools >= 1.2.0 first.
-2. Extract this module into ../modules/moduleinstaller
-3. Install through Admin → System Module → Modules.
+Operating instructions
+----------------------
+This module and its operations are very simple:
 
-Detailed module install instructions:
-https://xoops.gitbook.io/
+i) select the tab for desired operation: install or unistall modules
 
+ii) select modules
 
-Installer home
---------------
-Dashboard counts, last Focus snapshot link, configuration check, and optional
-sample-data buttons (preference: Show sample-data buttons?).
+iii) click on Next button
 
-
-Sample module sets
-------------------
-On Installer home, use Load sample module sets to import shipped sets
-(e.g. PM, Profile & Protector). Manage them under Module Sets.
-Sample data is YAML module sets, not database tables.
-
-
-Operating instructions (bulk tabs)
-----------------------------------
-i)   Open Admin → Installer
-ii)  Choose a tab: Install, Uninstall, Update, Activate, or Deactivate
-iii) Optional: Apply set (checks Yes for set members on this page)
-iv)  Filter / Select All / Un-Select All; click logo or name to toggle
-v)   Click Continue, review the result log
-
-Update tab: version mismatches are pre-selected; optional “needs update only”.
-
-
-Module Sets (1.6.0)
--------------------
-Admin → Installer → Module Sets
-
-- Create / edit / duplicate / delete named sets (YAML under
-  XOOPS_VAR_PATH/configs/moduleinstaller/sets/)
-- Snapshot currently active modules; import / export YAML
-- Apply: Activate, Deactivate, Install, Uninstall, or Focus
-- Focus activates set members and deactivates all other non-protected modules
-  (system and moduleinstaller are never touched). An auto-snapshot is saved first.
-- Modules listed in a set but missing on disk are skipped with a notice;
-  apply never fatals.
-
-
-UI notes
---------
-Control Panel look & feel comes from XOOPS ModuleAdmin and the admin theme.
-Module CSS (assets/css/admin.css) only styles installer helpers (selection
-highlight, filter, Apply set / sets panels, sticky selection bar).
-
-
-Upgrade from 1.5.1
-------------------
-1. Install mtools >= 1.2.0
-2. Replace module files and run System → Modules → Update on ModuleInstaller
-3. Ensure PHP 8.2+ and XOOPS 2.5.12+
+iv) Review the messages for errors, and click on Next Button
 
 
 Tutorial
---------
-docs/TUTORIAL.md — full operator walkthrough (bulk tabs, Module Sets, Focus).
-README.md and GitBook: https://xoops.gitbook.io/xoops-moduleinstaller/
+-----------
+
+At this moment there is no tutorial available

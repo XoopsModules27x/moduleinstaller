@@ -3,19 +3,23 @@
 namespace XoopsModules\Moduleinstaller;
 
 /*
- You may not change or alter any portion of this comment or credits
- of supporting developers from this source code or any supporting source code
- which is considered copyrighted (c) material of the original comment or credit authors.
-*/
-
-/**
- * @copyright 2000-2026 XOOPS Project (https://xoops.org)
- * @license   GNU GPL 2.0 or later (https://www.gnu.org/licenses/gpl-2.0.html)
- * @author    Michael Beck (mamba)
+ * You may not change or alter any portion of this comment or credits
+ * of supporting developers from this source code or any supporting source code
+ * which is considered copyrighted (c) material of the original comment or credit authors.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-
 use RuntimeException;
+use XoopsDatabaseFactory;
+
+/**
+ * @copyright    XOOPS Project (https://xoops.org)
+ * @license      GNU GPL 2.0 or later (https://www.gnu.org/licenses/gpl-2.0.html)
+ * @author       XOOPS Development Team
+ */
 
 /**
  * Class Helper
@@ -23,10 +27,15 @@ use RuntimeException;
 class Helper extends \Xmf\Module\Helper
 {
     /**
+     * @var bool
+     */
+    public $debug = false;
+    /**
      * @param bool $debug
      */
-    public function __construct(public $debug = false)
+    public function __construct($debug = false)
     {
+        $this->debug   = $debug;
         $moduleDirName = \basename(\dirname(__DIR__));
         parent::__construct($moduleDirName);
     }
@@ -70,10 +79,10 @@ class Helper extends \Xmf\Module\Helper
             throw new RuntimeException("Class '$class' not found");
         }
         /** @var \XoopsMySQLDatabase $db */
-        $db     = \XoopsDatabaseFactory::getDatabaseConnection();
+        $db     = XoopsDatabaseFactory::getDatabaseConnection();
         $helper = self::getInstance();
         $ret    = new $class($db, $helper);
-        $this->addLog("Getting handler '$name'");
+        $this->addLog("Getting handler '{$name}'");
 
         return $ret;
     }
