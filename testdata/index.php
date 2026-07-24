@@ -1,228 +1,230 @@
 <?php declare(strict_types=1);
 
 /**
- * You may not change or alter any portion of this comment or credits
- * of supporting developers from this source code or any supporting source code
- * which is considered copyrighted (c) material of the original comment or credit authors.
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * Sample data for ModuleInstaller — sample **module sets** (YAML), not DB tables.
  *
- * @copyright       XOOPS Project (https://xoops.org)
- * @license         GNU GPL 2 (https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
- * @since           2.5.9
- * @author          Michael Beck (aka Mamba): https://github.com/mambax7
+ * Uses the mtools TestdataButtons contract (op=load|save|clear) so admin home
+ * Load / Save / Clear sample buttons work like other mtools consumers.
+ *
+ * @copyright 2000-2026 XOOPS Project (https://xoops.org)
+ * @license   https://www.gnu.org/licenses/gpl-2.0.html GNU GPL
+ * @author    Michael Beck (aka Mamba)
  */
 
-use Xmf\Database\TableLoad;
 use Xmf\Request;
 use Xmf\Yaml;
-use XoopsModules\Moduleinstaller\{
-    Common\Configurator,
-    Helper,
-    Utility
-};
-/** @var Helper $helper */
-/** @var Utility $utility */
-/** @var Configurator $configurator */
+use XoopsModules\Moduleinstaller\Helper;
+use XoopsModules\Moduleinstaller\Set\ModuleSet;
+use XoopsModules\Moduleinstaller\Set\ModuleSetRepository;
+
 require \dirname(__DIR__, 3) . '/include/cp_header.php';
-require \dirname(__DIR__) . '/preloads/autoloader.php';
+require \dirname(__DIR__) . '/bootstrap.php';
+
+$mtoolsDependencyError = moduleinstaller_mtools_dependency_error();
+if ('' !== $mtoolsDependencyError) {
+    redirect_header(XOOPS_URL . '/admin.php', 3, $mtoolsDependencyError);
+    exit;
+}
 
 $op = Request::getCmd('op', '');
 
-$moduleDirName      = \basename(\dirname(__DIR__));
-$moduleDirNameUpper = \mb_strtoupper($moduleDirName);
-
 $helper = Helper::getInstance();
-// Load language files
 $helper->loadLanguage('common');
+$helper->loadLanguage('admin');
 
-switch ($op) {
-    case 'load':
-        if (Request::hasVar('ok', 'REQUEST') && 1 === Request::getInt('ok', 0)) {
-            if (!$GLOBALS['xoopsSecurity']->check()) {
-                redirect_header($helper->url('admin/index.php'), 3, implode(',', $GLOBALS['xoopsSecurity']->getErrors()));
-            }
-            loadSampleData();
-        } else {
-            xoops_cp_header();
-            xoops_confirm(['ok' => 1, 'op' => 'load'], 'index.php', constant('CO_' . $moduleDirNameUpper . '_' . 'LOAD_SAMPLEDATA_CONFIRM'), constant('CO_' . $moduleDirNameUpper . '_' . 'CONFIRM'), true);
-            xoops_cp_footer();
-        }
-        break;
-    case 'save':
-        saveSampleData();
-        break;
-    case 'clear':
-        if (Request::hasVar('ok', 'REQUEST') && 1 === Request::getInt('ok', 0)) {
-            if (!$GLOBALS['xoopsSecurity']->check()) {
-                redirect_header($helper->url('admin/index.php'), 3, implode(',', $GLOBALS['xoopsSecurity']->getErrors()));
-            }
-            clearSampleData();
-        } else {
-            xoops_cp_header();
-            xoops_confirm(['ok' => 1, 'op' => 'clear'], 'index.php', sprintf(constant('CO_' . $moduleDirNameUpper . '_' . 'CLEAR_SAMPLEDATA')), constant('CO_' . $moduleDirNameUpper . '_' . 'CONFIRM'), true);
-            xoops_cp_footer();
-        }
-        break;
+/**
+ * Resolve language subfolder under testdata/ (fallback english).
+ */
+function installer_testdata_lang_dir(): string
+{
+    global $xoopsConfig;
+    $lang = (string) ($xoopsConfig['language'] ?? 'english');
+    $path = __DIR__ . '/' . $lang;
+    if (\is_dir($path)) {
+        return $path;
+    }
+
+    return __DIR__ . '/english';
 }
 
-// XMF TableLoad for SAMPLE data
+/**
+ * @return list<string> Absolute paths to sample set YAML files shipped with the module
+ */
+function installer_sample_set_files(): array
+{
+    $dir = installer_testdata_lang_dir() . '/sets';
+    if (!\is_dir($dir)) {
+        return [];
+    }
+    $files = \glob($dir . '/*.yml') ?: [];
+    \sort($files);
+
+    return $files;
+}
+
+/**
+ * @return list<string> Sample set ids (from shipped YAML filenames / id fields)
+ */
+function installer_sample_set_ids(): array
+{
+    $ids = [];
+    foreach (installer_sample_set_files() as $file) {
+        $data = Yaml::readWrapped($file);
+        if (\is_array($data) && !empty($data['id'])) {
+            $ids[] = ModuleSet::normalizeId((string) $data['id']);
+        } else {
+            $ids[] = ModuleSet::normalizeId((string) \pathinfo($file, \PATHINFO_FILENAME));
+        }
+    }
+
+    return \array_values(\array_filter($ids));
+}
 
 function loadSampleData(): void
 {
-    global $xoopsConfig;
-    $moduleDirName      = \basename(\dirname(__DIR__));
-    $moduleDirNameUpper = \mb_strtoupper($moduleDirName);
+    $repo = new ModuleSetRepository();
+    $repo->ensureStorage();
 
-    $utility      = new Utility();
-    $configurator = new Configurator();
-
-    $tables = \Xmf\Module\Helper::getHelper($moduleDirName)->getModule()->getInfo('tables');
-
-    $language = 'english/';
-    if (is_dir(__DIR__ . '/' . $xoopsConfig['language'])) {
-        $language = $xoopsConfig['language'] . '/';
+    $files = installer_sample_set_files();
+    if ([] === $files) {
+        \redirect_header(
+            '../admin/index.php',
+            3,
+            \defined('_CO_MODULEINSTALLER_LOAD_SAMPLEDATA_FAILURE')
+                ? \_CO_MODULEINSTALLER_LOAD_SAMPLEDATA_FAILURE
+                : 'No sample set files found.'
+        );
     }
 
-    // load module tables
-    foreach ($tables as $table) {
-        $tabledata = Yaml::readWrapped($language . $table . '.yml');
-        TableLoad::truncateTable($table);
-        TableLoad::loadTableFromArray($table, $tabledata);
-    }
-
-    // load permissions
-    $table     = 'group_permission';
-    $tabledata = Yaml::readWrapped($language . $table . '.yml');
-    $mid       = \Xmf\Module\Helper::getHelper($moduleDirName)->getModule()->getVar('mid');
-    loadTableFromArrayWithReplace($table, $tabledata, 'gperm_modid', $mid);
-
-    //  ---  COPY test folder files ---------------
-    if (is_array($configurator->copyTestFolders) && count($configurator->copyTestFolders) > 0) {
-        //        $file =  \dirname(__DIR__) . '/testdata/images/';
-        foreach (array_keys($configurator->copyTestFolders) as $i) {
-            $src  = $configurator->copyTestFolders[$i][0];
-            $dest = $configurator->copyTestFolders[$i][1];
-            $utility::rcopy($src, $dest);
+    $loaded = 0;
+    foreach ($files as $file) {
+        $data = Yaml::readWrapped($file);
+        if (!\is_array($data)) {
+            continue;
+        }
+        if (empty($data['id'])) {
+            $data['id'] = \pathinfo($file, \PATHINFO_FILENAME);
+        }
+        if (empty($data['name'])) {
+            $data['name'] = (string) $data['id'];
+        }
+        try {
+            $set = ModuleSet::fromArray($data);
+            // Overwrite existing sample set with same id so re-load is idempotent
+            $repo->save($set);
+            ++$loaded;
+        } catch (\Throwable) {
+            continue;
         }
     }
-    \redirect_header('../admin/index.php', 1, \constant('CO_' . $moduleDirNameUpper . '_' . 'LOAD_SAMPLEDATA_SUCCESS'));
+
+    if (0 === $loaded) {
+        \redirect_header(
+            '../admin/index.php',
+            3,
+            \_CO_MODULEINSTALLER_LOAD_SAMPLEDATA_FAILURE
+        );
+    }
+
+    $msg = \_CO_MODULEINSTALLER_LOAD_SAMPLEDATA_SUCCESS;
+    if (\defined('_CO_MODULEINSTALLER_LOAD_SAMPLEDATA_COUNT')) {
+        $msg = \sprintf(\_CO_MODULEINSTALLER_LOAD_SAMPLEDATA_COUNT, $loaded);
+    }
+    \redirect_header('../admin/sets.php', 2, $msg);
 }
 
 function saveSampleData(): void
 {
-    $skipColumns = [];
-    global $xoopsConfig;
-    $moduleDirName      = \basename(\dirname(__DIR__));
-    $moduleDirNameUpper = \mb_strtoupper($moduleDirName);
-    $helper             = Helper::getInstance();
-    $tables             = $helper->getModule()->getInfo('tables');
+    $repo = new ModuleSetRepository();
+    $sets = $repo->listAll();
 
-    $languageFolder = __DIR__ . '/' . $xoopsConfig['language'];
-    if (!file_exists($languageFolder . '/')) {
-        Utility::createFolder($languageFolder . '/');
-    }
-    $exportFolder = $languageFolder . '/Exports-' . date('Y-m-d-H-i-s') . '/';
-    Utility::createFolder($exportFolder);
-
-    // save module tables
-    foreach ($tables as $table) {
-        TableLoad::saveTableToYamlFile($table, $exportFolder . $table . '.yml');
+    $exportRoot = installer_testdata_lang_dir() . '/Exports-' . \date('Y-m-d-H-i-s');
+    if (!@\mkdir($exportRoot, 0777, true) && !\is_dir($exportRoot)) {
+        \redirect_header(
+            '../admin/index.php',
+            3,
+            \_CO_MODULEINSTALLER_EXPORT_SCHEMA_ERROR
+        );
     }
 
-    // save permissions
-    $criteria = new \CriteriaCompo();
-    $criteria->add(new \Criteria('gperm_modid', (string)$helper->getModule()->getVar('mid')));
-    $skipColumns[] = 'gperm_id';
-    TableLoad::saveTableToYamlFile('group_permission', $exportFolder . 'group_permission.yml', $criteria, $skipColumns);
-    unset($criteria);
-
-    \redirect_header('../admin/index.php', 1, \constant('CO_' . $moduleDirNameUpper . '_' . 'SAVE_SAMPLEDATA_SUCCESS'));
-}
-
-function exportSchema(): void
-{
-    $moduleDirName      = \basename(\dirname(__DIR__));
-    $moduleDirNameUpper = \mb_strtoupper($moduleDirName);
-
-    try {
-        // TODO set exportSchema
-        //        $migrate = new Migrate($moduleDirName);
-        //        $migrate->saveCurrentSchema();
-        //
-        //        redirect_header('../admin/index.php', 1, constant('CO_' . $moduleDirNameUpper . '_' . 'EXPORT_SCHEMA_SUCCESS'));
-    } catch (\Throwable $exception) {
-        exit(constant('CO_' . $moduleDirNameUpper . '_' . 'EXPORT_SCHEMA_ERROR'));
-    }
-}
-
-/**
- * loadTableFromArrayWithReplace
- *
- * @param string $table  value which should be used instead of original value of $search
- *
- * @param array  $data   array of rows to insert
- *                       Each element of the outer array represents a single table row.
- *                       Each row is an associative array in 'column' => 'value' format.
- * @param string $search name of column for which the value should be replaced
- * @param        $replace
- * @return int number of rows inserted
- */
-function loadTableFromArrayWithReplace($table, $data, $search, $replace)
-{
-    /** @var \XoopsMySQLDatabase $db */
-    $db = \XoopsDatabaseFactory::getDatabaseConnection();
-
-    $prefixedTable = $db->prefix($table);
-    $count         = 0;
-
-    $sql = 'DELETE FROM ' . $prefixedTable . ' WHERE `' . $search . '`=' . $db->quote($replace);
-
-    $result = $db->queryF($sql);
-
-    foreach ($data as $row) {
-        $insertInto  = 'INSERT INTO ' . $prefixedTable . ' (';
-        $valueClause = ' VALUES (';
-        $first       = true;
-        foreach ($row as $column => $value) {
-            if ($first) {
-                $first = false;
-            } else {
-                $insertInto  .= ', ';
-                $valueClause .= ', ';
-            }
-
-            $insertInto .= $column;
-            if ($search === $column) {
-                $valueClause .= $db->quote($replace);
-            } else {
-                $valueClause .= $db->quote($value);
-            }
-        }
-
-        $sql = $insertInto . ') ' . $valueClause . ')';
-
-        $result = $db->queryF($sql);
-        if (false !== $result) {
+    $count = 0;
+    foreach ($sets as $set) {
+        $path = $exportRoot . '/' . $set->getId() . '.yml';
+        $ok   = Yaml::save($set->toArray(), $path);
+        if (false !== $ok) {
             ++$count;
         }
     }
 
-    return $count;
+    $msg = \_CO_MODULEINSTALLER_SAVE_SAMPLEDATA_SUCCESS;
+    if (\defined('_CO_MODULEINSTALLER_SAVE_SAMPLEDATA_COUNT')) {
+        $msg = \sprintf(\_CO_MODULEINSTALLER_SAVE_SAMPLEDATA_COUNT, $count, $exportRoot);
+    }
+    \redirect_header('../admin/index.php', 2, $msg);
 }
 
 function clearSampleData(): void
 {
-    $moduleDirName      = \basename(\dirname(__DIR__));
-    $moduleDirNameUpper = \mb_strtoupper($moduleDirName);
-    $helper             = Helper::getInstance();
-    // Load language files
-    $helper->loadLanguage('common');
-    $tables = $helper->getModule()->getInfo('tables');
-    // truncate module tables
-    foreach ($tables as $table) {
-        \Xmf\Database\TableLoad::truncateTable($table);
+    $repo    = new ModuleSetRepository();
+    $ids     = installer_sample_set_ids();
+    $removed = 0;
+    foreach ($ids as $id) {
+        if ($repo->delete($id)) {
+            ++$removed;
+        }
     }
-    redirect_header($helper->url('admin/index.php'), 1, constant('CO_' . $moduleDirNameUpper . '_' . 'CLEAR_SAMPLEDATA_OK'));
+
+    $msg = \_CO_MODULEINSTALLER_CLEAR_SAMPLEDATA_OK;
+    if (\defined('_CO_MODULEINSTALLER_CLEAR_SAMPLEDATA_COUNT')) {
+        $msg = \sprintf(\_CO_MODULEINSTALLER_CLEAR_SAMPLEDATA_COUNT, $removed);
+    }
+    \redirect_header('../admin/sets.php', 2, $msg);
+}
+
+// --- Route ---
+switch ($op) {
+    case 'load':
+        if (Request::hasVar('ok', 'REQUEST') && 1 === Request::getInt('ok', 0, 'REQUEST')) {
+            if (!$GLOBALS['xoopsSecurity']->check()) {
+                redirect_header($helper->url('admin/index.php'), 3, \implode(',', $GLOBALS['xoopsSecurity']->getErrors()));
+            }
+            loadSampleData();
+        } else {
+            xoops_cp_header();
+            xoops_confirm(
+                ['ok' => 1, 'op' => 'load'],
+                'index.php',
+                \_CO_MODULEINSTALLER_LOAD_SAMPLEDATA_CONFIRM,
+                \_CO_MODULEINSTALLER_CONFIRM,
+                true
+            );
+            xoops_cp_footer();
+        }
+        break;
+
+    case 'save':
+        saveSampleData();
+        break;
+
+    case 'clear':
+        if (Request::hasVar('ok', 'REQUEST') && 1 === Request::getInt('ok', 0, 'REQUEST')) {
+            if (!$GLOBALS['xoopsSecurity']->check()) {
+                redirect_header($helper->url('admin/index.php'), 3, \implode(',', $GLOBALS['xoopsSecurity']->getErrors()));
+            }
+            clearSampleData();
+        } else {
+            xoops_cp_header();
+            xoops_confirm(
+                ['ok' => 1, 'op' => 'clear'],
+                'index.php',
+                \_CO_MODULEINSTALLER_CLEAR_SAMPLEDATA_CONFIRM,
+                \_CO_MODULEINSTALLER_CONFIRM,
+                true
+            );
+            xoops_cp_footer();
+        }
+        break;
+
+    default:
+        redirect_header($helper->url('admin/index.php'), 1, '');
 }
