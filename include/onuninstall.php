@@ -1,77 +1,64 @@
 <?php declare(strict_types=1);
 
+/*
+ You may not change or alter any portion of this comment or credits
+ of supporting developers from this source code or any supporting source code
+ which is considered copyrighted (c) material of the original comment or credit authors.
+*/
+
 /**
- * uninstall.php - cleanup on module uninstall
- *
- * @author          XOOPS Module Development Team
- * @copyright       {@link https://xoops.org 2001-2016 XOOPS Project}
- * @license         {@link https://www.gnu.org/licenses/gpl-2.0.html GNU GPL 2.0 or later}
- * @link            https://xoops.org XOOPS
+ * @copyright 2000-2026 XOOPS Project (https://xoops.org)
+ * @license   GNU GPL 2.0 or later (https://www.gnu.org/licenses/gpl-2.0.html)
+ * @author    Michael Beck (mamba)
  */
 
-use XoopsModules\Moduleinstaller;
-use XoopsModules\Moduleinstaller\Utility;
+/**
+ * ModuleInstaller uninstall hooks.
+ */
+
+use XoopsModules\Moduleinstaller\Helper;
+use XoopsModules\Mtools\Common\FilesManagement;
+
+require \dirname(__DIR__) . '/bootstrap.php';
 
 /**
- * Prepares system prior to attempting to uninstall module
- * @param \XoopsModule $module {@link XoopsModule}
+ * Prepares system prior to attempting to uninstall module.
  *
  * @return bool true if ready to uninstall, false if not
  */
-function xoops_module_pre_uninstall_moduleinstaller(\XoopsModule $module)
+function xoops_module_pre_uninstall_moduleinstaller(\XoopsModule $module): bool
 {
-    // Do some synchronization
     return true;
 }
 
 /**
- * Performs tasks required during uninstallation of the module
- * @param \XoopsModule $module {@link XoopsModule}
+ * Performs tasks required during uninstallation of the module.
  *
  * @return bool true if uninstallation successful, false if not
  */
-function xoops_module_uninstall_moduleinstaller(\XoopsModule $module)
+function xoops_module_uninstall_moduleinstaller(\XoopsModule $module): bool
 {
-    //    return true;
-
-    $moduleDirName      = \basename(\dirname(__DIR__));
-    $moduleDirNameUpper = \mb_strtoupper($moduleDirName);
-    $helper             = Moduleinstaller\Helper::getInstance();
-
-    $utility = new Utility();
-    $success = true;
+    $moduleDirName = \basename(\dirname(__DIR__));
+    $helper        = Helper::getInstance();
     $helper->loadLanguage('admin');
+    $helper->loadLanguage('common');
 
-    //------------------------------------------------------------------
-    // Remove uploads folder (and all subfolders) if they exist
-    //------------------------------------------------------------------
-
-    $old_directories = [$GLOBALS['xoops']->path("uploads/{$moduleDirName}")];
-    foreach ($old_directories as $old_dir) {
-        $dirInfo = new \SplFileInfo($old_dir);
+    $success = true;
+    $oldDirs = [$GLOBALS['xoops']->path("uploads/{$moduleDirName}")];
+    foreach ($oldDirs as $oldDir) {
+        $dirInfo = new \SplFileInfo($oldDir);
         if ($dirInfo->isDir()) {
-            // The directory exists so delete it
-            if (!$utility::rrmdir($old_dir)) {
-                $module->setErrors(sprintf(constant('CO_' . $moduleDirNameUpper . '_' . 'ERROR_BAD_DEL_PATH'), $old_dir));
+            if (!FilesManagement::rrmdir($oldDir)) {
+                if (\defined('_CO_MODULEINSTALLER_ERROR_BAD_DEL_PATH')) {
+                    $module->setErrors(\sprintf(\_CO_MODULEINSTALLER_ERROR_BAD_DEL_PATH, $oldDir));
+                } else {
+                    $module->setErrors('Could not delete path: ' . $oldDir);
+                }
                 $success = false;
             }
         }
         unset($dirInfo);
     }
-    /*
-    //------------ START ----------------
-    //------------------------------------------------------------------
-    // Remove xsitemap.xml from XOOPS root folder if it exists
-    //------------------------------------------------------------------
-    $xmlfile = $GLOBALS['xoops']->path('xsitemap.xml');
-    if (is_file($xmlfile)) {
-        if (false === ($delOk = unlink($xmlfile))) {
-            $module->setErrors(sprintf(_AM_XXXXX_ERROR_BAD_REMOVE, $xmlfile));
-        }
-    }
-//    return $success && $delOk; // use this if you're using this routine
-*/
 
     return $success;
-    //------------ END  ----------------
 }

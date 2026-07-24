@@ -6,5 +6,5 @@ Below are language differences from a version to next version.
 1.01
 -------------------
 /language/english/admin.php
-added define('_AM_INSTALLER_SELECT_ALL' , "Select All");
-added define('_AM_INSTALLER_SELECT_NONE' , "Un-Select All");
+added define('_AM_MODULEINSTALLER_SELECT_ALL' , "Select All");
+added define('_AM_MODULEINSTALLER_SELECT_NONE' , "Un-Select All");
