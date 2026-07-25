@@ -56,7 +56,8 @@ function installer_sample_set_files(): array
     if (!\is_dir($dir)) {
         return [];
     }
-    $files = \glob($dir . '/*.yml') ?: [];
+    $glob = \glob($dir . '/*.yml');
+    $files = false === $glob ? [] : $glob;
     \sort($files);
 
     return $files;
@@ -70,14 +71,14 @@ function installer_sample_set_ids(): array
     $ids = [];
     foreach (installer_sample_set_files() as $file) {
         $data = Yaml::readWrapped($file);
-        if (\is_array($data) && !empty($data['id'])) {
+        if (\is_array($data) && isset($data['id']) && '' !== \trim((string) $data['id'])) {
             $ids[] = ModuleSet::normalizeId((string) $data['id']);
         } else {
             $ids[] = ModuleSet::normalizeId((string) \pathinfo($file, \PATHINFO_FILENAME));
         }
     }
 
-    return \array_values(\array_filter($ids));
+    return \array_values(\array_filter($ids, static fn (string $id): bool => '' !== $id));
 }
 
 function loadSampleData(): void
@@ -102,10 +103,10 @@ function loadSampleData(): void
         if (!\is_array($data)) {
             continue;
         }
-        if (empty($data['id'])) {
+        if (! isset($data['id']) || '' === \trim((string) $data['id'])) {
             $data['id'] = \pathinfo($file, \PATHINFO_FILENAME);
         }
-        if (empty($data['name'])) {
+        if (! isset($data['name']) || '' === \trim((string) $data['name'])) {
             $data['name'] = (string) $data['id'];
         }
         try {

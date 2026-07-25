@@ -13,6 +13,7 @@
  */
 
 // extra module configs
+/** @var array<string, mixed> $modversion */
 $modversion['config'][] = [
     'name'        => 'imageConfigs',
     'title'       => '_CO_MODULEINSTALLER_IMAGE_CONFIG',

@@ -259,12 +259,6 @@ parameters:
 			path: admin/menu.php
 
 		-
-			message: '#^Implicit array creation is not allowed \- variable \$adminmenu might not exist\.$#'
-			identifier: variable.implicitArray
-			count: 1
-			path: admin/menu.php
-
-		-
 			message: '#^Call to an undefined method XoopsModules\\Moduleinstaller\\Helper\:\:loadLanguage\(\)\.$#'
 			identifier: method.notFound
 			count: 2
@@ -739,12 +733,6 @@ parameters:
 			path: admin/sets.php
 
 		-
-			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
-			identifier: empty.notAllowed
-			count: 4
-			path: admin/sets.php
-
-		-
 			message: '#^Function redirect_header not found\.$#'
 			identifier: function.notFound
 			count: 4
@@ -753,30 +741,6 @@ parameters:
 		-
 			message: '#^Function xoops_cp_header not found\.$#'
 			identifier: function.notFound
-			count: 2
-			path: admin/sets.php
-
-		-
-			message: '#^Only booleans are allowed in &&, array\<string, mixed\>\|null given on the left side\.$#'
-			identifier: booleanAnd.leftNotBoolean
-			count: 2
-			path: admin/sets.php
-
-		-
-			message: '#^Only booleans are allowed in a ternary operator condition, array\<string, mixed\>\|null given\.$#'
-			identifier: ternary.condNotBoolean
-			count: 1
-			path: admin/sets.php
-
-		-
-			message: '#^Only booleans are allowed in an if condition, int\<0, max\>\|false given\.$#'
-			identifier: if.condNotBoolean
-			count: 1
-			path: admin/sets.php
-
-		-
-			message: '#^Only booleans are allowed in an if condition, int\|false given\.$#'
-			identifier: if.condNotBoolean
 			count: 2
 			path: admin/sets.php
 
@@ -861,12 +825,6 @@ parameters:
 		-
 			message: '#^Constant _AM_MODULEINSTALLER_SHOW_UPDATES_ONLY not found\.$#'
 			identifier: constant.notFound
-			count: 1
-			path: class/AdminBulkPage.php
-
-		-
-			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
-			identifier: empty.notAllowed
 			count: 1
 			path: class/AdminBulkPage.php
 
@@ -985,20 +943,8 @@ parameters:
 			path: class/ModuleCatalog.php
 
 		-
-			message: '#^Loose comparison via "\!\=" is not allowed\.$#'
-			identifier: notEqual.notAllowed
-			count: 1
-			path: class/ModuleCatalog.php
-
-		-
 			message: '#^Method XoopsModules\\Moduleinstaller\\ModuleCatalog\:\:getModuleHandler\(\) has invalid return type XoopsModuleHandler\.$#'
 			identifier: class.notFound
-			count: 1
-			path: class/ModuleCatalog.php
-
-		-
-			message: '#^Only booleans are allowed in a negated boolean, int\|false given\.$#'
-			identifier: booleanNot.exprNotBoolean
 			count: 1
 			path: class/ModuleCatalog.php
 
@@ -1013,24 +959,6 @@ parameters:
 			identifier: class.notFound
 			count: 1
 			path: class/ModuleCatalog.php
-
-		-
-			message: '#^Only booleans are allowed in a negated boolean, int\|false given\.$#'
-			identifier: booleanNot.exprNotBoolean
-			count: 1
-			path: class/Set/ModuleSet.php
-
-		-
-			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
-			identifier: empty.notAllowed
-			count: 1
-			path: class/Set/ModuleSetRepository.php
-
-		-
-			message: '#^Short ternary operator is not allowed\. Use null coalesce operator if applicable or consider using long ternary\.$#'
-			identifier: ternary.shortNotAllowed
-			count: 1
-			path: class/Set/ModuleSetRepository.php
 
 		-
 			message: '#^Constant XOOPS_UPLOAD_PATH not found\.$#'
@@ -1097,12 +1025,6 @@ parameters:
 			identifier: constant.notFound
 			count: 2
 			path: config/icons.php
-
-		-
-			message: '#^Implicit array creation is not allowed \- variable \$modversion might not exist\.$#'
-			identifier: variable.implicitArray
-			count: 1
-			path: config/imageconfig.php
 
 		-
 			message: '#^Constant XOOPS_UPLOAD_PATH not found\.$#'
@@ -1363,12 +1285,6 @@ parameters:
 			path: testdata/index.php
 
 		-
-			message: '#^Call to function array_filter\(\) requires parameter \#2 to be passed to avoid loose comparison semantics\.$#'
-			identifier: arrayFilter.strict
-			count: 1
-			path: testdata/index.php
-
-		-
 			message: '#^Constant _CO_MODULEINSTALLER_CLEAR_SAMPLEDATA_CONFIRM not found\.$#'
 			identifier: constant.notFound
 			count: 1
@@ -1423,12 +1339,6 @@ parameters:
 			path: testdata/index.php
 
 		-
-			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
-			identifier: empty.notAllowed
-			count: 3
-			path: testdata/index.php
-
-		-
 			message: '#^Function redirect_header not found\.$#'
 			identifier: function.notFound
 			count: 11
@@ -1453,36 +1363,6 @@ parameters:
 			path: testdata/index.php
 
 		-
-			message: '#^Short ternary operator is not allowed\. Use null coalesce operator if applicable or consider using long ternary\.$#'
-			identifier: ternary.shortNotAllowed
-			count: 1
-			path: testdata/index.php
-
-		-
-			message: '#^Dynamic call to static method PHPUnit\\Framework\\Assert\:\:markTestIncomplete\(\)\.$#'
-			identifier: staticMethod.dynamicCall
-			count: 3
-			path: tests/Unit/class/HelperTest.php
-
-		-
-			message: '#^Short ternary operator is not allowed\. Use null coalesce operator if applicable or consider using long ternary\.$#'
-			identifier: ternary.shortNotAllowed
-			count: 1
-			path: tests/Unit/class/Set/ModuleSetApplierTest.php
-
-		-
-			message: '#^Short ternary operator is not allowed\. Use null coalesce operator if applicable or consider using long ternary\.$#'
-			identifier: ternary.shortNotAllowed
-			count: 1
-			path: tests/Unit/class/Set/ModuleSetRepositoryTest.php
-
-		-
-			message: '#^Dynamic call to static method PHPUnit\\Framework\\Assert\:\:markTestIncomplete\(\)\.$#'
-			identifier: staticMethod.dynamicCall
-			count: 1
-			path: tests/Unit/preloads/ModuleinstallerCorePreloadTest.php
-
-		-
 			message: '#^Constant _MI_MODULEINSTALLER_DESC not found\.$#'
 			identifier: constant.notFound
 			count: 1
@@ -1491,11 +1371,5 @@ parameters:
 		-
 			message: '#^Constant _MI_MODULEINSTALLER_NAME not found\.$#'
 			identifier: constant.notFound
-			count: 1
-			path: xoops_version.php
-
-		-
-			message: '#^Implicit array creation is not allowed \- variable \$modversion might not exist\.$#'
-			identifier: variable.implicitArray
 			count: 1
 			path: xoops_version.php

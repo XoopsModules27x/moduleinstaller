@@ -68,7 +68,8 @@ class ModuleSetRepository
     public function listAll(): array
     {
         $this->ensureStorage();
-        $files = \glob($this->storagePath . '/*.yml') ?: [];
+        $glob = \glob($this->storagePath . '/*.yml');
+        $files = false === $glob ? [] : $glob;
         $sets = [];
         foreach ($files as $file) {
             $set = $this->readFile($file);
@@ -217,7 +218,7 @@ class ModuleSetRepository
         }
         // Prefer filename as id if missing/mismatched
         $basename = \basename($path, '.yml');
-        if (empty($data['id'])) {
+        if (! isset($data['id']) || '' === \trim((string) $data['id'])) {
             $data['id'] = $basename;
         }
 
