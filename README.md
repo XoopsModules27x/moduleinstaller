@@ -129,7 +129,7 @@ Ops manual: [XOOPS Operations Manual](https://xoops.gitbook.io/).
 1. Install mtools ≥ 1.2.0 if missing.  
 2. Upload the new module files over the old tree.  
 3. Run **Update** on ModuleInstaller in System → Modules.  
-4. Confirm PHP ≥ 8.2 and XOOPS ≥ 2.5.12.  
+4. Confirm PHP ≥ 8.2 and XOOPS ≥ 2.7.0.  
 5. (Optional) Load sample module sets from Installer home.  
 
 ---

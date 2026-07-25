@@ -4,7 +4,7 @@ Compared to previous public baseline 1.5.1-Final (L:\GitHub\00mambax7\moduleinst
 
 --------------------------------------------------------------------------------
 1.6.0 Stable  [2026-07-23]
-Dev: XOOPS 2.5.12+, PHP 8.2+, mtools 1.2.0+
+Dev: XOOPS 2.7.0+, PHP 8.2+, mtools 1.2.0+
 --------------------------------------------------------------------------------
 
 Highlights
@@ -12,7 +12,7 @@ Highlights
 - Shared safe bulk-action service for install / uninstall / update / activate /
   deactivate (skips missing modules; does not fatal mid-batch).
 - mtools 1.2.0 consumer bootstrap and lifecycle hooks.
-- Platform requirements raised to PHP 8.2 and XOOPS 2.5.12.
+- Platform requirements raised to PHP 8.2 and XOOPS 2.7.0.
 - Phase 3: pure CP chrome for bulk tabs; wizard baggage removed.
 - Sample module sets (PM/Profile/Protector); scoped admin.css for UX only.
 
@@ -47,7 +47,7 @@ mtools / install lifecycle
 - bootstrap.php: registers module namespace then loads mtools bootstrap.
 - include/mtools_dependency.php: ConsumerRuntime dependency check (API 1.0.0 +
   module 1.2.0); mtools must be installed (need not be active).
-- xoops_version.php: min_modules mtools >= 1.2.0; min_php 8.2; min_xoops 2.5.12.
+- xoops_version.php: min_modules mtools >= 1.2.0; min_php 8.2; min_xoops 2.7.0.
 - onInstall / onUpdate / onUninstall registered; mtools Module\Installer pattern.
 - Utility extends mtools SysUtility where applicable.
 

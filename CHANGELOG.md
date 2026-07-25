@@ -51,7 +51,7 @@ Baseline comparison for **1.6.0**: previous public tree `1.5.1-Final`
 
 ### Changed
 
-- Platform requirements: **PHP ≥ 8.2**, **XOOPS ≥ 2.5.12** (was PHP 7.4 / XOOPS 2.5.10)
+- Platform requirements: **PHP ≥ 8.2**, **XOOPS ≥ 2.7.0** (was PHP 7.4 / XOOPS 2.5.10)
 - Version string: `1.6.0-Stable` (was `1.5.1-Final`)
 - Bulk admin pages use **CP chrome only** via `AdminBulkPage::serve()` (thin tab wrappers)
 - Report HTML lives in presentation (`AdminBulkPage::renderReport`), not the domain service
@@ -87,7 +87,7 @@ Baseline comparison for **1.6.0**: previous public tree `1.5.1-Final`
 
 1. Install **mtools ≥ 1.2.0** (does not need to be active).
 2. Replace module files and run **Update** on ModuleInstaller in System → Modules.
-3. Confirm PHP ≥ 8.2 and XOOPS ≥ 2.5.12.
+3. Confirm PHP ≥ 8.2 and XOOPS ≥ 2.7.0.
 4. Open **Admin → Installer → Module Sets** (and optional sample sets on Home).
 
 ---

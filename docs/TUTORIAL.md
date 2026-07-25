@@ -16,7 +16,7 @@ It does **not** replace System → Modules for single-module installs; it speeds
 
 | Component | Minimum |
 |-----------|---------|
-| XOOPS | 2.5.12+ |
+| XOOPS | 2.7.0+ |
 | PHP | 8.2+ |
 | [mtools](https://github.com/XoopsModules25x/mtools) | 1.2.0+ (**installed**; does not need to be active) |
 
