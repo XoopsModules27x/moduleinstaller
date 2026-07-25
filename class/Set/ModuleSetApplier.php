@@ -23,26 +23,26 @@ use XoopsModules\Moduleinstaller\ModuleCatalog;
  */
 class ModuleSetApplier
 {
-    public const ACTION_ACTIVATE   = ModuleActionService::ACTION_ACTIVATE;
+    public const ACTION_ACTIVATE = ModuleActionService::ACTION_ACTIVATE;
     public const ACTION_DEACTIVATE = ModuleActionService::ACTION_DEACTIVATE;
-    public const ACTION_INSTALL    = ModuleActionService::ACTION_INSTALL;
-    public const ACTION_UNINSTALL  = ModuleActionService::ACTION_UNINSTALL;
-    public const ACTION_FOCUS      = 'focus';
+    public const ACTION_INSTALL = ModuleActionService::ACTION_INSTALL;
+    public const ACTION_UNINSTALL = ModuleActionService::ACTION_UNINSTALL;
+    public const ACTION_FOCUS = 'focus';
 
-    private ModuleActionService $actions;
-    private ModuleSetResolver $resolver;
-    private ModuleSetRepository $repository;
-    private ModuleCatalog $catalog;
+    private readonly ModuleActionService $actions;
+    private readonly ModuleSetResolver $resolver;
+    private readonly ModuleSetRepository $repository;
+    private readonly ModuleCatalog $catalog;
 
     public function __construct(
         ?ModuleActionService $actions = null,
         ?ModuleSetResolver $resolver = null,
         ?ModuleSetRepository $repository = null,
     ) {
-        $this->actions    = $actions ?? new ModuleActionService();
-        $this->resolver   = $resolver ?? new ModuleSetResolver($this->actions->getCatalog());
+        $this->actions = $actions ?? new ModuleActionService();
+        $this->resolver = $resolver ?? new ModuleSetResolver($this->actions->getCatalog());
         $this->repository = $repository ?? new ModuleSetRepository();
-        $this->catalog    = $this->actions->getCatalog();
+        $this->catalog = $this->actions->getCatalog();
     }
 
     /**
@@ -69,12 +69,12 @@ class ModuleSetApplier
         $action = \mb_strtolower(\trim($action));
 
         return match ($action) {
-            self::ACTION_FOCUS      => $this->planFocus($set),
+            self::ACTION_FOCUS => $this->planFocus($set),
             self::ACTION_ACTIVATE,
             self::ACTION_DEACTIVATE,
             self::ACTION_INSTALL,
-            self::ACTION_UNINSTALL  => $this->planMemberAction($set, $action),
-            default                 => [],
+            self::ACTION_UNINSTALL => $this->planMemberAction($set, $action),
+            default => [],
         };
     }
 
@@ -85,18 +85,26 @@ class ModuleSetApplier
      */
     public function execute(ModuleSet $set, string $action, bool $snapshotBeforeFocus = true): array
     {
-        $action     = \mb_strtolower(\trim($action));
-        $notices    = $this->collectNotices($set);
+        $action = \mb_strtolower(\trim($action));
+        $notices = $this->collectNotices($set);
         $snapshotId = null;
-        $results    = [];
+        $results = [];
 
         if (self::ACTION_FOCUS === $action && $snapshotBeforeFocus) {
             try {
-                $snapshot   = $this->createSnapshot($set);
+                $snapshot = $this->createSnapshot($set);
                 $snapshotId = $snapshot->getId();
-                $notices[]  = 'Saved snapshot: ' . $snapshot->getName() . ' (' . $snapshotId . ')';
+                $notices[] = 'Saved snapshot: ' . $snapshot->getName() . ' (' . $snapshotId . ')';
             } catch (\Throwable $e) {
-                $notices[] = 'Snapshot failed: ' . $e->getMessage();
+                // The snapshot is the ONLY way to undo a Focus. If it cannot be saved,
+                // abort before deactivating anything so the operation stays recoverable.
+                $notices[] = 'Aborted: could not save recovery snapshot before Focus (' . $e->getMessage() . ')';
+
+                return [
+                    'results' => [],
+                    'snapshot_id' => null,
+                    'notices' => $notices,
+                ];
             }
         }
 
@@ -105,10 +113,14 @@ class ModuleSetApplier
             $results[] = $this->actions->runOne($step['action'], $step['dirname']);
         }
 
-        // Also record skips for missing members not in the plan
+        // Also record skips for missing members not in the plan. Use $row['dirname']
+        // (always a string) rather than the array key, which PHP coerces to int for
+        // all-numeric dirnames and would break the strict in_array() de-dup.
+        $unusableStates = [ModuleSetResolver::STATE_MISSING, ModuleSetResolver::STATE_ORPHANED];
         $plannedDirnames = \array_column($plan, 'dirname');
-        foreach ($this->resolver->resolve($set) as $dirname => $row) {
-            if (ModuleSetResolver::STATE_MISSING === $row['state'] && !\in_array($dirname, $plannedDirnames, true)) {
+        foreach ($this->resolver->resolve($set) as $row) {
+            $dirname = $row['dirname'];
+            if (\in_array($row['state'], $unusableStates, true) && ! \in_array($dirname, $plannedDirnames, true)) {
                 $results[] = new ModuleActionResult(
                     $dirname,
                     ModuleActionResult::STATUS_SKIP,
@@ -121,9 +133,9 @@ class ModuleSetApplier
         $this->actions->flushCaches();
 
         return [
-            'results'     => $results,
+            'results' => $results,
             'snapshot_id' => $snapshotId,
-            'notices'     => $notices,
+            'notices' => $notices,
         ];
     }
 
@@ -133,8 +145,8 @@ class ModuleSetApplier
     public function createSnapshot(ModuleSet $beforeFocusSet): ModuleSet
     {
         $active = $this->catalog->listInstalled(true);
-        $name   = 'Snapshot before Focus: ' . $beforeFocusSet->getName();
-        $id     = $this->repository->uniqueId('snapshot-' . \gmdate('Ymd-His'));
+        $name = 'Snapshot before Focus: ' . $beforeFocusSet->getName();
+        $id = $this->repository->uniqueId('snapshot-' . \gmdate('Ymd-His'));
 
         $set = new ModuleSet(
             $id,
@@ -152,9 +164,10 @@ class ModuleSetApplier
      */
     private function collectNotices(ModuleSet $set): array
     {
+        $problemStates = [ModuleSetResolver::STATE_MISSING, ModuleSetResolver::STATE_ORPHANED];
         $notices = [];
         foreach ($this->resolver->resolve($set) as $row) {
-            if (null !== $row['notice'] && ModuleSetResolver::STATE_MISSING === $row['state']) {
+            if (null !== $row['notice'] && \in_array($row['state'], $problemStates, true)) {
                 $notices[] = $row['dirname'] . ': ' . $row['notice'];
             }
         }
@@ -167,10 +180,11 @@ class ModuleSetApplier
      */
     private function planMemberAction(ModuleSet $set, string $action): array
     {
-        $plan     = [];
+        $plan = [];
         $resolved = $this->resolver->resolve($set);
 
-        foreach ($resolved as $dirname => $row) {
+        foreach ($resolved as $row) {
+            $dirname = $row['dirname'];
             if ($row['protected'] && \in_array($action, [self::ACTION_UNINSTALL, self::ACTION_DEACTIVATE], true)) {
                 continue;
             }
@@ -178,19 +192,22 @@ class ModuleSetApplier
                 continue;
             }
 
+            // Note: an ORPHANED module (installed, files gone) may still be
+            // uninstalled/deactivated to clean up the DB, but never activated —
+            // activation requires files on disk.
             $include = match ($action) {
-                self::ACTION_INSTALL    => !$row['installed'] && $row['on_disk'],
-                self::ACTION_UNINSTALL  => $row['installed'] && !$row['protected'],
-                self::ACTION_ACTIVATE   => $row['installed'] && !$row['active'],
-                self::ACTION_DEACTIVATE => $row['installed'] && $row['active'] && !$row['protected'],
-                default                 => false,
+                self::ACTION_INSTALL => ! $row['installed'] && $row['on_disk'],
+                self::ACTION_UNINSTALL => $row['installed'] && ! $row['protected'],
+                self::ACTION_ACTIVATE => $row['installed'] && ! $row['active'] && $row['on_disk'],
+                self::ACTION_DEACTIVATE => $row['installed'] && $row['active'] && ! $row['protected'],
+                default => false,
             };
 
             if ($include) {
                 $plan[] = [
                     'dirname' => $dirname,
-                    'action'  => $action,
-                    'reason'  => 'Member of set',
+                    'action' => $action,
+                    'reason' => 'Member of set',
                 ];
             }
         }
@@ -205,17 +222,20 @@ class ModuleSetApplier
      */
     private function planFocus(ModuleSet $set): array
     {
-        $plan        = [];
-        $setMembers  = \array_fill_keys($set->getModules(), true);
-        $resolved    = $this->resolver->resolve($set);
+        $plan = [];
+        $setMembers = \array_fill_keys($set->getModules(), true);
+        $resolved = $this->resolver->resolve($set);
 
-        // Activate members that are installed but inactive
-        foreach ($resolved as $dirname => $row) {
-            if ($row['installed'] && !$row['active'] && !$row['protected'] && ModuleSetResolver::STATE_MISSING !== $row['state']) {
+        // Activate members that are installed but inactive. Require files on disk so an
+        // ORPHANED member (installed, folder gone) is never activated. Protection is NOT
+        // checked here: activation is constructive, and a protected-but-inactive member
+        // (e.g. an inactive start-page module) should still be turned on by Focus.
+        foreach ($resolved as $row) {
+            if ($row['installed'] && ! $row['active'] && $row['on_disk']) {
                 $plan[] = [
-                    'dirname' => $dirname,
-                    'action'  => self::ACTION_ACTIVATE,
-                    'reason'  => 'Focus: activate set member',
+                    'dirname' => $row['dirname'],
+                    'action' => self::ACTION_ACTIVATE,
+                    'reason' => 'Focus: activate set member',
                 ];
             }
         }
@@ -230,8 +250,8 @@ class ModuleSetApplier
             }
             $plan[] = [
                 'dirname' => $dirname,
-                'action'  => self::ACTION_DEACTIVATE,
-                'reason'  => 'Focus: deactivate non-member',
+                'action' => self::ACTION_DEACTIVATE,
+                'reason' => 'Focus: deactivate non-member',
             ];
         }
 

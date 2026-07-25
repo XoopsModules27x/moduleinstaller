@@ -36,7 +36,7 @@ final class AdminBulkPage
     public static function serve(string $action): void
     {
         self::ensureAssets();
-        $action    = \mb_strtolower(\trim($action));
+        $action = \mb_strtolower(\trim($action));
         $navScript = \basename((string) ($_SERVER['SCRIPT_NAME'] ?? 'install.php'));
 
         $adminObject = Admin::getInstance();
@@ -44,20 +44,20 @@ final class AdminBulkPage
 
         $pageHasForm = true;
         if ('POST' === ($_SERVER['REQUEST_METHOD'] ?? 'GET')) {
-            if (!self::checkCsrf()) {
+            if (! self::checkCsrf()) {
                 $pageHasForm = false;
-                $msg         = \defined('_AM_MODULEINSTALLER_ERR_TOKEN')
+                $msg = \defined('_AM_MODULEINSTALLER_ERR_TOKEN')
                     ? \_AM_MODULEINSTALLER_ERR_TOKEN
                     : 'Invalid security token. Please try again.';
-                $content     = "<div class='errorMsg'>" . \htmlspecialchars($msg, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</div>';
+                $content = "<div class='errorMsg'>" . \htmlspecialchars((string) $msg, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</div>';
             } else {
-                $handled     = self::handlePost($action, self::successTitleFor($action));
+                $handled = self::handlePost($action, self::successTitleFor($action));
                 $pageHasForm = $handled['pageHasForm'];
-                $content     = $handled['content'];
+                $content = $handled['content'];
             }
         } else {
-            $built       = self::buildListPage($action);
-            $content     = $built['content'];
+            $built = self::buildListPage($action);
+            $content = $built['content'];
             $pageHasForm = $built['pageHasForm'];
         }
 
@@ -85,7 +85,7 @@ final class AdminBulkPage
         if ($loaded) {
             return;
         }
-        if (!isset($GLOBALS['xoTheme']) || !\is_object($GLOBALS['xoTheme'])) {
+        if (! isset($GLOBALS['xoTheme']) || ! \is_object($GLOBALS['xoTheme'])) {
             return;
         }
         $dirname = 'moduleinstaller';
@@ -93,7 +93,7 @@ final class AdminBulkPage
             $dirname = (string) $GLOBALS['xoopsModule']->getVar('dirname');
         }
         $base = \XOOPS_URL . '/modules/' . $dirname . '/assets';
-        $v    = self::ASSET_VERSION;
+        $v = self::ASSET_VERSION;
         // Scoped module UX only — CP look & feel comes from ModuleAdmin + admin theme
         $GLOBALS['xoTheme']->addStylesheet($base . '/css/admin.css?v=' . $v);
         $GLOBALS['xoTheme']->addScript($base . '/js/xo-installer.js?v=' . $v);
@@ -108,7 +108,7 @@ final class AdminBulkPage
     public static function buildListPage(string $action): array
     {
         $catalog = new ModuleCatalog();
-        $action  = \mb_strtolower(\trim($action));
+        $action = \mb_strtolower(\trim($action));
 
         if (ModuleActionService::ACTION_UPDATE === $action) {
             return self::buildUpdateListPage($catalog);
@@ -117,13 +117,13 @@ final class AdminBulkPage
         $list = $catalog->candidatesFor($action);
         if ([] === $list) {
             return [
-                'content'     => self::emptyListMessage(),
+                'content' => self::emptyListMessage(),
                 'pageHasForm' => false,
             ];
         }
 
         return [
-            'content'     => self::renderModuleTable($list),
+            'content' => self::renderModuleTable($list),
             'pageHasForm' => true,
         ];
     }
@@ -133,8 +133,8 @@ final class AdminBulkPage
      */
     private static function buildUpdateListPage(ModuleCatalog $catalog): array
     {
-        $list      = $catalog->candidatesFor(ModuleActionService::ACTION_UPDATE);
-        $needs     = $catalog->listNeedsUpdate();
+        $list = $catalog->candidatesFor(ModuleActionService::ACTION_UPDATE);
+        $needs = $catalog->listNeedsUpdate();
         $onlyNeeds = Request::getInt('needs_only', 0, 'GET') === 1;
         if ($onlyNeeds) {
             $list = $needs;
@@ -142,7 +142,7 @@ final class AdminBulkPage
 
         if ([] === $list) {
             return [
-                'content'     => self::emptyListMessage(),
+                'content' => self::emptyListMessage(),
                 'pageHasForm' => false,
             ];
         }
@@ -153,15 +153,13 @@ final class AdminBulkPage
         }
         $toggleUrl = 'update.php' . ($onlyNeeds ? '' : '?needs_only=1');
         $toggleLbl = \_AM_MODULEINSTALLER_SHOW_UPDATES_ONLY;
-        $content  .= '<p><a class="formButton" href="' . \htmlspecialchars($toggleUrl, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '">'
+        $content .= '<p><a class="formButton" href="' . \htmlspecialchars($toggleUrl, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '">'
             . \htmlspecialchars($toggleLbl, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8')
             . ($onlyNeeds ? ' ✓' : '') . '</a></p>';
-        $content  .= self::renderModuleTable($list, $needs, static function (string $dirname, array $info) use ($catalog): array {
-            return ['highlight' => $catalog->needsUpdate($dirname)];
-        });
+        $content .= self::renderModuleTable($list, $needs, static fn (string $dirname, array $info): array => ['highlight' => $catalog->needsUpdate($dirname)]);
 
         return [
-            'content'     => $content,
+            'content' => $content,
             'pageHasForm' => true,
         ];
     }
@@ -172,17 +170,17 @@ final class AdminBulkPage
             ? \_AM_MODULEINSTALLER_NO_MODULES
             : 'No modules found.';
 
-        return "<div class='x2-note confirmMsg'>" . \htmlspecialchars($msg, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</div>';
+        return "<div class='x2-note confirmMsg'>" . \htmlspecialchars((string) $msg, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</div>';
     }
 
     private static function successTitleFor(string $action): string
     {
         $map = [
-            ModuleActionService::ACTION_INSTALL    => '_AM_MODULEINSTALLER_DONE_INSTALL',
-            ModuleActionService::ACTION_UNINSTALL  => '_AM_MODULEINSTALLER_DONE_UNINSTALL',
-            ModuleActionService::ACTION_ACTIVATE   => '_AM_MODULEINSTALLER_DONE_ACTIVATE',
+            ModuleActionService::ACTION_INSTALL => '_AM_MODULEINSTALLER_DONE_INSTALL',
+            ModuleActionService::ACTION_UNINSTALL => '_AM_MODULEINSTALLER_DONE_UNINSTALL',
+            ModuleActionService::ACTION_ACTIVATE => '_AM_MODULEINSTALLER_DONE_ACTIVATE',
             ModuleActionService::ACTION_DEACTIVATE => '_AM_MODULEINSTALLER_DONE_DEACTIVATE',
-            ModuleActionService::ACTION_UPDATE     => '_AM_MODULEINSTALLER_DONE_UPDATE',
+            ModuleActionService::ACTION_UPDATE => '_AM_MODULEINSTALLER_DONE_UPDATE',
         ];
         $const = $map[$action] ?? '';
         if ('' !== $const && \defined($const)) {
@@ -194,8 +192,10 @@ final class AdminBulkPage
 
     private static function checkCsrf(): bool
     {
-        if (!isset($GLOBALS['xoopsSecurity']) || !\is_object($GLOBALS['xoopsSecurity'])) {
-            return true;
+        if (! isset($GLOBALS['xoopsSecurity']) || ! \is_object($GLOBALS['xoopsSecurity'])) {
+            // Fail closed: without the security service we cannot validate the CSRF
+            // token, and these endpoints perform destructive bulk actions.
+            return false;
         }
 
         return (bool) $GLOBALS['xoopsSecurity']->check();
@@ -243,12 +243,12 @@ final class AdminBulkPage
      */
     public static function renderModuleTable(array $dirnames, array $preselect = [], ?callable $rowDecorator = null): string
     {
-        $catalog   = new ModuleCatalog();
+        $catalog = new ModuleCatalog();
         $preselect = \array_fill_keys($preselect, true);
-        $filterPh  = \defined('_AM_MODULEINSTALLER_FILTER_PLACEHOLDER') ? \_AM_MODULEINSTALLER_FILTER_PLACEHOLDER : 'Filter…';
+        $filterPh = \defined('_AM_MODULEINSTALLER_FILTER_PLACEHOLDER') ? \_AM_MODULEINSTALLER_FILTER_PLACEHOLDER : 'Filter…';
         $filterLbl = \defined('_AM_MODULEINSTALLER_FILTER') ? \_AM_MODULEINSTALLER_FILTER : 'Filter';
         $filterHint = \defined('_AM_MODULEINSTALLER_FILTER_HINT') ? \_AM_MODULEINSTALLER_FILTER_HINT : '';
-        $noneMsg   = \defined('_AM_MODULEINSTALLER_SET_FILTER_NONE') ? \_AM_MODULEINSTALLER_SET_FILTER_NONE : 'No match';
+        $noneMsg = \defined('_AM_MODULEINSTALLER_SET_FILTER_NONE') ? \_AM_MODULEINSTALLER_SET_FILTER_NONE : 'No match';
 
         $selectAllLbl = \htmlspecialchars(
             \defined('_AM_MODULEINSTALLER_SELECT_ALL') ? \_AM_MODULEINSTALLER_SELECT_ALL : 'Select All',
@@ -269,25 +269,25 @@ final class AdminBulkPage
         // Selected count is shown on the page title (.CPbigTitle) and sticky bar only.
         $content = '<div class="installer-list-toolbar">';
         $content .= '<label class="installer-filter-label" for="installer-module-filter">'
-            . \htmlspecialchars($filterLbl, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</label> ';
+            . \htmlspecialchars((string) $filterLbl, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</label> ';
         // type=text (not search) so theme/input styles apply; size gives a visible fallback width
         $content .= '<input type="text" id="installer-module-filter" class="installer-module-filter form-control" '
             . 'size="36" '
-            . 'placeholder="' . \htmlspecialchars($filterPh, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '" '
-            . 'autocomplete="off" aria-label="' . \htmlspecialchars($filterLbl, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '">';
+            . 'placeholder="' . \htmlspecialchars((string) $filterPh, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '" '
+            . 'autocomplete="off" aria-label="' . \htmlspecialchars((string) $filterLbl, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '">';
         if ('' !== $filterHint) {
             $content .= ' <span class="small installer-filter-hint">'
-                . \htmlspecialchars($filterHint, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</span>';
+                . \htmlspecialchars((string) $filterHint, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</span>';
         }
         $content .= '</div>';
         $content .= '<p id="installer-filter-empty" class="x2-note confirmMsg" style="display:none;">'
-            . \htmlspecialchars($noneMsg, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</p>';
+            . \htmlspecialchars((string) $noneMsg, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</p>';
         // No ul/li wrapper: list markers broke first-row radio layout (black square + stretched Yes/No)
         $content .= "<div class='installer-module-list'>"
             . "<table class='outer module installer-module-table width100'>\n"
             . "<colgroup><col class='installer-col-img'><col class='installer-col-desc'><col class='installer-col-yesno'></colgroup>\n";
-        $count   = 0;
-        $even    = false;
+        $count = 0;
+        $even = false;
 
         foreach ($dirnames as $file) {
             $file = \trim((string) $file);
@@ -304,28 +304,28 @@ final class AdminBulkPage
             $highlight = false;
             if (null !== $rowDecorator) {
                 $meta = $rowDecorator($file, $info);
-                if (\is_array($meta) && !empty($meta['highlight'])) {
+                if (\is_array($meta) && ! empty($meta['highlight'])) {
                     $highlight = true;
                 }
             }
 
-            $spanOpen  = $highlight ? "<span style='color:#FF0000;font-weight:bold;'>" : '<span>';
+            $spanOpen = $highlight ? "<span style='color:#FF0000;font-weight:bold;'>" : '<span>';
             $spanClose = '</span>';
 
-            $imgSrc     = \XOOPS_URL . '/modules/' . $info['dirname'] . '/' . $info['image'];
+            $imgSrc = \XOOPS_URL . '/modules/' . $info['dirname'] . '/' . $info['image'];
             $dirnameEsc = \htmlspecialchars($file, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8');
-            $nameEsc    = \htmlspecialchars($info['name'], \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8');
-            $toggleJs   = "toggleModuleRow('" . $dirnameEsc . "')";
+            $nameEsc = \htmlspecialchars($info['name'], \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8');
+            $toggleJs = "toggleModuleRow('" . $dirnameEsc . "')";
             $searchBlob = \htmlspecialchars(
                 \mb_strtolower($info['name'] . ' ' . $file . ' ' . $info['description']),
                 \ENT_QUOTES | \ENT_SUBSTITUTE,
                 'UTF-8'
             );
-            $even     = !$even;
-            $stripe   = $even ? 'even' : 'odd';
-            $rowClass = \trim($stripe . ($value ? ' installer-row-selected' : ''));
-            $content .= "<tr id='" . $dirnameEsc . "' class='" . $rowClass . "' data-search=\"" . $searchBlob . "\""
-                . ($value ? " style='background-color:var(--installer-selected,#E6EFC2);'" : '') . ">\n";
+            $even = ! $even;
+            $stripe = $even ? 'even' : 'odd';
+            $rowClass = \trim($stripe . ($value !== 0 ? ' installer-row-selected' : ''));
+            $content .= "<tr id='" . $dirnameEsc . "' class='" . $rowClass . "' data-search=\"" . $searchBlob . '"'
+                . ($value !== 0 ? " style='background-color:var(--installer-selected,#E6EFC2);'" : '') . ">\n";
             $content .= "    <td class='img installer-mod-toggle' onclick=\"" . $toggleJs . "\" title='Toggle selection'>";
             $content .= "<img class='installer-mod-logo' src='" . \htmlspecialchars($imgSrc, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8')
                 . "' alt='" . $nameEsc . "'></td>\n";
@@ -354,9 +354,9 @@ final class AdminBulkPage
     public static function renderStickyBar(string $actionButtonsHtml = ''): string
     {
         $countTpl = \defined('_AM_MODULEINSTALLER_SELECTED_COUNT') ? \_AM_MODULEINSTALLER_SELECTED_COUNT : '%d selected';
-        $noneMsg  = \defined('_AM_MODULEINSTALLER_ERR_NONE_SELECTED') ? \_AM_MODULEINSTALLER_ERR_NONE_SELECTED : 'Select at least one module.';
-        $parts    = \explode('%d', $countTpl, 2);
-        $label    = \htmlspecialchars($parts[0] ?? '', \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8')
+        $noneMsg = \defined('_AM_MODULEINSTALLER_ERR_NONE_SELECTED') ? \_AM_MODULEINSTALLER_ERR_NONE_SELECTED : 'Select at least one module.';
+        $parts = \explode('%d', (string) $countTpl, 2);
+        $label = \htmlspecialchars($parts[0] ?? '', \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8')
             . '<span class="installer-selected-count-num" id="installer-selected-count">0</span>'
             . \htmlspecialchars($parts[1] ?? '', \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8');
 
@@ -369,7 +369,7 @@ final class AdminBulkPage
             . '<div class="installer-sticky-countline">'
             . '<strong class="installer-selected-label">' . $label . '</strong>'
             . '<span id="installer-empty-warn" class="installer-empty-warn" style="display:none;">'
-            . \htmlspecialchars($noneMsg, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8')
+            . \htmlspecialchars((string) $noneMsg, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8')
             . '</span></div>'
             . $actions
             . '</div>';
@@ -385,27 +385,27 @@ final class AdminBulkPage
      */
     public static function renderYesNoRadios(string $dirname, int $value): string
     {
-        $safeId   = 'modsel_' . \preg_replace('/[^a-zA-Z0-9_-]/', '_', $dirname);
+        $safeId = 'modsel_' . \preg_replace('/[^a-zA-Z0-9_-]/', '_', $dirname);
         $nameAttr = 'modules[' . \htmlspecialchars($dirname, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . ']';
-        $idYes    = $safeId . '_1';
-        $idNo     = $safeId . '_2';
-        $onclick  = "selectModule('" . \htmlspecialchars($dirname, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . "', this)";
+        $idYes = $safeId . '_1';
+        $idNo = $safeId . '_2';
+        $onclick = "selectModule('" . \htmlspecialchars($dirname, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . "', this)";
         $yesLabel = \defined('_YES') ? \_YES : 'Yes';
-        $noLabel  = \defined('_NO') ? \_NO : 'No';
-        $yesChk   = (1 === $value) ? ' checked' : '';
-        $noChk    = (1 === $value) ? '' : ' checked';
+        $noLabel = \defined('_NO') ? \_NO : 'No';
+        $yesChk = (1 === $value) ? ' checked' : '';
+        $noChk = (1 === $value) ? '' : ' checked';
 
         // Single-line nowrap unit — first row cannot stretch Yes/No across the cell
         return '<span class="installer-yesno" style="display:inline-block;white-space:nowrap;">'
             . '<label class="installer-yesno-opt" for="' . $idYes . '">'
             . '<input type="radio" name="' . $nameAttr . '" id="' . $idYes . '" value="1"'
-            . $yesChk . " onclick=\"" . $onclick . '">&nbsp;'
-            . \htmlspecialchars($yesLabel, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8')
+            . $yesChk . ' onclick="' . $onclick . '">&nbsp;'
+            . \htmlspecialchars((string) $yesLabel, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8')
             . '</label>&nbsp;&nbsp;'
             . '<label class="installer-yesno-opt" for="' . $idNo . '">'
             . '<input type="radio" name="' . $nameAttr . '" id="' . $idNo . '" value="0"'
-            . $noChk . " onclick=\"" . $onclick . '">&nbsp;'
-            . \htmlspecialchars($noLabel, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8')
+            . $noChk . ' onclick="' . $onclick . '">&nbsp;'
+            . \htmlspecialchars((string) $noLabel, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8')
             . '</label></span>';
     }
 
@@ -416,7 +416,7 @@ final class AdminBulkPage
      */
     public static function handlePost(string $action, string $successTitle): array
     {
-        $service  = new ModuleActionService();
+        $service = new ModuleActionService();
         $selected = $service->selectedDirnames(self::postedModules());
         if ([] === $selected) {
             $msg = \defined('_AM_MODULEINSTALLER_ERR_NONE_SELECTED')
@@ -425,8 +425,8 @@ final class AdminBulkPage
 
             return [
                 'pageHasForm' => false,
-                'content'     => "<div class='errorMsg'>" . \htmlspecialchars($msg, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</div>',
-                'results'     => [],
+                'content' => "<div class='errorMsg'>" . \htmlspecialchars((string) $msg, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</div>',
+                'results' => [],
             ];
         }
         $results = $service->runMany($action, $selected);
@@ -434,8 +434,8 @@ final class AdminBulkPage
 
         return [
             'pageHasForm' => false,
-            'content'     => self::renderReport($results, $successTitle),
-            'results'     => $results,
+            'content' => self::renderReport($results, $successTitle),
+            'results' => $results,
         ];
     }
 
@@ -451,7 +451,7 @@ final class AdminBulkPage
                 ? \_AM_MODULEINSTALLER_NO_SELECTION_REPORT
                 : 'No modules selected.';
 
-            return "<div class='x2-note confirmMsg'>" . \htmlspecialchars($msg, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</div>';
+            return "<div class='x2-note confirmMsg'>" . \htmlspecialchars((string) $msg, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</div>';
         }
 
         $html = '';
@@ -460,23 +460,23 @@ final class AdminBulkPage
         }
         $html .= "<ul class='log installer-result-log'>";
         foreach ($results as $result) {
-            if (!$result instanceof ModuleActionResult) {
+            if (! $result instanceof ModuleActionResult) {
                 continue;
             }
             $class = match ($result->status) {
-                ModuleActionResult::STATUS_OK   => 'success',
+                ModuleActionResult::STATUS_OK => 'success',
                 ModuleActionResult::STATUS_SKIP => 'warning',
-                default                         => 'error',
+                default => 'error',
             };
             $prefix = \strtoupper($result->status);
-            // Core modulesadmin may return HTML in $message — pass through as historically done
+            // Core modulesadmin returns HTML in $message; messageHtml() strips it to a
+            // safe formatting subset so a hostile module name/version can't inject markup.
             $html .= '<li class="' . $class . '"><strong>[' . \htmlspecialchars($prefix, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . ']</strong> '
                 . \htmlspecialchars($result->dirname, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . ': '
-                . $result->message . '</li>';
+                . $result->messageHtml() . '</li>';
         }
-        $html .= '</ul>';
 
-        return $html;
+        return $html . '</ul>';
     }
 
     /**
@@ -505,6 +505,7 @@ final class AdminBulkPage
     public static function renderSetSelector(): string
     {
         $sets = [];
+
         try {
             $repo = new ModuleSetRepository();
             $repo->ensureStorage();
@@ -542,15 +543,15 @@ final class AdminBulkPage
 
         $html = '<div id="installer-set-toolbar" class="installer-set-toolbar clearfix">';
         $html .= '<label for="installer-set-select" class="installer-set-toolbar-label" title="'
-            . \htmlspecialchars($hint, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '">'
-            . \htmlspecialchars($label, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</label> ';
+            . \htmlspecialchars((string) $hint, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '">'
+            . \htmlspecialchars((string) $label, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</label> ';
         $html .= '<select id="installer-set-select" name="installer_set_select" class="form-control installer-set-select" '
             . 'data-sets="' . $jsonAttr . '" title="'
-            . \htmlspecialchars($hint, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '">';
-        $html .= '<option value="">' . \htmlspecialchars($placeholder, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</option>';
+            . \htmlspecialchars((string) $hint, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '">';
+        $html .= '<option value="">' . \htmlspecialchars((string) $placeholder, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</option>';
 
         if ([] === $sets) {
-            $html .= '<option value="" disabled>' . \htmlspecialchars($emptyHint, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</option>';
+            $html .= '<option value="" disabled>' . \htmlspecialchars((string) $emptyHint, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</option>';
         } else {
             foreach ($sets as $set) {
                 $count = $set->countModules();
@@ -563,92 +564,93 @@ final class AdminBulkPage
 
         $html .= '</select>';
         $html .= ' <span class="small installer-set-toolbar-hint">'
-            . \htmlspecialchars($hint, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</span>';
+            . \htmlspecialchars((string) $hint, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</span>';
         $html .= '</div>';
 
         // Self-contained handler: works even if xo-installer.js is missing or cached stale.
         // Matches modules by <tr id="dirname"> which AdminBulkPage always emits.
-        $html .= <<<'JS'
-<script type="text/javascript">
-(function () {
-    function installerSelectSet(moduleList) {
-        var wanted = {};
-        if (moduleList && moduleList.length) {
-            for (var i = 0; i < moduleList.length; i++) {
-                wanted[String(moduleList[i])] = true;
-            }
-        }
-        var matched = 0;
-        var rows = document.querySelectorAll('table.module tr[id]');
-        if (!rows.length) {
-            rows = document.querySelectorAll('tr[id]');
-        }
-        for (var r = 0; r < rows.length; r++) {
-            var row = rows[r];
-            var dirname = row.id;
-            if (!dirname) {
-                continue;
-            }
-            var wantYes = !!wanted[dirname];
-            var radios = row.querySelectorAll('input[type="radio"]');
-            if (!radios.length) {
-                continue;
-            }
-            var yesRadio = null;
-            var noRadio = null;
-            for (var j = 0; j < radios.length; j++) {
-                if (String(radios[j].value) === '1') {
-                    yesRadio = radios[j];
-                } else if (String(radios[j].value) === '0') {
-                    noRadio = radios[j];
+        $html .= <<<'JS_WRAP'
+        <script type="text/javascript">
+        (function () {
+            function installerSelectSet(moduleList) {
+                var wanted = {};
+                if (moduleList && moduleList.length) {
+                    for (var i = 0; i < moduleList.length; i++) {
+                        wanted[String(moduleList[i])] = true;
+                    }
                 }
-            }
-            if (wantYes) {
-                if (yesRadio) {
-                    yesRadio.checked = true;
+                var matched = 0;
+                var rows = document.querySelectorAll('table.module tr[id]');
+                if (!rows.length) {
+                    rows = document.querySelectorAll('tr[id]');
                 }
-                row.style.background = '#E6EFC2';
-                matched++;
-            } else {
-                if (noRadio) {
-                    noRadio.checked = true;
+                for (var r = 0; r < rows.length; r++) {
+                    var row = rows[r];
+                    var dirname = row.id;
+                    if (!dirname) {
+                        continue;
+                    }
+                    var wantYes = !!wanted[dirname];
+                    var radios = row.querySelectorAll('input[type="radio"]');
+                    if (!radios.length) {
+                        continue;
+                    }
+                    var yesRadio = null;
+                    var noRadio = null;
+                    for (var j = 0; j < radios.length; j++) {
+                        if (String(radios[j].value) === '1') {
+                            yesRadio = radios[j];
+                        } else if (String(radios[j].value) === '0') {
+                            noRadio = radios[j];
+                        }
+                    }
+                    if (wantYes) {
+                        if (yesRadio) {
+                            yesRadio.checked = true;
+                        }
+                        row.style.background = '#E6EFC2';
+                        matched++;
+                    } else {
+                        if (noRadio) {
+                            noRadio.checked = true;
+                        }
+                        row.style.background = 'transparent';
+                    }
                 }
-                row.style.background = 'transparent';
+                return matched;
             }
-        }
-        return matched;
-    }
 
-    function installerApplySet(selectEl) {
-        if (!selectEl) {
-            return 0;
-        }
-        var setId = selectEl.value;
-        if (!setId) {
-            return 0;
-        }
-        var map = window.installerModuleSets || {};
-        if ((!map || !Object.keys(map).length) && selectEl.getAttribute('data-sets')) {
-            try {
-                map = JSON.parse(selectEl.getAttribute('data-sets'));
-            } catch (e) {
-                map = {};
+            function installerApplySet(selectEl) {
+                if (!selectEl) {
+                    return 0;
+                }
+                var setId = selectEl.value;
+                if (!setId) {
+                    return 0;
+                }
+                var map = window.installerModuleSets || {};
+                if ((!map || !Object.keys(map).length) && selectEl.getAttribute('data-sets')) {
+                    try {
+                        map = JSON.parse(selectEl.getAttribute('data-sets'));
+                    } catch (e) {
+                        map = {};
+                    }
+                }
+                window.installerModuleSets = map;
+                var modules = map[setId] || [];
+                return installerSelectSet(modules);
             }
-        }
-        window.installerModuleSets = map;
-        var modules = map[setId] || [];
-        return installerSelectSet(modules);
-    }
 
-    // Expose globally for toolbar + any external callers
-    window.installerSelectSet = installerSelectSet;
-    window.applyInstallerSet = installerApplySet;
-    window.selectSet = window.selectSet || installerSelectSet;
+            // Expose globally for toolbar + any external callers
+            window.installerSelectSet = installerSelectSet;
+            window.applyInstallerSet = installerApplySet;
+            window.selectSet = window.selectSet || installerSelectSet;
 
-    window.installerModuleSets =
-JS;
+            window.installerModuleSets =
+        JS_WRAP;
         $html .= $json . ";\n";
-        $html .= <<<'JS'
+
+        return $html . <<<'JS'
     function bindSetSelect() {
         var sel = document.getElementById('installer-set-select');
         if (!sel || sel.getAttribute('data-bound') === '1') {
@@ -668,8 +670,5 @@ JS;
 })();
 </script>
 JS;
-
-        return $html;
     }
 }
-

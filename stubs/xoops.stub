@@ -206,3 +206,15 @@ namespace Xmf\Module\Helper {
         public function addLog(string $log): void {}
     }
 }
+
+namespace XoopsModules\Mtools\Common {
+    // mtools (>= 1.2.0) consumer base; not composer-autoloadable during standalone
+    // analysis. Stub only what ModuleInstaller consumes (see class/Utility.php,
+    // include/on{install,update}.php). Extend as more SysUtility APIs are used.
+    class SysUtility
+    {
+        public static function checkVerXoops(?\XoopsModule $module = null, $requiredVer = null): bool {}
+
+        public static function checkVerPhp(?\XoopsModule $module = null): bool {}
+    }
+}

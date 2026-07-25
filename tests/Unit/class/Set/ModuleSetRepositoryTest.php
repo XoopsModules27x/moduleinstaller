@@ -18,7 +18,7 @@ final class ModuleSetRepositoryTest extends TestCase
     {
         parent::setUp();
         $this->tmpDir = \sys_get_temp_dir() . '/mi_sets_' . \bin2hex(\random_bytes(4));
-        $this->repo   = new ModuleSetRepository($this->tmpDir);
+        $this->repo = new ModuleSetRepository($this->tmpDir);
     }
 
     protected function tearDown(): void

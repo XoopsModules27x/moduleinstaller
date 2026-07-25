@@ -22,13 +22,13 @@
 
 use XoopsModules\Mtools\Module\ConsumerRuntime;
 
-if (!\function_exists('moduleinstaller_mtools_dependency_error')) {
+if (! \function_exists('moduleinstaller_mtools_dependency_error')) {
     /**
      * @return string Empty when mtools is ready; human-readable error otherwise
      */
     function moduleinstaller_mtools_dependency_error(): string
     {
-        if (!\class_exists(ConsumerRuntime::class)) {
+        if (! \class_exists(ConsumerRuntime::class)) {
             return 'The mtools module files are missing. Install mtools before installing or running ModuleInstaller.';
         }
 

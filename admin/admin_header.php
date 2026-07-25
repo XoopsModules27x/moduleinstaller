@@ -36,17 +36,17 @@ if ('' !== $mtoolsDependencyError) {
 
 require \dirname(__DIR__) . '/include/common.php';
 
-$helper        = Helper::getInstance();
+$helper = Helper::getInstance();
 $moduleDirName = \basename(\dirname(__DIR__));
-$utility       = new Utility();
-$adminObject   = Admin::getInstance();
+$utility = new Utility();
+$adminObject = Admin::getInstance();
 
-$pathIcon16    = Admin::iconUrl('', '16');
-$pathIcon32    = Admin::iconUrl('', '32');
+$pathIcon16 = Admin::iconUrl('', '16');
+$pathIcon32 = Admin::iconUrl('', '32');
 $pathModIcon32 = $helper->getModule()->getInfo('modicons32');
 
 $myts = \MyTextSanitizer::getInstance();
-if (!isset($GLOBALS['xoopsTpl']) || !($GLOBALS['xoopsTpl'] instanceof \XoopsTpl)) {
+if (! isset($GLOBALS['xoopsTpl']) || ! ($GLOBALS['xoopsTpl'] instanceof \XoopsTpl)) {
     require_once $GLOBALS['xoops']->path('class/template.php');
     $xoopsTpl = new \XoopsTpl();
 }

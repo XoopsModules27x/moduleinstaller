@@ -21,6 +21,11 @@ use XoopsModules\Moduleinstaller\Utility;
 use XoopsModules\Mtools\Common\Configurator;
 use XoopsModules\Mtools\Module\Installer;
 
+if ((! defined('XOOPS_ROOT_PATH')) || ! ($GLOBALS['xoopsUser'] instanceof \XoopsUser)
+    || ! $GLOBALS['xoopsUser']->isAdmin()) {
+    exit('Restricted access' . PHP_EOL);
+}
+
 require \dirname(__DIR__) . '/bootstrap.php';
 
 /**
@@ -39,7 +44,7 @@ function xoops_module_pre_install_moduleinstaller(\XoopsModule $module): bool
 
     $utility = new Utility();
 
-    if (!$utility::checkVerXoops($module) || !$utility::checkVerPhp($module)) {
+    if (! $utility::checkVerXoops($module) || ! $utility::checkVerPhp($module)) {
         return false;
     }
 
@@ -65,14 +70,14 @@ function xoops_module_install_moduleinstaller(\XoopsModule $module): bool
     }
 
     $moduleDirName = \basename(\dirname(__DIR__));
-    $helper        = Helper::getInstance();
+    $helper = Helper::getInstance();
 
     $helper->loadLanguage('admin');
     $helper->loadLanguage('modinfo');
 
     $moduleId = $module->getVar('mid');
     /** @var \XoopsGroupPermHandler $grouppermHandler */
-    $grouppermHandler = \xoops_getHandler('groupperm');
+    $grouppermHandler = xoops_getHandler('groupperm');
     $grouppermHandler->addRight($moduleDirName . '_approve', 1, \XOOPS_GROUP_ADMIN, $moduleId);
     $grouppermHandler->addRight($moduleDirName . '_submit', 1, \XOOPS_GROUP_ADMIN, $moduleId);
     $grouppermHandler->addRight($moduleDirName . '_view', 1, \XOOPS_GROUP_ADMIN, $moduleId);

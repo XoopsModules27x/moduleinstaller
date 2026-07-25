@@ -21,13 +21,13 @@ namespace XoopsModules\Moduleinstaller;
  */
 class ModuleActionService
 {
-    public const ACTION_INSTALL    = 'install';
-    public const ACTION_UNINSTALL  = 'uninstall';
-    public const ACTION_ACTIVATE   = 'activate';
+    public const ACTION_INSTALL = 'install';
+    public const ACTION_UNINSTALL = 'uninstall';
+    public const ACTION_ACTIVATE = 'activate';
     public const ACTION_DEACTIVATE = 'deactivate';
-    public const ACTION_UPDATE     = 'update';
+    public const ACTION_UPDATE = 'update';
 
-    private ModuleCatalog $catalog;
+    private readonly ModuleCatalog $catalog;
     private bool $coreLoaded = false;
 
     public function __construct(?ModuleCatalog $catalog = null)
@@ -104,7 +104,7 @@ class ModuleActionService
     public function runOne(string $action, string $dirname): ModuleActionResult
     {
         $dirname = \trim($dirname);
-        $action  = \mb_strtolower(\trim($action));
+        $action = \mb_strtolower(\trim($action));
 
         if ('' === $dirname) {
             return new ModuleActionResult($dirname, ModuleActionResult::STATUS_SKIP, 'Empty dirname', $action);
@@ -123,12 +123,12 @@ class ModuleActionService
             $this->loadCoreAdmin();
 
             return match ($action) {
-                self::ACTION_INSTALL    => $this->doInstall($dirname),
-                self::ACTION_UNINSTALL  => $this->doUninstall($dirname),
-                self::ACTION_ACTIVATE   => $this->doActivate($dirname),
+                self::ACTION_INSTALL => $this->doInstall($dirname),
+                self::ACTION_UNINSTALL => $this->doUninstall($dirname),
+                self::ACTION_ACTIVATE => $this->doActivate($dirname),
                 self::ACTION_DEACTIVATE => $this->doDeactivate($dirname),
-                self::ACTION_UPDATE     => $this->doUpdate($dirname),
-                default                 => new ModuleActionResult($dirname, ModuleActionResult::STATUS_FAIL, 'Unknown action: ' . $action, $action),
+                self::ACTION_UPDATE => $this->doUpdate($dirname),
+                default => new ModuleActionResult($dirname, ModuleActionResult::STATUS_FAIL, 'Unknown action: ' . $action, $action),
             };
         } catch (\Throwable $e) {
             return new ModuleActionResult(
@@ -156,7 +156,7 @@ class ModuleActionService
 
     private function doInstall(string $dirname): ModuleActionResult
     {
-        if (!$this->catalog->existsOnDisk($dirname)) {
+        if (! $this->catalog->existsOnDisk($dirname)) {
             return new ModuleActionResult($dirname, ModuleActionResult::STATUS_SKIP, 'Not found on disk', self::ACTION_INSTALL);
         }
         if ($this->catalog->isInstalled($dirname)) {
@@ -165,24 +165,24 @@ class ModuleActionService
 
         $msg = \xoops_module_install($dirname);
 
-        return new ModuleActionResult($dirname, ModuleActionResult::STATUS_OK, (string) $msg, self::ACTION_INSTALL);
+        return $this->verifiedResult($dirname, self::ACTION_INSTALL, (string) $msg, true, null, 'Install did not complete');
     }
 
     private function doUninstall(string $dirname): ModuleActionResult
     {
-        if (!$this->catalog->isInstalled($dirname)) {
+        if (! $this->catalog->isInstalled($dirname)) {
             return new ModuleActionResult($dirname, ModuleActionResult::STATUS_SKIP, 'Not installed', self::ACTION_UNINSTALL);
         }
 
         $msg = \xoops_module_uninstall($dirname);
 
-        return new ModuleActionResult($dirname, ModuleActionResult::STATUS_OK, (string) $msg, self::ACTION_UNINSTALL);
+        return $this->verifiedResult($dirname, self::ACTION_UNINSTALL, (string) $msg, false, null, 'Uninstall did not complete');
     }
 
     private function doActivate(string $dirname): ModuleActionResult
     {
         $module = $this->catalog->getInstalled($dirname);
-        if (null === $module) {
+        if (! $module instanceof \XoopsModule) {
             return new ModuleActionResult($dirname, ModuleActionResult::STATUS_SKIP, 'Not installed (cannot activate)', self::ACTION_ACTIVATE);
         }
         if ($module->isActive()) {
@@ -196,16 +196,16 @@ class ModuleActionService
 
         $msg = \xoops_module_activate($mid);
 
-        return new ModuleActionResult($dirname, ModuleActionResult::STATUS_OK, (string) $msg, self::ACTION_ACTIVATE);
+        return $this->verifiedResult($dirname, self::ACTION_ACTIVATE, (string) $msg, true, true, 'Activation did not take effect');
     }
 
     private function doDeactivate(string $dirname): ModuleActionResult
     {
         $module = $this->catalog->getInstalled($dirname);
-        if (null === $module) {
+        if (! $module instanceof \XoopsModule) {
             return new ModuleActionResult($dirname, ModuleActionResult::STATUS_SKIP, 'Not installed (cannot deactivate)', self::ACTION_DEACTIVATE);
         }
-        if (!$module->isActive()) {
+        if (! $module->isActive()) {
             return new ModuleActionResult($dirname, ModuleActionResult::STATUS_SKIP, 'Already inactive', self::ACTION_DEACTIVATE);
         }
 
@@ -216,20 +216,82 @@ class ModuleActionService
 
         $msg = \xoops_module_deactivate($mid);
 
-        return new ModuleActionResult($dirname, ModuleActionResult::STATUS_OK, (string) $msg, self::ACTION_DEACTIVATE);
+        // Core silently refuses to deactivate system/start-page modules; a clean
+        // deactivation must leave the module installed AND inactive (not vanished).
+        return $this->verifiedResult($dirname, self::ACTION_DEACTIVATE, (string) $msg, true, false, 'Deactivation did not take effect (start-page or protected module?)');
     }
 
     private function doUpdate(string $dirname): ModuleActionResult
     {
-        if (!$this->catalog->isInstalled($dirname)) {
+        if (! $this->catalog->isInstalled($dirname)) {
             return new ModuleActionResult($dirname, ModuleActionResult::STATUS_SKIP, 'Not installed', self::ACTION_UPDATE);
         }
-        if (!$this->catalog->existsOnDisk($dirname)) {
+        if (! $this->catalog->existsOnDisk($dirname)) {
             return new ModuleActionResult($dirname, ModuleActionResult::STATUS_SKIP, 'Not found on disk', self::ACTION_UPDATE);
         }
 
         $msg = \xoops_module_update($dirname);
 
-        return new ModuleActionResult($dirname, ModuleActionResult::STATUS_OK, (string) $msg, self::ACTION_UPDATE);
+        // NOTE: core xoops_module_update() bumps the DB version and inserts it BEFORE
+        // running the module's pre_update callback and never rolls back, so a failed
+        // update callback leaves the module installed at the new version. That failure
+        // is therefore not detectable from DB state — we can only confirm the module
+        // did not vanish.
+        return $this->verifiedResult($dirname, self::ACTION_UPDATE, (string) $msg, true, null, 'Update did not complete');
+    }
+
+    /**
+     * Build a result by comparing the module's real post-action state against what the
+     * action was expected to produce.
+     *
+     * @param bool      $wantInstalled expected installed state after the action
+     * @param bool|null $wantActive    expected active state, or null if the action does not change it
+     */
+    private function verifiedResult(string $dirname, string $action, string $msg, bool $wantInstalled, ?bool $wantActive, string $failReason): ModuleActionResult
+    {
+        $state = $this->freshState($dirname);
+        if (null === $state) {
+            // Post-action state could not be read (no DB / query failed). For a
+            // destructive bulk tool an unverifiable outcome is reported as a failure so
+            // a genuinely failed operation is never silently presented as success.
+            return new ModuleActionResult($dirname, ModuleActionResult::STATUS_FAIL, 'Result could not be verified (module state unreadable): ' . $msg, $action);
+        }
+
+        $reached = $state['installed'] === $wantInstalled
+            && (null === $wantActive || $state['active'] === $wantActive);
+        if (! $reached) {
+            return new ModuleActionResult($dirname, ModuleActionResult::STATUS_FAIL, $failReason . ': ' . $msg, $action);
+        }
+
+        return new ModuleActionResult($dirname, ModuleActionResult::STATUS_OK, $msg, $action);
+    }
+
+    /**
+     * Read a module's installed/active state straight from the DB, bypassing the
+     * module handler's per-request static cache (which core install/uninstall/
+     * activate/deactivate do NOT invalidate, so a handler re-read returns stale data).
+     *
+     * @return array{installed:bool,active:bool}|null null when the state cannot be
+     *                                                 read (no DB / query failed)
+     */
+    private function freshState(string $dirname): ?array
+    {
+        $dirname = \trim($dirname);
+        $db = $GLOBALS['xoopsDB'] ?? null;
+        if ('' === $dirname || ! $db instanceof \XoopsMySQLDatabase) {
+            return null;
+        }
+
+        $sql = 'SELECT isactive FROM ' . $db->prefix('modules') . ' WHERE dirname = ' . $db->quote($dirname);
+        $result = $db->query($sql);
+        if (! $result) {
+            return null;
+        }
+        $row = $db->fetchArray($result);
+        if (false === $row) {
+            return ['installed' => false, 'active' => false];
+        }
+
+        return ['installed' => true, 'active' => 1 === (int) $row['isactive']];
     }
 }

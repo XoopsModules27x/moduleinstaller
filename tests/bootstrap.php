@@ -39,15 +39,15 @@ if (\is_file($mtoolsBootstrap)) {
 }
 
 // Defaults used by ModuleSetRepository when tests do not inject a storage path.
-if (!\defined('XOOPS_ROOT_PATH')) {
+if (! \defined('XOOPS_ROOT_PATH')) {
     // Prefer the site document root when this module lives under modules/
     $siteRoot = \dirname($moduleRoot, 2);
     \define('XOOPS_ROOT_PATH', \is_dir($siteRoot) ? $siteRoot : $moduleRoot);
 }
-if (!\defined('XOOPS_VAR_PATH')) {
+if (! \defined('XOOPS_VAR_PATH')) {
     \define('XOOPS_VAR_PATH', \sys_get_temp_dir() . '/xoops_var_moduleinstaller_tests');
 }
-if (!\defined('XOOPS_URL')) {
+if (! \defined('XOOPS_URL')) {
     \define('XOOPS_URL', 'https://localhost');
 }
 
@@ -58,12 +58,12 @@ if ($xoopsRoot !== '' && \is_dir($xoopsRoot)) {
     $mainfile = $xoopsRoot . '/mainfile.php';
 
     if (\is_file($mainfile)) {
-        if (!\defined('XOOPS_ROOT_PATH') || \XOOPS_ROOT_PATH !== $xoopsRoot) {
+        if (! \defined('XOOPS_ROOT_PATH') || \XOOPS_ROOT_PATH !== $xoopsRoot) {
             // Already defined above for unit defaults; only redefine if env points elsewhere
             // and we can boot — skip redefinition if already set.
         }
         $trust = \getenv('XOOPS_TRUST_PATH') ?: $xoopsRoot;
-        if (!\defined('XOOPS_TRUST_PATH')) {
+        if (! \defined('XOOPS_TRUST_PATH')) {
             \define('XOOPS_TRUST_PATH', $trust);
         }
 
@@ -84,6 +84,6 @@ if ($xoopsRoot !== '' && \is_dir($xoopsRoot)) {
  * Single source of truth for "are integration tests possible in this run?".
  * Read by the RequiresXoops trait.
  */
-if (!\defined('XOOPS_OVERLAY_INTEGRATION')) {
+if (! \defined('XOOPS_OVERLAY_INTEGRATION')) {
     \define('XOOPS_OVERLAY_INTEGRATION', $integration);
 }

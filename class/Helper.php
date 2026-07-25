@@ -31,11 +31,6 @@ class Helper extends \Xmf\Module\Helper
         parent::__construct($moduleDirName);
     }
 
-    /**
-     * @param bool $debug
-     *
-     * @return \XoopsModules\Moduleinstaller\Helper
-     */
     public static function getInstance(bool $debug = false): self
     {
         static $instance;
@@ -46,12 +41,9 @@ class Helper extends \Xmf\Module\Helper
         return $instance;
     }
 
-    /**
-     * @return string
-     */
-    public function getDirname()
+    public function getDirname(): string
     {
-        return $this->dirname;
+        return (string) $this->dirname();
     }
 
     /**
@@ -66,13 +58,14 @@ class Helper extends \Xmf\Module\Helper
         $ret = false;
 
         $class = __NAMESPACE__ . '\\' . \ucfirst($name) . 'Handler';
-        if (!\class_exists($class)) {
+        if (! \class_exists($class)) {
             throw new RuntimeException("Class '$class' not found");
         }
         /** @var \XoopsMySQLDatabase $db */
-        $db     = \XoopsDatabaseFactory::getDatabaseConnection();
+        $db = \XoopsDatabaseFactory::getDatabaseConnection();
         $helper = self::getInstance();
-        $ret    = new $class($db, $helper);
+        /** @var \XoopsObjectHandler|\XoopsPersistableObjectHandler $ret */
+        $ret = new $class($db, $helper);
         $this->addLog("Getting handler '$name'");
 
         return $ret;

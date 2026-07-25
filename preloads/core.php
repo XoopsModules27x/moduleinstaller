@@ -22,7 +22,7 @@ class ModuleinstallerCorePreload extends \XoopsPreloadItem
 {
     // to add PSR-4 autoloader
     /**
-     * @param array $args
+     * @param array<int|string, mixed> $args
      */
     public static function eventCoreIncludeCommonEnd(array $args): void
     {

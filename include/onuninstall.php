@@ -19,6 +19,11 @@
 use XoopsModules\Moduleinstaller\Helper;
 use XoopsModules\Mtools\Common\FilesManagement;
 
+if ((! defined('XOOPS_ROOT_PATH')) || ! ($GLOBALS['xoopsUser'] instanceof \XoopsUser)
+    || ! $GLOBALS['xoopsUser']->isAdmin()) {
+    exit('Restricted access' . PHP_EOL);
+}
+
 require \dirname(__DIR__) . '/bootstrap.php';
 
 /**
@@ -39,7 +44,7 @@ function xoops_module_pre_uninstall_moduleinstaller(\XoopsModule $module): bool
 function xoops_module_uninstall_moduleinstaller(\XoopsModule $module): bool
 {
     $moduleDirName = \basename(\dirname(__DIR__));
-    $helper        = Helper::getInstance();
+    $helper = Helper::getInstance();
     $helper->loadLanguage('admin');
     $helper->loadLanguage('common');
 
@@ -47,15 +52,13 @@ function xoops_module_uninstall_moduleinstaller(\XoopsModule $module): bool
     $oldDirs = [$GLOBALS['xoops']->path("uploads/{$moduleDirName}")];
     foreach ($oldDirs as $oldDir) {
         $dirInfo = new \SplFileInfo($oldDir);
-        if ($dirInfo->isDir()) {
-            if (!FilesManagement::rrmdir($oldDir)) {
-                if (\defined('_CO_MODULEINSTALLER_ERROR_BAD_DEL_PATH')) {
-                    $module->setErrors(\sprintf(\_CO_MODULEINSTALLER_ERROR_BAD_DEL_PATH, $oldDir));
-                } else {
-                    $module->setErrors('Could not delete path: ' . $oldDir);
-                }
-                $success = false;
+        if ($dirInfo->isDir() && ! FilesManagement::rrmdir($oldDir)) {
+            if (\defined('_CO_MODULEINSTALLER_ERROR_BAD_DEL_PATH')) {
+                $module->setErrors(\sprintf(\_CO_MODULEINSTALLER_ERROR_BAD_DEL_PATH, $oldDir));
+            } else {
+                $module->setErrors('Could not delete path: ' . $oldDir);
             }
+            $success = false;
         }
         unset($dirInfo);
     }

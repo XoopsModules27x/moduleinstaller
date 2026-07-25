@@ -1,12 +1,12 @@
 {
-    "name": "xoopsmodules25x/moduleinstaller",
+    "name": "xoopsmodules27x/moduleinstaller",
     "type": "xoops-module",
     "description": "Bulk module install/uninstall/update/activate and Module Sets for XOOPS CMS.",
     "license": "GPL-2.0-or-later",
     "homepage": "https://xoops.org",
     "support": {
-        "issues": "https://github.com/XoopsModules25x/moduleinstaller/issues",
-        "source": "https://github.com/XoopsModules25x/moduleinstaller"
+        "issues": "https://github.com/XoopsModules27x/moduleinstaller/issues",
+        "source": "https://github.com/XoopsModules27x/moduleinstaller"
     },
     "require": {
         "php": ">=8.2"
@@ -36,7 +36,8 @@
         "phpstan/phpstan-strict-rules": "^2.0",
         "phpunit/phpunit": "^10.5 || ^11.0",
         "rector/rector": "^2.0",
-        "xoops/rector-xoops": "^1.0@alpha"
+        "xoops/rector-xoops": "^1.0@alpha",
+        "xoops/xmf": "^1.3"
     },
     "scripts": {
         "analyse": "phpstan analyse --configuration=phpstan.neon.dist --memory-limit=512M",

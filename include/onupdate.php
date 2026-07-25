@@ -21,8 +21,8 @@ use XoopsModules\Moduleinstaller\Utility;
 use XoopsModules\Mtools\Common\Configurator;
 use XoopsModules\Mtools\Module\Installer;
 
-if ((!defined('XOOPS_ROOT_PATH')) || !($GLOBALS['xoopsUser'] instanceof \XoopsUser)
-    || !$GLOBALS['xoopsUser']->isAdmin()) {
+if ((! defined('XOOPS_ROOT_PATH')) || ! ($GLOBALS['xoopsUser'] instanceof \XoopsUser)
+    || ! $GLOBALS['xoopsUser']->isAdmin()) {
     exit('Restricted access' . PHP_EOL);
 }
 
@@ -45,7 +45,7 @@ function xoops_module_pre_update_moduleinstaller(\XoopsModule $module): bool
     $utility = new Utility();
 
     $xoopsSuccess = $utility::checkVerXoops($module);
-    $phpSuccess   = $utility::checkVerPhp($module);
+    $phpSuccess = $utility::checkVerPhp($module);
 
     Installer::createUploadFolders(new Configurator(\dirname(__DIR__)));
 
@@ -79,7 +79,7 @@ function xoops_module_update_moduleinstaller(\XoopsModule $module, $previousVers
 
     if (null !== $previousVersion && (int) $previousVersion < 240) {
         /** @var \XoopsGroupPermHandler $grouppermHandler */
-        $grouppermHandler = \xoops_getHandler('groupperm');
+        $grouppermHandler = xoops_getHandler('groupperm');
 
         return (bool) $grouppermHandler->deleteByModule($module->getVar('mid'), 'item_read');
     }

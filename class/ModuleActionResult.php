@@ -17,9 +17,9 @@ namespace XoopsModules\Moduleinstaller;
 /**
  * Result of a single module action (install/activate/etc.).
  */
-final class ModuleActionResult
+final readonly class ModuleActionResult
 {
-    public const STATUS_OK   = 'ok';
+    public const STATUS_OK = 'ok';
     public const STATUS_SKIP = 'skip';
     public const STATUS_FAIL = 'fail';
 
@@ -30,10 +30,10 @@ final class ModuleActionResult
      * @param string $action  Action attempted (install, activate, …)
      */
     public function __construct(
-        public readonly string $dirname,
-        public readonly string $status,
-        public readonly string $message,
-        public readonly string $action = '',
+        public string $dirname,
+        public string $status,
+        public string $message,
+        public string $action = '',
     ) {
     }
 
@@ -50,5 +50,25 @@ final class ModuleActionResult
     public function isFail(): bool
     {
         return self::STATUS_FAIL === $this->status;
+    }
+
+    /**
+     * Message rendered safe for admin output.
+     *
+     * Core modulesadmin returns HTML install logs, but a module's own (possibly
+     * third-party) name/version is reflected inside them, so the message is fully
+     * untrusted. A tag allowlist is not enough — strip_tags() keeps attributes on
+     * permitted tags, so a name like "<p onmouseover=…>" would still execute. Instead:
+     * turn block/line breaks into newlines, strip EVERY tag, HTML-escape the remaining
+     * text, then re-introduce only <br> for the preserved breaks. The sole markup in
+     * the output is that generated <br>, so no injected attribute can survive.
+     */
+    public function messageHtml(): string
+    {
+        $text = \preg_replace('#<(?:br\s*/?|/p|/div|/li|/tr)>#i', "\n", $this->message) ?? $this->message;
+        $text = \strip_tags($text);
+        $escaped = \htmlspecialchars($text, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8');
+
+        return \nl2br($escaped, false);
     }
 }

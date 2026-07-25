@@ -203,7 +203,22 @@ switch ($op) {
         break;
 
     case 'save':
-        saveSampleData();
+        if (Request::hasVar('ok', 'REQUEST') && 1 === Request::getInt('ok', 0, 'REQUEST')) {
+            if (!$GLOBALS['xoopsSecurity']->check()) {
+                redirect_header($helper->url('admin/index.php'), 3, \implode(',', $GLOBALS['xoopsSecurity']->getErrors()));
+            }
+            saveSampleData();
+        } else {
+            xoops_cp_header();
+            xoops_confirm(
+                ['ok' => 1, 'op' => 'save'],
+                'index.php',
+                \_CO_MODULEINSTALLER_SAVE_SAMPLEDATA_CONFIRM,
+                \_CO_MODULEINSTALLER_CONFIRM,
+                true
+            );
+            xoops_cp_footer();
+        }
         break;
 
     case 'clear':

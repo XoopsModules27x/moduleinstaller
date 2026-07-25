@@ -27,14 +27,14 @@ use XoopsModules\Moduleinstaller\Set\ModuleSetResolver;
 
 require_once __DIR__ . '/admin_header.php';
 
-$helper     = Helper::getInstance();
+$helper = Helper::getInstance();
 $helper->loadLanguage('admin');
 $helper->loadLanguage('modinfo');
 
 $repository = new ModuleSetRepository();
-$catalog    = new ModuleCatalog();
-$resolver   = new ModuleSetResolver($catalog);
-$applier    = new ModuleSetApplier(null, $resolver, $repository);
+$catalog = new ModuleCatalog();
+$resolver = new ModuleSetResolver($catalog);
+$applier = new ModuleSetApplier(null, $resolver, $repository);
 
 $op = Request::getCmd('op', 'list');
 $id = Request::getString('id', '');
@@ -48,7 +48,7 @@ $redirect = static function (string $msg, string $type = 's'): void {
 
 // --- Mutations (POST) ---
 if ('POST' === ($_SERVER['REQUEST_METHOD'] ?? 'GET')) {
-    if (!$GLOBALS['xoopsSecurity']->check()) {
+    if (! $GLOBALS['xoopsSecurity']->check()) {
         redirect_header('sets.php', 3, implode('<br>', $GLOBALS['xoopsSecurity']->getErrors()));
     }
 
@@ -57,11 +57,11 @@ if ('POST' === ($_SERVER['REQUEST_METHOD'] ?? 'GET')) {
 
         switch ($op) {
             case 'save':
-                $name        = Request::getString('name', '', 'POST');
+                $name = Request::getString('name', '', 'POST');
                 $description = Request::getString('description', '', 'POST');
-                $setId       = ModuleSet::normalizeId(Request::getString('id', '', 'POST'));
-                $modulesMap  = Request::getArray('modules', [], 'POST');
-                $selected    = [];
+                $setId = ModuleSet::normalizeId(Request::getString('id', '', 'POST'));
+                $modulesMap = Request::getArray('modules', [], 'POST');
+                $selected = [];
                 foreach ($modulesMap as $dirname => $flag) {
                     if ((int) $flag === 1 || '1' === $flag) {
                         $selected[] = (string) $dirname;
@@ -81,10 +81,10 @@ if ('POST' === ($_SERVER['REQUEST_METHOD'] ?? 'GET')) {
 
                 if ('' === $setId) {
                     $setId = $repository->uniqueId(ModuleSet::idFromName($name));
-                    $set   = new ModuleSet($setId, $name, $description, $selected);
+                    $set = new ModuleSet($setId, $name, $description, $selected);
                 } else {
                     $existing = $repository->get($setId);
-                    if (null === $existing) {
+                    if (! $existing instanceof \XoopsModules\Moduleinstaller\Set\ModuleSet) {
                         $set = new ModuleSet($setId, $name, $description, $selected);
                     } else {
                         $set = $existing->withName($name)->withDescription($description)->withModules($selected);
@@ -92,21 +92,24 @@ if ('POST' === ($_SERVER['REQUEST_METHOD'] ?? 'GET')) {
                 }
                 $repository->save($set);
                 $redirect(\sprintf(_AM_MODULEINSTALLER_SET_SAVED, $set->getName()));
+
                 break;
 
             case 'delete':
                 $setId = ModuleSet::normalizeId(Request::getString('id', '', 'POST'));
-                if ('' === $setId || !$repository->delete($setId)) {
+                if ('' === $setId || ! $repository->delete($setId)) {
                     throw new RuntimeException(_AM_MODULEINSTALLER_SET_ERR_NOTFOUND);
                 }
                 $redirect(_AM_MODULEINSTALLER_SET_DELETED);
+
                 break;
 
             case 'duplicate':
-                $setId   = ModuleSet::normalizeId(Request::getString('id', '', 'POST'));
+                $setId = ModuleSet::normalizeId(Request::getString('id', '', 'POST'));
                 $newName = Request::getString('name', '', 'POST');
-                $copy    = $repository->duplicate($setId, $newName);
+                $copy = $repository->duplicate($setId, $newName);
                 $redirect(\sprintf(_AM_MODULEINSTALLER_SET_DUPLICATED, $copy->getName()));
+
                 break;
 
             case 'create_from_active':
@@ -115,27 +118,29 @@ if ('POST' === ($_SERVER['REQUEST_METHOD'] ?? 'GET')) {
                     $name = _AM_MODULEINSTALLER_SET_FROM_ACTIVE_DEFAULT;
                 }
                 $active = $catalog->listInstalled(true);
-                $set    = $repository->createFromModules($name, $active, _AM_MODULEINSTALLER_SET_FROM_ACTIVE_DESC);
+                $set = $repository->createFromModules($name, $active, _AM_MODULEINSTALLER_SET_FROM_ACTIVE_DESC);
                 $redirect(\sprintf(_AM_MODULEINSTALLER_SET_SAVED, $set->getName()));
+
                 break;
 
             case 'import':
-                if (empty($_FILES['import_file']['tmp_name']) || !\is_uploaded_file($_FILES['import_file']['tmp_name'])) {
+                if (empty($_FILES['import_file']['tmp_name']) || ! \is_uploaded_file($_FILES['import_file']['tmp_name'])) {
                     throw new RuntimeException(_AM_MODULEINSTALLER_SET_ERR_IMPORT);
                 }
                 $raw = (string) \file_get_contents($_FILES['import_file']['tmp_name']);
                 $set = installer_import_set_from_yaml($repository, $raw);
                 $redirect(\sprintf(_AM_MODULEINSTALLER_SET_IMPORTED, $set->getName()));
+
                 break;
 
             case 'apply':
-                $setId  = ModuleSet::normalizeId(Request::getString('id', '', 'POST'));
+                $setId = ModuleSet::normalizeId(Request::getString('id', '', 'POST'));
                 $action = Request::getCmd('action', '', 'POST');
-                $set    = $repository->get($setId);
-                if (null === $set) {
+                $set = $repository->get($setId);
+                if (! $set instanceof \XoopsModules\Moduleinstaller\Set\ModuleSet) {
                     throw new RuntimeException(_AM_MODULEINSTALLER_SET_ERR_NOTFOUND);
                 }
-                if (!\in_array($action, ModuleSetApplier::supportedActions(), true)) {
+                if (! \in_array($action, ModuleSetApplier::supportedActions(), true)) {
                     throw new InvalidArgumentException(_AM_MODULEINSTALLER_SET_ERR_ACTION);
                 }
                 // Destructive confirm
@@ -147,8 +152,8 @@ if ('POST' === ($_SERVER['REQUEST_METHOD'] ?? 'GET')) {
                 }
 
                 $outcome = $applier->execute($set, $action, true);
-                if (!empty($outcome['snapshot_id'])) {
-                    $_SESSION['installer_last_snapshot_id'] = (string) $outcome['snapshot_id'];
+                if (! empty($outcome['snapshot_id'])) {
+                    $_SESSION['installer_last_snapshot_id'] = $outcome['snapshot_id'];
                 }
                 // Fall through to result display (no redirect)
                 xoops_cp_header();
@@ -167,8 +172,8 @@ if ('POST' === ($_SERVER['REQUEST_METHOD'] ?? 'GET')) {
                     }
                     echo '</ul></div>';
                 }
-                if (!empty($outcome['snapshot_id'])) {
-                    $snapId = (string) $outcome['snapshot_id'];
+                if (! empty($outcome['snapshot_id'])) {
+                    $snapId = $outcome['snapshot_id'];
                     echo "<div class='x2-note successMsg'>" . \sprintf(
                         _AM_MODULEINSTALLER_SET_SNAPSHOT_SAVED,
                         \htmlspecialchars($snapId, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')
@@ -193,6 +198,14 @@ if ('POST' === ($_SERVER['REQUEST_METHOD'] ?? 'GET')) {
 }
 
 // --- Views (GET) ---
+
+// Export streams a YAML file download with its own Content-Type/Disposition headers,
+// so it must run BEFORE any admin chrome (xoops_cp_header) is emitted or headers_sent()
+// would already be true and the YAML would be appended to the admin page. It always exits.
+if ('export' === $op) {
+    installer_export_set($repository, $id);
+}
+
 xoops_cp_header();
 \XoopsModules\Moduleinstaller\AdminBulkPage::ensureAssets();
 $adminObject = Admin::getInstance();
@@ -206,33 +219,14 @@ try {
     exit;
 }
 
-switch ($op) {
-    case 'edit':
-    case 'new':
-        renderSetEditForm($repository, $catalog, $resolver, $id, 'new' === $op);
-        break;
-
-    case 'apply_form':
-        renderApplyForm($repository, $resolver, $applier, $id);
-        break;
-
-    case 'delete_confirm':
-        renderDeleteConfirm($repository, $id);
-        break;
-
-    case 'duplicate_form':
-        renderDuplicateForm($repository, $id);
-        break;
-
-    case 'export':
-        installer_export_set($repository, $id);
-        break;
-
-    case 'list':
-    default:
-        renderSetList($repository, $resolver);
-        break;
-}
+match ($op) {
+    'edit', 'new' => renderSetEditForm($repository, $catalog, $resolver, $id, 'new' === $op),
+    'apply_form' => renderApplyForm($repository, $resolver, $applier, $id),
+    'delete_confirm' => renderDeleteConfirm($repository, $id),
+    'duplicate_form' => renderDuplicateForm($repository, $id),
+    // 'export' is handled before xoops_cp_header() above (streams a file, then exits).
+    default => renderSetList($repository, $resolver),
+};
 
 require_once __DIR__ . '/admin_footer.php';
 
@@ -284,10 +278,10 @@ function renderSetList(ModuleSetRepository $repository, ModuleSetResolver $resol
 
     $even = false;
     foreach ($sets as $set) {
-        $even    = !$even;
-        $class   = $even ? 'even' : 'odd';
+        $even = ! $even;
+        $class = $even ? 'even' : 'odd';
         $missing = $resolver->countMissing($set);
-        $idEsc   = \htmlspecialchars($set->getId(), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $idEsc = \htmlspecialchars($set->getId(), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $nameEsc = \htmlspecialchars($set->getName(), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
         echo '<tr class="' . $class . '">';
@@ -324,24 +318,24 @@ function renderSetEditForm(
     $adminObject->displayButton('left');
 
     $set = null;
-    if (!$isNew && '' !== $id) {
+    if (! $isNew && '' !== $id) {
         $set = $repository->get($id);
-        if (null === $set) {
+        if (! $set instanceof \XoopsModules\Moduleinstaller\Set\ModuleSet) {
             echo "<div class='errorMsg'>" . _AM_MODULEINSTALLER_SET_ERR_NOTFOUND . '</div>';
 
             return;
         }
     }
 
-    $name        = $set?->getName() ?? '';
+    $name = $set?->getName() ?? '';
     $description = $set?->getDescription() ?? '';
-    $setId       = $set?->getId() ?? '';
-    $selected    = $set?->getModules() ?? [];
+    $setId = $set?->getId() ?? '';
+    $selected = $set?->getModules() ?? [];
     $selectedMap = \array_fill_keys($selected, true);
 
     // Stale members still shown
     $resolvedMissing = [];
-    if (null !== $set) {
+    if ($set instanceof \XoopsModules\Moduleinstaller\Set\ModuleSet) {
         foreach ($resolver->resolve($set) as $dirname => $row) {
             if (ModuleSetResolver::STATE_MISSING === $row['state']) {
                 $resolvedMissing[$dirname] = $row;
@@ -403,7 +397,7 @@ function renderSetEditForm(
     // Include missing members so user can uncheck/remove them
     $allDirnames = $onDisk;
     foreach (\array_keys($resolvedMissing) as $missingDir) {
-        if (!\in_array($missingDir, $allDirnames, true)) {
+        if (! \in_array($missingDir, $allDirnames, true)) {
             $allDirnames[] = $missingDir;
         }
     }
@@ -416,14 +410,14 @@ function renderSetEditForm(
 
     $even = false;
     foreach ($allDirnames as $dirname) {
-        $even    = !$even;
-        $class   = $even ? 'even' : 'odd';
-        $info    = $catalog->loadInfo($dirname);
-        $row     = $resolver->resolveOne($dirname);
-        $inSet   = isset($selectedMap[$dirname]);
+        $even = ! $even;
+        $class = $even ? 'even' : 'odd';
+        $info = $catalog->loadInfo($dirname);
+        $row = $resolver->resolveOne($dirname);
+        $inSet = isset($selectedMap[$dirname]);
         $checked = $inSet ? ' checked' : '';
         $rowClass = $class . ' set-mod-row' . ($inSet ? ' installer-row-selected' : '');
-        $cellBg   = $inSet ? 'background-color:var(--installer-selected,#E6EFC2);' : '';
+        $cellBg = $inSet ? 'background-color:var(--installer-selected,#E6EFC2);' : '';
         $rowStyle = $inSet ? ' style="background-color:var(--installer-selected,#E6EFC2);"' : '';
 
         $label = $info
@@ -577,7 +571,7 @@ function renderApplyForm(
     $adminObject->displayButton('left');
 
     $set = $repository->get($id);
-    if (null === $set) {
+    if (! $set instanceof \XoopsModules\Moduleinstaller\Set\ModuleSet) {
         echo "<div class='errorMsg'>" . _AM_MODULEINSTALLER_SET_ERR_NOTFOUND . '</div>';
 
         return;
@@ -601,11 +595,11 @@ function renderApplyForm(
     echo '<label for="installer-set-action">' . _AM_MODULEINSTALLER_SET_ACTION . '</label> ';
     echo '<select id="installer-set-action" name="action" onchange="this.form.submit()">';
     $actions = [
-        ModuleSetApplier::ACTION_FOCUS      => _AM_MODULEINSTALLER_SET_ACT_FOCUS,
-        ModuleSetApplier::ACTION_ACTIVATE   => _AM_MODULEINSTALLER_SET_ACT_ACTIVATE,
+        ModuleSetApplier::ACTION_FOCUS => _AM_MODULEINSTALLER_SET_ACT_FOCUS,
+        ModuleSetApplier::ACTION_ACTIVATE => _AM_MODULEINSTALLER_SET_ACT_ACTIVATE,
         ModuleSetApplier::ACTION_DEACTIVATE => _AM_MODULEINSTALLER_SET_ACT_DEACTIVATE,
-        ModuleSetApplier::ACTION_INSTALL    => _AM_MODULEINSTALLER_SET_ACT_INSTALL,
-        ModuleSetApplier::ACTION_UNINSTALL  => _AM_MODULEINSTALLER_SET_ACT_UNINSTALL,
+        ModuleSetApplier::ACTION_INSTALL => _AM_MODULEINSTALLER_SET_ACT_INSTALL,
+        ModuleSetApplier::ACTION_UNINSTALL => _AM_MODULEINSTALLER_SET_ACT_UNINSTALL,
     ];
     foreach ($actions as $key => $label) {
         $sel = $key === $action ? ' selected' : '';
@@ -639,7 +633,7 @@ function renderApplyForm(
         echo '</tr></thead><tbody>';
         $even = false;
         foreach ($plan as $step) {
-            $even  = !$even;
+            $even = ! $even;
             $class = $even ? 'even' : 'odd';
             echo '<tr class="' . $class . '">';
             echo '<td><code>' . \htmlspecialchars($step['dirname'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</code></td>';
@@ -658,7 +652,7 @@ function renderApplyForm(
     echo '</tr></thead><tbody>';
     $even = false;
     foreach ($resolver->resolve($set) as $row) {
-        $even  = !$even;
+        $even = ! $even;
         $class = $even ? 'even' : 'odd';
         echo '<tr class="' . $class . '">';
         echo '<td><code>' . \htmlspecialchars($row['dirname'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</code></td>';
@@ -696,7 +690,7 @@ function renderApplyForm(
 function renderDeleteConfirm(ModuleSetRepository $repository, string $id): void
 {
     $set = $repository->get($id);
-    if (null === $set) {
+    if (! $set instanceof \XoopsModules\Moduleinstaller\Set\ModuleSet) {
         echo "<div class='errorMsg'>" . _AM_MODULEINSTALLER_SET_ERR_NOTFOUND . '</div>';
 
         return;
@@ -719,7 +713,7 @@ function renderDeleteConfirm(ModuleSetRepository $repository, string $id): void
 function renderDuplicateForm(ModuleSetRepository $repository, string $id): void
 {
     $set = $repository->get($id);
-    if (null === $set) {
+    if (! $set instanceof \XoopsModules\Moduleinstaller\Set\ModuleSet) {
         echo "<div class='errorMsg'>" . _AM_MODULEINSTALLER_SET_ERR_NOTFOUND . '</div>';
 
         return;
@@ -744,11 +738,11 @@ function renderDuplicateForm(ModuleSetRepository $repository, string $id): void
 function installer_status_badge(string $state): string
 {
     $map = [
-        ModuleSetResolver::STATE_ACTIVE        => [_AM_MODULEINSTALLER_BADGE_ACTIVE, 'active'],
-        ModuleSetResolver::STATE_INACTIVE      => [_AM_MODULEINSTALLER_BADGE_INACTIVE, 'inactive'],
+        ModuleSetResolver::STATE_ACTIVE => [_AM_MODULEINSTALLER_BADGE_ACTIVE, 'active'],
+        ModuleSetResolver::STATE_INACTIVE => [_AM_MODULEINSTALLER_BADGE_INACTIVE, 'inactive'],
         ModuleSetResolver::STATE_NOT_INSTALLED => [_AM_MODULEINSTALLER_BADGE_NOT_INSTALLED, 'notinst'],
-        ModuleSetResolver::STATE_MISSING       => [_AM_MODULEINSTALLER_BADGE_MISSING, 'missing'],
-        ModuleSetResolver::STATE_PROTECTED     => [_AM_MODULEINSTALLER_BADGE_PROTECTED, 'protected'],
+        ModuleSetResolver::STATE_MISSING => [_AM_MODULEINSTALLER_BADGE_MISSING, 'missing'],
+        ModuleSetResolver::STATE_PROTECTED => [_AM_MODULEINSTALLER_BADGE_PROTECTED, 'protected'],
     ];
     [$label, $css] = $map[$state] ?? [$state, 'inactive'];
 
@@ -763,11 +757,11 @@ function installer_status_badge(string $state): string
 function installer_plan_counts(array $plan): array
 {
     $counts = [
-        'activate'   => 0,
+        'activate' => 0,
         'deactivate' => 0,
-        'install'    => 0,
-        'uninstall'  => 0,
-        'other'      => 0,
+        'install' => 0,
+        'uninstall' => 0,
+        'other' => 0,
     ];
     foreach ($plan as $step) {
         $a = \mb_strtolower((string) ($step['action'] ?? ''));
@@ -787,8 +781,10 @@ function installer_plan_counts(array $plan): array
 function installer_export_set(ModuleSetRepository $repository, string $id): void
 {
     $set = $repository->get($id);
-    if (null === $set) {
+    if (! $set instanceof \XoopsModules\Moduleinstaller\Set\ModuleSet) {
         redirect_header('sets.php', 2, _AM_MODULEINSTALLER_SET_ERR_NOTFOUND);
+
+        return;
     }
     $data = $set->toArray();
     // Prefer Xmf\Yaml dump if available
@@ -801,19 +797,19 @@ function installer_export_set(ModuleSetRepository $repository, string $id): void
         }
     }
     if ('' === $yaml || false === $yaml) {
-        $yaml = "id: " . $data['id'] . "\n"
-            . "name: " . \str_replace(["\n", "\r"], ' ', $data['name']) . "\n"
-            . "description: " . \str_replace(["\n", "\r"], ' ', $data['description']) . "\n"
+        $yaml = 'id: ' . $data['id'] . "\n"
+            . 'name: ' . \str_replace(["\n", "\r"], ' ', $data['name']) . "\n"
+            . 'description: ' . \str_replace(["\n", "\r"], ' ', $data['description']) . "\n"
             . "modules:\n";
         foreach ($data['modules'] as $m) {
             $yaml .= '  - ' . $m . "\n";
         }
     }
     $filename = 'module-set-' . $set->getId() . '.yml';
-    if (!\headers_sent()) {
+    if (! \headers_sent()) {
         \header('Content-Type: text/yaml; charset=UTF-8');
         \header('Content-Disposition: attachment; filename="' . $filename . '"');
-        \header('Content-Length: ' . (string) \strlen((string) $yaml));
+        \header('Content-Length: ' . \strlen((string) $yaml));
     }
     echo $yaml;
     exit;
@@ -838,7 +834,7 @@ function installer_import_set_from_yaml(ModuleSetRepository $repository, string 
             $data = null;
         }
     }
-    if (!\is_array($data)) {
+    if (! \is_array($data)) {
         // Minimal fallback parse for modules: list
         $data = [];
         if (\preg_match('/^name:\s*(.+)$/mi', $raw, $m)) {
@@ -853,7 +849,7 @@ function installer_import_set_from_yaml(ModuleSetRepository $repository, string 
         }
         $data['modules'] = $mods;
     }
-    if (!\is_array($data) || empty($data['name'])) {
+    if (empty($data['name'])) {
         throw new RuntimeException(_AM_MODULEINSTALLER_SET_ERR_IMPORT);
     }
     $name = (string) $data['name'];
@@ -866,7 +862,7 @@ function installer_import_set_from_yaml(ModuleSetRepository $repository, string 
             }
         }
     }
-    $id  = $repository->uniqueId(ModuleSet::idFromName($name));
+    $id = $repository->uniqueId(ModuleSet::idFromName($name));
     $set = new ModuleSet($id, $name, $desc, $mods);
     $repository->save($set);
 

@@ -19,21 +19,24 @@ namespace XoopsModules\Moduleinstaller\Set;
  */
 final class ModuleSet
 {
+    /** @var list<string> */
+    private array $modules = [];
+
     /**
-     * @param list<string> $modules
+     * @param array<int|string, mixed> $modules Raw dirnames; normalized (validated, de-duped, sorted) on construction.
      */
     public function __construct(
         private string $id,
         private string $name,
         private string $description = '',
-        private array $modules = [],
+        array $modules = [],
         private string $createdAt = '',
         private string $updatedAt = '',
     ) {
-        $this->id          = self::normalizeId($id);
-        $this->name        = \trim($name);
+        $this->id = self::normalizeId($id);
+        $this->name = \trim($name);
         $this->description = \trim($description);
-        $this->modules     = self::normalizeModules($modules);
+        $this->modules = self::normalizeModules($modules);
         if ('' === $this->createdAt) {
             $this->createdAt = \gmdate('c');
         }
@@ -68,12 +71,12 @@ final class ModuleSet
     public function toArray(): array
     {
         return [
-            'id'          => $this->id,
-            'name'        => $this->name,
+            'id' => $this->id,
+            'name' => $this->name,
             'description' => $this->description,
-            'modules'     => $this->modules,
-            'created_at'  => $this->createdAt,
-            'updated_at'  => $this->updatedAt,
+            'modules' => $this->modules,
+            'created_at' => $this->createdAt,
+            'updated_at' => $this->updatedAt,
         ];
     }
 
@@ -122,7 +125,7 @@ final class ModuleSet
 
     public function withName(string $name): self
     {
-        $clone       = clone $this;
+        $clone = clone $this;
         $clone->name = \trim($name);
         $clone->touch();
 
@@ -131,7 +134,7 @@ final class ModuleSet
 
     public function withDescription(string $description): self
     {
-        $clone              = clone $this;
+        $clone = clone $this;
         $clone->description = \trim($description);
         $clone->touch();
 
@@ -143,7 +146,7 @@ final class ModuleSet
      */
     public function withModules(array $modules): self
     {
-        $clone          = clone $this;
+        $clone = clone $this;
         $clone->modules = self::normalizeModules($modules);
         $clone->touch();
 
@@ -152,7 +155,7 @@ final class ModuleSet
 
     public function withId(string $id): self
     {
-        $clone     = clone $this;
+        $clone = clone $this;
         $clone->id = self::normalizeId($id);
         $clone->touch();
 
@@ -168,9 +171,8 @@ final class ModuleSet
     {
         $id = \mb_strtolower(\trim($id));
         $id = \preg_replace('/[^a-z0-9_-]+/', '-', $id) ?? '';
-        $id = \trim($id, '-_');
 
-        return $id;
+        return \trim($id, '-_');
     }
 
     /**
@@ -185,7 +187,10 @@ final class ModuleSet
                 $item = $item['dirname'] ?? $item['name'] ?? '';
             }
             $dirname = \trim((string) $item);
-            if ('' === $dirname || !\preg_match('/^[a-zA-Z0-9_-]+$/', $dirname)) {
+            if ('' === $dirname) {
+                continue;
+            }
+            if (! \preg_match('/^[a-zA-Z0-9_-]+$/', $dirname)) {
                 continue;
             }
             $out[$dirname] = $dirname;
@@ -203,7 +208,7 @@ final class ModuleSet
     {
         $id = self::normalizeId($name);
         if ('' === $id) {
-            $id = 'set-' . \gmdate('YmdHis');
+            return 'set-' . \gmdate('YmdHis');
         }
 
         return $id;

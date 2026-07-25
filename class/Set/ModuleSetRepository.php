@@ -29,7 +29,7 @@ class ModuleSetRepository
             $this->storagePath = \rtrim($storagePath, '/\\');
         } else {
             $base = \defined('XOOPS_VAR_PATH') ? \XOOPS_VAR_PATH : (\XOOPS_ROOT_PATH . '/../xoops_data');
-            $this->storagePath = \rtrim((string) $base, '/\\') . '/configs/moduleinstaller/sets';
+            $this->storagePath = \rtrim($base, '/\\') . '/configs/moduleinstaller/sets';
         }
     }
 
@@ -48,16 +48,16 @@ class ModuleSetRepository
         if (\is_dir($this->storagePath)) {
             return;
         }
-        if (!@\mkdir($this->storagePath, 0777, true) && !\is_dir($this->storagePath)) {
+        if (! @\mkdir($this->storagePath, 0777, true) && ! \is_dir($this->storagePath)) {
             throw new \RuntimeException('Cannot create module set storage: ' . $this->storagePath);
         }
         // Deny web access if document root somehow overlaps
         $htaccess = $this->storagePath . '/.htaccess';
-        if (!\is_file($htaccess)) {
+        if (! \is_file($htaccess)) {
             @\file_put_contents($htaccess, "Require all denied\nDeny from all\n");
         }
         $index = $this->storagePath . '/index.php';
-        if (!\is_file($index)) {
+        if (! \is_file($index)) {
             @\file_put_contents($index, "<?php\nheader('HTTP/1.0 403 Forbidden');\nexit;\n");
         }
     }
@@ -69,14 +69,14 @@ class ModuleSetRepository
     {
         $this->ensureStorage();
         $files = \glob($this->storagePath . '/*.yml') ?: [];
-        $sets  = [];
+        $sets = [];
         foreach ($files as $file) {
             $set = $this->readFile($file);
-            if (null !== $set) {
+            if ($set instanceof \XoopsModules\Moduleinstaller\Set\ModuleSet) {
                 $sets[] = $set;
             }
         }
-        \usort($sets, static fn(ModuleSet $a, ModuleSet $b): int => \strcasecmp($a->getName(), $b->getName()));
+        \usort($sets, static fn (ModuleSet $a, ModuleSet $b): int => \strcasecmp($a->getName(), $b->getName()));
 
         return $sets;
     }
@@ -88,7 +88,7 @@ class ModuleSetRepository
             return null;
         }
         $path = $this->pathForId($id);
-        if (!\is_file($path)) {
+        if (! \is_file($path)) {
             return null;
         }
 
@@ -117,8 +117,8 @@ class ModuleSetRepository
         }
 
         $set->touch();
-        $path   = $this->pathForId($id);
-        $bytes  = Yaml::save($set->toArray(), $path);
+        $path = $this->pathForId($id);
+        $bytes = Yaml::save($set->toArray(), $path);
         if (false === $bytes) {
             throw new \RuntimeException('Failed to write module set: ' . $path);
         }
@@ -133,7 +133,7 @@ class ModuleSetRepository
             return false;
         }
         $path = $this->pathForId($id);
-        if (!\is_file($path)) {
+        if (! \is_file($path)) {
             return false;
         }
 
@@ -148,7 +148,7 @@ class ModuleSetRepository
     public function duplicate(string $sourceId, string $newName, ?string $newId = null): ModuleSet
     {
         $source = $this->get($sourceId);
-        if (null === $source) {
+        if (! $source instanceof \XoopsModules\Moduleinstaller\Set\ModuleSet) {
             throw new \InvalidArgumentException('Source set not found: ' . $sourceId);
         }
 
@@ -194,8 +194,8 @@ class ModuleSetRepository
         if ('' === $base) {
             $base = 'set';
         }
-        $id    = $base;
-        $n     = 2;
+        $id = $base;
+        $n = 2;
         while ($this->exists($id)) {
             $id = $base . '-' . $n;
             ++$n;
@@ -212,7 +212,7 @@ class ModuleSetRepository
     private function readFile(string $path): ?ModuleSet
     {
         $data = Yaml::read($path);
-        if (!\is_array($data)) {
+        if (! \is_array($data)) {
             return null;
         }
         // Prefer filename as id if missing/mismatched
@@ -220,6 +220,7 @@ class ModuleSetRepository
         if (empty($data['id'])) {
             $data['id'] = $basename;
         }
+
         try {
             return ModuleSet::fromArray($data);
         } catch (\Throwable) {

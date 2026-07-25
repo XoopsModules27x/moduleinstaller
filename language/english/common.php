@@ -66,6 +66,7 @@
 \define('_CO_MODULEINSTALLER_LOAD_SAMPLEDATA_COUNT', 'Imported %d sample module set(s).');
 \define('_CO_MODULEINSTALLER_LOAD_SAMPLEDATA_FAILURE', 'Sample module set import failed (no valid YAML under testdata/).');
 \define('_CO_MODULEINSTALLER_SAVE_SAMPLEDATA', 'Export module sets to YAML');
+\define('_CO_MODULEINSTALLER_SAVE_SAMPLEDATA_CONFIRM', 'Export all current module sets to a new timestamped folder under testdata/?');
 \define('_CO_MODULEINSTALLER_SAVE_SAMPLEDATA_SUCCESS', 'Module sets exported to YAML successfully.');
 \define('_CO_MODULEINSTALLER_SAVE_SAMPLEDATA_COUNT', 'Exported %1$d set(s) to %2$s.');
 \define('_CO_MODULEINSTALLER_CLEAR_SAMPLEDATA', 'Remove sample module sets');

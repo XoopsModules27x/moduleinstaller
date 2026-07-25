@@ -19,15 +19,11 @@ class ModuleCatalog
     /** @var list<string> */
     public const PROTECTED_DIRNAMES = ['system', 'moduleinstaller'];
 
-    /** @var \XoopsModuleHandler|null */
-    private $moduleHandler;
-
     /**
      * @param \XoopsModuleHandler|null $moduleHandler Optional handler (defaults to core)
      */
-    public function __construct($moduleHandler = null)
+    public function __construct(private $moduleHandler = null)
     {
-        $this->moduleHandler = $moduleHandler;
     }
 
     /**
@@ -36,7 +32,7 @@ class ModuleCatalog
     private function getModuleHandler()
     {
         if (null === $this->moduleHandler) {
-            $this->moduleHandler = \xoops_getHandler('module');
+            $this->moduleHandler = xoops_getHandler('module');
         }
 
         return $this->moduleHandler;
@@ -44,10 +40,30 @@ class ModuleCatalog
 
     /**
      * Whether dirname is protected from bulk destructive actions.
+     *
+     * Besides the hard-coded list, the current site start-page module is protected
+     * dynamically: XOOPS core silently refuses to deactivate it, so treating it as
+     * protected keeps bulk plans honest instead of reporting a no-op as success.
      */
     public function isProtected(string $dirname): bool
     {
-        return \in_array(\mb_strtolower(\trim($dirname)), self::PROTECTED_DIRNAMES, true);
+        $dirname = \mb_strtolower(\trim($dirname));
+
+        return \in_array($dirname, self::PROTECTED_DIRNAMES, true)
+            || ('' !== $dirname && $dirname === $this->startPageDirname());
+    }
+
+    /**
+     * Dirname of the configured site start-page module (lower-cased), or '' if unknown.
+     */
+    private function startPageDirname(): string
+    {
+        $config = $GLOBALS['xoopsConfig'] ?? null;
+        if (\is_array($config) && isset($config['startpage'])) {
+            return \mb_strtolower(\trim((string) $config['startpage']));
+        }
+
+        return '';
     }
 
     /**
@@ -56,23 +72,21 @@ class ModuleCatalog
     public function existsOnDisk(string $dirname): bool
     {
         $dirname = \trim($dirname);
-        if ('' === $dirname || !\preg_match('/^[a-zA-Z0-9_-]+$/', $dirname)) {
+        if ('' === $dirname || ! \preg_match('/^[a-zA-Z0-9_-]+$/', $dirname)) {
             return false;
         }
 
         $path = \XOOPS_ROOT_PATH . '/modules/' . $dirname;
-        if (!\is_dir($path)) {
+        if (! \is_dir($path)) {
             return false;
         }
 
         $module = $this->getModuleHandler()->create();
+
         return (bool) $module->loadInfo($dirname, false);
     }
 
-    /**
-     * @return \XoopsModule|null
-     */
-    public function getInstalled(string $dirname)
+    public function getInstalled(string $dirname): ?\XoopsModule
     {
         $dirname = \trim($dirname);
         if ('' === $dirname) {
@@ -80,18 +94,20 @@ class ModuleCatalog
         }
 
         $module = $this->getModuleHandler()->getByDirname($dirname);
+
         return ($module instanceof \XoopsModule) ? $module : null;
     }
 
     public function isInstalled(string $dirname): bool
     {
-        return null !== $this->getInstalled($dirname);
+        return $this->getInstalled($dirname) instanceof \XoopsModule;
     }
 
     public function isActive(string $dirname): bool
     {
         $module = $this->getInstalled($dirname);
-        return null !== $module && $module->isActive();
+
+        return $module instanceof \XoopsModule && $module->isActive();
     }
 
     /**
@@ -103,7 +119,7 @@ class ModuleCatalog
     {
         \XoopsLoad::load('XoopsLists');
         $list = \XoopsLists::getModulesList();
-        if (!\is_array($list)) {
+        if (! \is_array($list)) {
             return [];
         }
 
@@ -128,12 +144,12 @@ class ModuleCatalog
     public function listInstalled(?bool $activeOnly = null): array
     {
         $modules = $this->getModuleHandler()->getObjects();
-        $out     = [];
+        $out = [];
         foreach ($modules as $module) {
-            if (!$module instanceof \XoopsModule) {
+            if (! $module instanceof \XoopsModule) {
                 continue;
             }
-            if (true === $activeOnly && !$module->isActive()) {
+            if (true === $activeOnly && ! $module->isActive()) {
                 continue;
             }
             if (false === $activeOnly && $module->isActive()) {
@@ -159,17 +175,17 @@ class ModuleCatalog
         }
 
         $module = $this->getModuleHandler()->create();
-        if (!$module->loadInfo($dirname, false)) {
+        if (! $module->loadInfo($dirname, false)) {
             return null;
         }
 
         return [
-            'dirname'       => (string) $module->getInfo('dirname'),
-            'name'          => (string) $module->getInfo('name'),
-            'version'       => $module->getInfo('version'),
+            'dirname' => (string) $module->getInfo('dirname'),
+            'name' => (string) $module->getInfo('name'),
+            'version' => $module->getInfo('version'),
             'module_status' => $module->getInfo('module_status'),
-            'image'         => (string) $module->getInfo('image'),
-            'description'   => (string) $module->getInfo('description'),
+            'image' => (string) $module->getInfo('image'),
+            'description' => (string) $module->getInfo('description'),
         ];
     }
 
@@ -179,18 +195,18 @@ class ModuleCatalog
     public function needsUpdate(string $dirname): bool
     {
         $installed = $this->getInstalled($dirname);
-        if (null === $installed || !$this->existsOnDisk($dirname)) {
+        if (! $installed instanceof \XoopsModule || ! $this->existsOnDisk($dirname)) {
             return false;
         }
         $info = $this->loadInfo($dirname);
         if (null === $info) {
             return false;
         }
-        $dbVersion   = $installed->getVar('version');
+        $dbVersion = $installed->getVar('version');
         $diskVersion = \str_replace("\n", '', (string) $info['version']);
-        $legacyInt   = (string) (int) \round(((float) $diskVersion) * 100);
+        $legacyInt = (string) (int) \round(((float) $diskVersion) * 100);
 
-        return ($diskVersion != $dbVersion && $legacyInt != (string) $dbVersion);
+        return ($diskVersion != $dbVersion && $legacyInt !== (string) $dbVersion);
     }
 
     /**
@@ -224,7 +240,7 @@ class ModuleCatalog
             'deactivate' => $this->candidatesDeactivate(),
             'update' => \array_values(\array_filter(
                 $this->listInstalled(),
-                fn (string $d): bool => $this->existsOnDisk($d)
+                $this->existsOnDisk(...)
             )),
             default => [],
         };
@@ -236,9 +252,9 @@ class ModuleCatalog
     private function candidatesInstall(): array
     {
         $installed = \array_fill_keys($this->listInstalled(), true);
-        $out       = [];
+        $out = [];
         foreach ($this->listOnDisk() as $dirname) {
-            if (!isset($installed[$dirname])) {
+            if (! isset($installed[$dirname])) {
                 $out[] = $dirname;
             }
         }
@@ -253,7 +269,7 @@ class ModuleCatalog
     {
         $out = [];
         foreach ($this->listInstalled() as $dirname) {
-            if (!$this->isProtected($dirname)) {
+            if (! $this->isProtected($dirname)) {
                 $out[] = $dirname;
             }
         }
@@ -268,7 +284,7 @@ class ModuleCatalog
     {
         $out = [];
         foreach ($this->listInstalled(true) as $dirname) {
-            if (!$this->isProtected($dirname)) {
+            if (! $this->isProtected($dirname)) {
                 $out[] = $dirname;
             }
         }

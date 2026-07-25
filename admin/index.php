@@ -26,7 +26,7 @@ xoops_cp_header();
 AdminBulkPage::ensureAssets();
 
 $adminObject = Admin::getInstance();
-$helper      = Helper::getInstance();
+$helper = Helper::getInstance();
 $adminObject->displayNavigation(basename(__FILE__));
 
 // mtools sample-data buttons (Load / Save / Clear sample module sets)
@@ -37,15 +37,18 @@ $op = Request::getString('op', '', 'GET');
 switch ($op) {
     case 'hide_buttons':
         TestdataButtons::hideButtons($helper);
+
         break;
     case 'show_buttons':
         TestdataButtons::showButtons($helper);
+
         break;
 }
 
 $catalog = new ModuleCatalog();
-$repo    = new ModuleSetRepository();
-$sets    = [];
+$repo = new ModuleSetRepository();
+$sets = [];
+
 try {
     $repo->ensureStorage();
     $sets = $repo->listAll();
@@ -54,9 +57,9 @@ try {
 }
 
 $needsUpdate = $catalog->listNeedsUpdate();
-$active      = $catalog->listInstalled(true);
-$installed   = $catalog->listInstalled();
-$onDisk      = $catalog->listOnDisk();
+$active = $catalog->listInstalled(true);
+$installed = $catalog->listInstalled();
+$onDisk = $catalog->listOnDisk();
 
 $lastSnapId = isset($_SESSION['installer_last_snapshot_id'])
     ? (string) $_SESSION['installer_last_snapshot_id']
@@ -86,7 +89,7 @@ echo '<div class="installer-dash-card"><h4>' . _AM_MODULEINSTALLER_DASH_ONDISK .
 echo '<div class="num">' . \count($onDisk) . '</div></div>';
 
 echo '<div class="installer-dash-card"><h4>' . _AM_MODULEINSTALLER_DASH_LAST_SNAPSHOT . '</h4>';
-if ($lastSnap) {
+if ($lastSnap instanceof \XoopsModules\Moduleinstaller\Set\ModuleSet) {
     echo '<p><strong>' . \htmlspecialchars($lastSnap->getName(), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</strong></p>';
     echo '<p><a href="sets.php?op=apply_form&amp;id=' . \rawurlencode($lastSnap->getId()) . '&amp;action=focus">'
         . _AM_MODULEINSTALLER_SET_RESTORE_SNAPSHOT . '</a></p>';

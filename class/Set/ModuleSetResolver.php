@@ -23,13 +23,14 @@ use XoopsModules\Moduleinstaller\ModuleCatalog;
  */
 class ModuleSetResolver
 {
-    public const STATE_PROTECTED     = 'protected';
-    public const STATE_MISSING       = 'missing';
+    public const STATE_PROTECTED = 'protected';
+    public const STATE_MISSING = 'missing';
+    public const STATE_ORPHANED = 'orphaned';
     public const STATE_NOT_INSTALLED = 'not_installed';
-    public const STATE_INACTIVE      = 'inactive';
-    public const STATE_ACTIVE        = 'active';
+    public const STATE_INACTIVE = 'inactive';
+    public const STATE_ACTIVE = 'active';
 
-    private ModuleCatalog $catalog;
+    private readonly ModuleCatalog $catalog;
 
     public function __construct(?ModuleCatalog $catalog = null)
     {
@@ -61,42 +62,47 @@ class ModuleSetResolver
      */
     public function resolveOne(string $dirname): array
     {
-        $dirname   = \trim($dirname);
+        $dirname = \trim($dirname);
         $protected = $this->catalog->isProtected($dirname);
-        $onDisk    = $this->catalog->existsOnDisk($dirname);
+        $onDisk = $this->catalog->existsOnDisk($dirname);
         $installed = $this->catalog->isInstalled($dirname);
-        $active    = $installed && $this->catalog->isActive($dirname);
+        $active = $installed && $this->catalog->isActive($dirname);
 
-        if ($protected) {
-            $state  = self::STATE_PROTECTED;
-            $notice = 'Protected module';
-        } elseif (!$onDisk && !$installed) {
-            $state  = self::STATE_MISSING;
+        // Disk/install reality is decided BEFORE protection so a protected module whose
+        // folder was deleted is still surfaced as ORPHANED/MISSING rather than hidden as
+        // "Protected". Protection remains available as the orthogonal `protected` flag.
+        if ($installed && ! $onDisk) {
+            // Installed in the DB but its folder is gone: a distinct state so bulk
+            // planning never tries to activate/install a module with no files.
+            $state = self::STATE_ORPHANED;
+            $notice = 'Installed in database but folder missing on disk';
+        } elseif (! $onDisk && ! $installed) {
+            $state = self::STATE_MISSING;
             $notice = 'Not found on disk (removed module)';
-        } elseif (!$installed) {
-            $state  = self::STATE_NOT_INSTALLED;
-            $notice = $onDisk ? 'Present on disk but not installed' : 'Not installed';
+        } elseif ($protected) {
+            $state = self::STATE_PROTECTED;
+            $notice = 'Protected module';
+        } elseif (! $installed) {
+            // Reached only when on disk (the installed && !on_disk case is ORPHANED above,
+            // and !on_disk && !installed is MISSING), so the folder is always present here.
+            $state = self::STATE_NOT_INSTALLED;
+            $notice = 'Present on disk but not installed';
         } elseif ($active) {
-            $state  = self::STATE_ACTIVE;
+            $state = self::STATE_ACTIVE;
             $notice = null;
         } else {
-            $state  = self::STATE_INACTIVE;
+            $state = self::STATE_INACTIVE;
             $notice = null;
-        }
-
-        // Folder gone but still in DB (orphaned install)
-        if ($installed && !$onDisk) {
-            $notice = 'Installed in database but folder missing on disk';
         }
 
         return [
-            'dirname'   => $dirname,
-            'state'     => $state,
-            'on_disk'   => $onDisk,
+            'dirname' => $dirname,
+            'state' => $state,
+            'on_disk' => $onDisk,
             'installed' => $installed,
-            'active'    => $active,
+            'active' => $active,
             'protected' => $protected,
-            'notice'    => $notice,
+            'notice' => $notice,
         ];
     }
 

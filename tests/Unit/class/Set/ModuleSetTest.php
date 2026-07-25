@@ -25,7 +25,7 @@ final class ModuleSetTest extends TestCase
     #[Test]
     public function fromAndToArrayRoundTrip(): void
     {
-        $set  = new ModuleSet('sim-kit', 'SIM Kit', 'Focus SIM', ['party', 'billing']);
+        $set = new ModuleSet('sim-kit', 'SIM Kit', 'Focus SIM', ['party', 'billing']);
         $copy = ModuleSet::fromArray($set->toArray());
 
         self::assertSame($set->getId(), $copy->getId());
@@ -37,7 +37,7 @@ final class ModuleSetTest extends TestCase
     #[Test]
     public function withModulesReturnsUpdatedCopy(): void
     {
-        $set  = new ModuleSet('a', 'A', '', ['one']);
+        $set = new ModuleSet('a', 'A', '', ['one']);
         $next = $set->withModules(['two', 'three']);
 
         self::assertSame(['one'], $set->getModules());
