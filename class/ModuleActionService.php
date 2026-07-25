@@ -284,7 +284,7 @@ class ModuleActionService
 
         $sql = 'SELECT isactive FROM ' . $db->prefix('modules') . ' WHERE dirname = ' . $db->quote($dirname);
         $result = $db->query($sql);
-        if (! $result) {
+        if (false === $result) {
             return null;
         }
         $row = $db->fetchArray($result);
