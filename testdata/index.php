@@ -71,7 +71,7 @@ function installer_sample_set_ids(): array
     $ids = [];
     foreach (installer_sample_set_files() as $file) {
         $data = Yaml::readWrapped($file);
-        if (\is_array($data) && isset($data['id']) && '' !== (string) $data['id']) {
+        if (\is_array($data) && isset($data['id']) && '' !== \trim((string) $data['id'])) {
             $ids[] = ModuleSet::normalizeId((string) $data['id']);
         } else {
             $ids[] = ModuleSet::normalizeId((string) \pathinfo($file, \PATHINFO_FILENAME));
@@ -103,10 +103,10 @@ function loadSampleData(): void
         if (!\is_array($data)) {
             continue;
         }
-        if (! isset($data['id']) || '' === (string) $data['id']) {
+        if (! isset($data['id']) || '' === \trim((string) $data['id'])) {
             $data['id'] = \pathinfo($file, \PATHINFO_FILENAME);
         }
-        if (! isset($data['name']) || '' === (string) $data['name']) {
+        if (! isset($data['name']) || '' === \trim((string) $data['name'])) {
             $data['name'] = (string) $data['id'];
         }
         try {

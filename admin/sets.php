@@ -850,7 +850,7 @@ function installer_import_set_from_yaml(ModuleSetRepository $repository, string 
         }
         $data['modules'] = $mods;
     }
-    if (! isset($data['name']) || '' === (string) $data['name']) {
+    if (! isset($data['name']) || '' === \trim((string) $data['name'])) {
         throw new RuntimeException(_AM_MODULEINSTALLER_SET_ERR_IMPORT);
     }
     $name = (string) $data['name'];
