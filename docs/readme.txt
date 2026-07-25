@@ -14,7 +14,7 @@ See CHANGELOG.md and docs/changelog.txt for the full 1.5.1 → 1.6.0 delta.
 
 Requirements
 ------------
-- XOOPS >= 2.5.12
+- XOOPS >= 2.7.0
 - PHP >= 8.2
 - mtools module >= 1.2.0 (installed; active not required)
 - MySQL >= 5.5
@@ -22,7 +22,8 @@ Requirements
 
 Install / uninstall
 -------------------
-1. Install mtools >= 1.2.0 first.
+1. Install mtools >= 1.2.0 first. It must be INSTALLED (Admin -> System -> Modules),
+   not merely present in modules/mtools/; it does not need to be activated.
 2. Extract this module into ../modules/moduleinstaller
 3. Install through Admin → System Module → Modules.
 
@@ -79,7 +80,7 @@ Upgrade from 1.5.1
 ------------------
 1. Install mtools >= 1.2.0
 2. Replace module files and run System → Modules → Update on ModuleInstaller
-3. Ensure PHP 8.2+ and XOOPS 2.5.12+
+3. Ensure PHP 8.2+ and XOOPS 2.7.0+
 
 
 Tutorial

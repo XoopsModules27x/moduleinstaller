@@ -1,6 +1,16 @@
 INSTALL/UNISTALL
 =================
 
-No special measures necessary, follow the standard installation process – extract the /moduleinstaller folder into the ../modules directory. Install the module through Admin -> System Module -> Modules.
+PREREQUISITE — install mtools first
+------------------------------------
+ModuleInstaller depends on the mtools module (>= 1.2.0). mtools must be INSTALLED,
+not merely present: extracting the mtools files into ../modules/mtools is NOT enough.
+ModuleInstaller verifies mtools' *installed* version (via Admin -> System -> Modules)
+and will refuse to install if mtools is only present on disk but not installed.
+mtools does NOT need to be activated — installed (even if left inactive) is sufficient.
+
+So: Admin -> System -> Modules -> install mtools, THEN install ModuleInstaller.
+
+Then follow the standard installation process – extract the /moduleinstaller folder into the ../modules directory. Install the module through Admin -> System Module -> Modules.
 
 Detailed instructions on installing modules are available in the XOOPS Operations Manual: https://goo.gl/adT2i

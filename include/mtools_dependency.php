@@ -29,10 +29,19 @@ if (! \function_exists('moduleinstaller_mtools_dependency_error')) {
     function moduleinstaller_mtools_dependency_error(): string
     {
         if (! \class_exists(ConsumerRuntime::class)) {
-            return 'The mtools module files are missing. Install mtools before installing or running ModuleInstaller.';
+            $error = 'The mtools module files are missing. Install mtools before installing or running ModuleInstaller.';
+        } else {
+            // API 1.0.0 + module 1.2.0 (Configurator::forModule, Module\Installer, ModuleContext)
+            $error = ConsumerRuntime::dependencyError('1.0.0', '1.2.0');
         }
 
-        // API 1.0.0 + module 1.2.0 (Configurator::forModule, Module\Installer, ModuleContext)
-        return ConsumerRuntime::dependencyError('1.0.0', '1.2.0');
+        if ('' === $error) {
+            return '';
+        }
+
+        // Point admins straight at the download so they can grab mtools without hunting.
+        return $error . ' You can download mtools from '
+            . '<a href="https://github.com/XoopsModules27x/mtools/releases" target="_blank" rel="noopener">'
+            . 'github.com/XoopsModules27x/mtools/releases</a>.';
     }
 }

@@ -16,7 +16,7 @@ It does **not** replace System → Modules for single-module installs; it speeds
 
 | Component | Minimum |
 |-----------|---------|
-| XOOPS | 2.5.12+ |
+| XOOPS | 2.7.0+ |
 | PHP | 8.2+ |
 | [mtools](https://github.com/XoopsModules25x/mtools) | 1.2.0+ (**installed**; does not need to be active) |
 
@@ -24,7 +24,9 @@ It does **not** replace System → Modules for single-module installs; it speeds
 
 ## Install and upgrade
 
-1. Install **mtools** ≥ 1.2.0 if it is not already present.  
+> **mtools must be _installed_, not merely present.** Having the mtools files under `modules/mtools/` is **not** enough — ModuleInstaller verifies mtools' *installed* version (≥ 1.2.0) and refuses to install otherwise. mtools does **not** need to be activated.
+
+1. Install **mtools** ≥ 1.2.0 via **Admin → System → Modules** if it is not already installed.  
 2. Place this module under `modules/moduleinstaller/`.  
 3. In **Admin → System → Modules**, install or **update** “Installer”.  
 4. Open **Admin → Installer**.
