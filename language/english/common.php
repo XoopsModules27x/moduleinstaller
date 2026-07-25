@@ -1,229 +1,230 @@
 <?php declare(strict_types=1);
+
 /*
  You may not change or alter any portion of this comment or credits
  of supporting developers from this source code or any supporting source code
  which is considered copyrighted (c) material of the original comment or credit authors.
+*/
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- */
 /**
- * @copyright       XOOPS Project (https://xoops.org)
- * @license         GNU GPL 2.0 or later (https://www.gnu.org/licenses/gpl-2.0.html)
- * @author          Xoops Development Team
+ * @copyright 2000-2026 XOOPS Project (https://xoops.org)
+ * @license   GNU GPL 2.0 or later (https://www.gnu.org/licenses/gpl-2.0.html)
+ * @author    Michael Beck (mamba)
  */
-$moduleDirName      = \basename(\dirname(__DIR__, 2));
-$moduleDirNameUpper = \mb_strtoupper($moduleDirName);
 
-\define('CO_' . $moduleDirNameUpper . '_' . 'GDLIBSTATUS', 'GD library support: ');
-\define('CO_' . $moduleDirNameUpper . '_' . 'GDLIBVERSION', 'GD Library version: ');
-\define('CO_' . $moduleDirNameUpper . '_' . 'GDOFF', "<span style='font-weight: bold;'>Disabled</span> (No thumbnails available)");
-\define('CO_' . $moduleDirNameUpper . '_' . 'GDON', "<span style='font-weight: bold;'>Enabled</span> (Thumbsnails available)");
-\define('CO_' . $moduleDirNameUpper . '_' . 'IMAGEINFO', 'Server status');
-\define('CO_' . $moduleDirNameUpper . '_' . 'MAXPOSTSIZE', 'Max post size permitted (post_max_size directive in php.ini): ');
-\define('CO_' . $moduleDirNameUpper . '_' . 'MAXUPLOADSIZE', 'Max upload size permitted (upload_max_filesize directive in php.ini): ');
-\define('CO_' . $moduleDirNameUpper . '_' . 'MEMORYLIMIT', 'Memory limit (memory_limit directive in php.ini): ');
-\define('CO_' . $moduleDirNameUpper . '_' . 'METAVERSION', "<span style='font-weight: bold;'>Downloads meta version:</span> ");
-\define('CO_' . $moduleDirNameUpper . '_' . 'OFF', "<span style='font-weight: bold;'>OFF</span>");
-\define('CO_' . $moduleDirNameUpper . '_' . 'ON', "<span style='font-weight: bold;'>ON</span>");
-\define('CO_' . $moduleDirNameUpper . '_' . 'SERVERPATH', 'Server path to XOOPS root: ');
-\define('CO_' . $moduleDirNameUpper . '_' . 'SERVERUPLOADSTATUS', 'Server uploads status: ');
-\define('CO_' . $moduleDirNameUpper . '_' . 'SPHPINI', "<span style='font-weight: bold;'>Information taken from PHP ini file:</span>");
-\define('CO_' . $moduleDirNameUpper . '_' . 'UPLOADPATHDSC', 'Note. Upload path *MUST* contain the full server path of your upload folder.');
+\define('_CO_MODULEINSTALLER_GDLIBSTATUS', 'GD library support: ');
+\define('_CO_MODULEINSTALLER_GDLIBVERSION', 'GD Library version: ');
+\define('_CO_MODULEINSTALLER_GDOFF', "<span style='font-weight: bold;'>Disabled</span> (No thumbnails available)");
+\define('_CO_MODULEINSTALLER_GDON', "<span style='font-weight: bold;'>Enabled</span> (Thumbsnails available)");
+\define('_CO_MODULEINSTALLER_IMAGEINFO', 'Server status');
+\define('_CO_MODULEINSTALLER_MAXPOSTSIZE', 'Max post size permitted (post_max_size directive in php.ini): ');
+\define('_CO_MODULEINSTALLER_MAXUPLOADSIZE', 'Max upload size permitted (upload_max_filesize directive in php.ini): ');
+\define('_CO_MODULEINSTALLER_MEMORYLIMIT', 'Memory limit (memory_limit directive in php.ini): ');
+\define('_CO_MODULEINSTALLER_METAVERSION', "<span style='font-weight: bold;'>Downloads meta version:</span> ");
+\define('_CO_MODULEINSTALLER_OFF', "<span style='font-weight: bold;'>OFF</span>");
+\define('_CO_MODULEINSTALLER_ON', "<span style='font-weight: bold;'>ON</span>");
+\define('_CO_MODULEINSTALLER_SERVERPATH', 'Server path to XOOPS root: ');
+\define('_CO_MODULEINSTALLER_SERVERUPLOADSTATUS', 'Server uploads status: ');
+\define('_CO_MODULEINSTALLER_SPHPINI', "<span style='font-weight: bold;'>Information taken from PHP ini file:</span>");
+\define('_CO_MODULEINSTALLER_UPLOADPATHDSC', 'Note. Upload path *MUST* contain the full server path of your upload folder.');
 
-\define('CO_' . $moduleDirNameUpper . '_PRINT', "<span style='font-weight: bold;'>Print</span>");
-\define('CO_' . $moduleDirNameUpper . '_PDF', "<span style='font-weight: bold;'>Create PDF</span>");
+\define('_CO_MODULEINSTALLER_PRINT', "<span style='font-weight: bold;'>Print</span>");
+\define('_CO_MODULEINSTALLER_PDF', "<span style='font-weight: bold;'>Create PDF</span>");
 
-\define('CO_' . $moduleDirNameUpper . '_' . 'UPGRADEFAILED0', "Update failed - couldn't rename field '%s'");
-\define('CO_' . $moduleDirNameUpper . '_' . 'UPGRADEFAILED1', "Update failed - couldn't add new fields");
-\define('CO_' . $moduleDirNameUpper . '_' . 'UPGRADEFAILED2', "Update failed - couldn't rename table '%s'");
-\define('CO_' . $moduleDirNameUpper . '_' . 'ERROR_COLUMN', 'Could not create column in database : %s');
-\define('CO_' . $moduleDirNameUpper . '_' . 'ERROR_BAD_XOOPS', 'This module requires XOOPS %s+ (%s installed)');
-\define('CO_' . $moduleDirNameUpper . '_' . 'ERROR_BAD_PHP', 'This module requires PHP version %s+ (%s installed)');
-\define('CO_' . $moduleDirNameUpper . '_' . 'ERROR_TAG_REMOVAL', 'Could not remove tags from Tag Module');
+\define('_CO_MODULEINSTALLER_UPGRADEFAILED0', "Update failed - couldn't rename field '%s'");
+\define('_CO_MODULEINSTALLER_UPGRADEFAILED1', "Update failed - couldn't add new fields");
+\define('_CO_MODULEINSTALLER_UPGRADEFAILED2', "Update failed - couldn't rename table '%s'");
+\define('_CO_MODULEINSTALLER_ERROR_COLUMN', 'Could not create column in database : %s');
+\define('_CO_MODULEINSTALLER_ERROR_BAD_XOOPS', 'This module requires XOOPS %s+ (%s installed)');
+\define('_CO_MODULEINSTALLER_ERROR_BAD_PHP', 'This module requires PHP version %s+ (%s installed)');
+\define('_CO_MODULEINSTALLER_ERROR_TAG_REMOVAL', 'Could not remove tags from Tag Module');
 
-\define('CO_' . $moduleDirNameUpper . '_' . 'FOLDERS_DELETED_OK', 'Upload Folders have been deleted');
+\define('_CO_MODULEINSTALLER_FOLDERS_DELETED_OK', 'Upload Folders have been deleted');
 
 // Error Msgs
-\define('CO_' . $moduleDirNameUpper . '_' . 'ERROR_BAD_DEL_PATH', 'Could not delete %s directory');
-\define('CO_' . $moduleDirNameUpper . '_' . 'ERROR_BAD_REMOVE', 'Could not delete %s');
-\define('CO_' . $moduleDirNameUpper . '_' . 'ERROR_NO_PLUGIN', 'Could not load plugin');
+\define('_CO_MODULEINSTALLER_ERROR_BAD_DEL_PATH', 'Could not delete %s directory');
+\define('_CO_MODULEINSTALLER_ERROR_BAD_REMOVE', 'Could not delete %s');
+\define('_CO_MODULEINSTALLER_ERROR_NO_PLUGIN', 'Could not load plugin');
 
 //Help
-\define('CO_' . $moduleDirNameUpper . '_' . 'DIRNAME', basename(dirname(__DIR__, 2)));
-\define('CO_' . $moduleDirNameUpper . '_' . 'HELP_HEADER', __DIR__ . '/help/helpheader.tpl');
-\define('CO_' . $moduleDirNameUpper . '_' . 'BACK_2_ADMIN', 'Back to Administration of ');
-\define('CO_' . $moduleDirNameUpper . '_' . 'OVERVIEW', 'Overview');
+\define('_CO_MODULEINSTALLER_DIRNAME', basename(dirname(__DIR__, 2)));
+\define('_CO_MODULEINSTALLER_HELP_HEADER', __DIR__ . '/help/helpheader.tpl');
+\define('_CO_MODULEINSTALLER_BACK_2_ADMIN', 'Back to Administration of ');
+\define('_CO_MODULEINSTALLER_OVERVIEW', 'Overview');
 
-//\define('CO_' . $moduleDirNameUpper . '_HELP_DIR', __DIR__);
+//\define('_CO_MODULEINSTALLER_HELP_DIR', __DIR__);
 
 //help multipage
-\define('CO_' . $moduleDirNameUpper . '_' . 'DISCLAIMER', 'Disclaimer');
-\define('CO_' . $moduleDirNameUpper . '_' . 'LICENSE', 'License');
-\define('CO_' . $moduleDirNameUpper . '_' . 'SUPPORT', 'Support');
+\define('_CO_MODULEINSTALLER_DISCLAIMER', 'Disclaimer');
+\define('_CO_MODULEINSTALLER_LICENSE', 'License');
+\define('_CO_MODULEINSTALLER_SUPPORT', 'Support');
 
-//Sample Data
-\define('CO_' . $moduleDirNameUpper . '_' . 'LOAD_SAMPLEDATA', 'Import Sample Data (will delete ALL current data)');
-\define('CO_' . $moduleDirNameUpper . '_' . 'LOAD_SAMPLEDATA_CONFIRM', 'Are you sure to Import Sample Data? (It will delete ALL current data)');
-\define('CO_' . $moduleDirNameUpper . '_' . 'LOAD_SAMPLEDATA_SUCCESS', 'Sample Date imported  successfully');
-\define('CO_' . $moduleDirNameUpper . '_' . 'SAVE_SAMPLEDATA', 'Export Tables to YAML');
-\define('CO_' . $moduleDirNameUpper . '_' . 'SAVE_SAMPLEDATA_SUCCESS', 'Export Tables to YAML successfully');
-\define('CO_' . $moduleDirNameUpper . '_' . 'CLEAR_SAMPLEDATA', 'Clear Sample Data');
-\define('CO_' . $moduleDirNameUpper . '_' . 'CLEAR_SAMPLEDATA_OK', 'The Sample Data has been cleared');
-\define('CO_' . $moduleDirNameUpper . '_' . 'CLEAR_SAMPLEDATA_CONFIRM', 'Are you sure to Clear Sample Data? (It will delete ALL current data)');
-\define('CO_' . $moduleDirNameUpper . '_' . 'EXPORT_SCHEMA', 'Export DB Schema to YAML');
-\define('CO_' . $moduleDirNameUpper . '_' . 'EXPORT_SCHEMA_SUCCESS', 'Export DB Schema to YAML was a success');
-\define('CO_' . $moduleDirNameUpper . '_' . 'EXPORT_SCHEMA_ERROR', 'ERROR: Export of DB Schema to YAML failed');
-\define('CO_' . $moduleDirNameUpper . '_' . 'SHOW_SAMPLE_BUTTON', 'Show Sample Button?');
-\define('CO_' . $moduleDirNameUpper . '_' . 'SHOW_SAMPLE_BUTTON_DESC', 'If yes, the "Add Sample Data" button will be visible to the Admin. It is Yes as a default for first installation.');
-\define('CO_' . $moduleDirNameUpper . '_' . 'HIDE_SAMPLEDATA_BUTTONS', 'Hide the Import buttons)');
-\define('CO_' . $moduleDirNameUpper . '_' . 'SHOW_SAMPLEDATA_BUTTONS', 'Show the Import buttons)');
+// Sample data = sample module sets (YAML under testdata/), not DB tables
+\define('_CO_MODULEINSTALLER_LOAD_SAMPLEDATA', 'Load sample module sets');
+\define('_CO_MODULEINSTALLER_LOAD_SAMPLEDATA_CONFIRM', 'Import sample module sets? Existing sets with the same id (e.g. PM / Profile / Protector) will be overwritten.');
+\define('_CO_MODULEINSTALLER_LOAD_SAMPLEDATA_SUCCESS', 'Sample module sets imported successfully.');
+\define('_CO_MODULEINSTALLER_LOAD_SAMPLEDATA_COUNT', 'Imported %d sample module set(s).');
+\define('_CO_MODULEINSTALLER_LOAD_SAMPLEDATA_FAILURE', 'Sample module set import failed (no valid YAML under testdata/).');
+\define('_CO_MODULEINSTALLER_SAVE_SAMPLEDATA', 'Export module sets to YAML');
+\define('_CO_MODULEINSTALLER_SAVE_SAMPLEDATA_CONFIRM', 'Export all current module sets to a new timestamped folder under testdata/?');
+\define('_CO_MODULEINSTALLER_SAVE_SAMPLEDATA_SUCCESS', 'Module sets exported to YAML successfully.');
+\define('_CO_MODULEINSTALLER_SAVE_SAMPLEDATA_COUNT', 'Exported %1$d set(s) to %2$s.');
+\define('_CO_MODULEINSTALLER_CLEAR_SAMPLEDATA', 'Remove sample module sets');
+\define('_CO_MODULEINSTALLER_CLEAR_SAMPLEDATA_OK', 'Sample module sets removed.');
+\define('_CO_MODULEINSTALLER_CLEAR_SAMPLEDATA_COUNT', 'Removed %d sample module set(s).');
+\define('_CO_MODULEINSTALLER_CLEAR_SAMPLEDATA_CONFIRM', 'Remove the shipped sample module sets (e.g. PM, Profile & Protector)? Other custom sets are kept.');
+\define('_CO_MODULEINSTALLER_EXPORT_SCHEMA', 'Export DB Schema to YAML');
+\define('_CO_MODULEINSTALLER_EXPORT_SCHEMA_SUCCESS', 'Export DB Schema to YAML was a success');
+\define('_CO_MODULEINSTALLER_EXPORT_SCHEMA_ERROR', 'ERROR: Export of module sets failed');
+\define('_CO_MODULEINSTALLER_SHOW_SAMPLE_BUTTON', 'Show sample-data buttons?');
+\define('_CO_MODULEINSTALLER_SHOW_SAMPLE_BUTTON_DESC', 'If yes, Load / Save / Clear sample module set buttons appear on the Installer home page.');
+\define('_CO_MODULEINSTALLER_HIDE_SAMPLEDATA_BUTTONS', 'Hide sample-data buttons');
+\define('_CO_MODULEINSTALLER_SHOW_SAMPLEDATA_BUTTONS', 'Show sample-data buttons');
 
-\define('CO_' . $moduleDirNameUpper . '_' . 'CONFIRM', 'Confirm');
+\define('_CO_MODULEINSTALLER_CONFIRM', 'Confirm');
 
 //letter choice
-\define('CO_' . $moduleDirNameUpper . '_' . 'BROWSETOTOPIC', "<span style='font-weight: bold;'>Browse items alphabetically</span>");
-\define('CO_' . $moduleDirNameUpper . '_' . 'OTHER', 'Other');
-\define('CO_' . $moduleDirNameUpper . '_' . 'ALL', 'All');
+\define('_CO_MODULEINSTALLER_BROWSETOTOPIC', "<span style='font-weight: bold;'>Browse items alphabetically</span>");
+\define('_CO_MODULEINSTALLER_OTHER', 'Other');
+\define('_CO_MODULEINSTALLER_ALL', 'All');
 
 // block defines
-\define('CO_' . $moduleDirNameUpper . '_' . 'ACCESSRIGHTS', 'Access Rights');
-\define('CO_' . $moduleDirNameUpper . '_' . 'ACTION', 'Action');
-\define('CO_' . $moduleDirNameUpper . '_' . 'ACTIVERIGHTS', 'Active Rights');
-\define('CO_' . $moduleDirNameUpper . '_' . 'BADMIN', 'Block Administration');
-\define('CO_' . $moduleDirNameUpper . '_' . 'BLKDESC', 'Description');
-\define('CO_' . $moduleDirNameUpper . '_' . 'CBCENTER', 'Center Middle');
-\define('CO_' . $moduleDirNameUpper . '_' . 'CBLEFT', 'Center Left');
-\define('CO_' . $moduleDirNameUpper . '_' . 'CBRIGHT', 'Center Right');
-\define('CO_' . $moduleDirNameUpper . '_' . 'SBLEFT', 'Left');
-\define('CO_' . $moduleDirNameUpper . '_' . 'SBRIGHT', 'Right');
-\define('CO_' . $moduleDirNameUpper . '_' . 'SIDE', 'Alignment');
-\define('CO_' . $moduleDirNameUpper . '_' . 'TITLE', 'Title');
-\define('CO_' . $moduleDirNameUpper . '_' . 'VISIBLE', 'Visible');
-\define('CO_' . $moduleDirNameUpper . '_' . 'VISIBLEIN', 'Visible In');
-\define('CO_' . $moduleDirNameUpper . '_' . 'WEIGHT', 'Weight');
+\define('_CO_MODULEINSTALLER_ACCESSRIGHTS', 'Access Rights');
+\define('_CO_MODULEINSTALLER_ACTION', 'Action');
+\define('_CO_MODULEINSTALLER_ACTIVERIGHTS', 'Active Rights');
+\define('_CO_MODULEINSTALLER_BADMIN', 'Block Administration');
+\define('_CO_MODULEINSTALLER_BLKDESC', 'Description');
+\define('_CO_MODULEINSTALLER_CBCENTER', 'Center Middle');
+\define('_CO_MODULEINSTALLER_CBLEFT', 'Center Left');
+\define('_CO_MODULEINSTALLER_CBRIGHT', 'Center Right');
+\define('_CO_MODULEINSTALLER_SBLEFT', 'Left');
+\define('_CO_MODULEINSTALLER_SBRIGHT', 'Right');
+\define('_CO_MODULEINSTALLER_SIDE', 'Alignment');
+\define('_CO_MODULEINSTALLER_TITLE', 'Title');
+\define('_CO_MODULEINSTALLER_VISIBLE', 'Visible');
+\define('_CO_MODULEINSTALLER_VISIBLEIN', 'Visible In');
+\define('_CO_MODULEINSTALLER_WEIGHT', 'Weight');
 
-\define('CO_' . $moduleDirNameUpper . '_' . 'PERMISSIONS', 'Permissions');
-\define('CO_' . $moduleDirNameUpper . '_' . 'BLOCKS', 'Blocks Admin');
-\define('CO_' . $moduleDirNameUpper . '_' . 'BLOCKS_DESC', 'Blocks/Group Admin');
+\define('_CO_MODULEINSTALLER_PERMISSIONS', 'Permissions');
+\define('_CO_MODULEINSTALLER_BLOCKS', 'Blocks Admin');
+\define('_CO_MODULEINSTALLER_BLOCKS_DESC', 'Blocks/Group Admin');
 
-\define('CO_' . $moduleDirNameUpper . '_' . 'BLOCKS_MANAGMENT', 'Manage');
-\define('CO_' . $moduleDirNameUpper . '_' . 'BLOCKS_ADDBLOCK', 'Add a new block');
-\define('CO_' . $moduleDirNameUpper . '_' . 'BLOCKS_EDITBLOCK', 'Edit a block');
-\define('CO_' . $moduleDirNameUpper . '_' . 'BLOCKS_CLONEBLOCK', 'Clone a block');
+\define('_CO_MODULEINSTALLER_BLOCKS_MANAGMENT', 'Manage');
+\define('_CO_MODULEINSTALLER_BLOCKS_ADDBLOCK', 'Add a new block');
+\define('_CO_MODULEINSTALLER_BLOCKS_EDITBLOCK', 'Edit a block');
+\define('_CO_MODULEINSTALLER_BLOCKS_CLONEBLOCK', 'Clone a block');
 
 //myblocksadmin
-\define('CO_' . $moduleDirNameUpper . '_' . 'AGDS', 'Admin Groups');
-\define('CO_' . $moduleDirNameUpper . '_' . 'BCACHETIME', 'Cache Time');
-\define('CO_' . $moduleDirNameUpper . '_' . 'BLOCKS_ADMIN', 'Blocks Admin');
-\define('CO_' . $moduleDirNameUpper . '_' . 'UPDATE_SUCCESS', 'Update successful');
+\define('_CO_MODULEINSTALLER_AGDS', 'Admin Groups');
+\define('_CO_MODULEINSTALLER_BCACHETIME', 'Cache Time');
+\define('_CO_MODULEINSTALLER_BLOCKS_ADMIN', 'Blocks Admin');
+\define('_CO_MODULEINSTALLER_UPDATE_SUCCESS', 'Update successful');
 
 //Template Admin
-\define('CO_' . $moduleDirNameUpper . '_' . 'TPLSETS', 'Template Management');
-\define('CO_' . $moduleDirNameUpper . '_' . 'GENERATE', 'Generate');
-\define('CO_' . $moduleDirNameUpper . '_' . 'FILENAME', 'File Name');
+\define('_CO_MODULEINSTALLER_TPLSETS', 'Template Management');
+\define('_CO_MODULEINSTALLER_GENERATE', 'Generate');
+\define('_CO_MODULEINSTALLER_FILENAME', 'File Name');
 
 //Menu
-\define('CO_' . $moduleDirNameUpper . '_' . 'ADMENU_MIGRATE', 'Migrate');
-\define('CO_' . $moduleDirNameUpper . '_' . 'FOLDER_YES', 'Folder "%s" exist');
-\define('CO_' . $moduleDirNameUpper . '_' . 'FOLDER_NO', 'Folder "%s" does not exist. Create the specified folder with CHMOD 777.');
-\define('CO_' . $moduleDirNameUpper . '_' . 'SHOW_DEV_TOOLS', 'Show Development Tools Button?');
-\define('CO_' . $moduleDirNameUpper . '_' . 'SHOW_DEV_TOOLS_DESC', 'If yes, the "Migrate" Tab and other Development tools will be visible to the Admin.');
-\define('CO_' . $moduleDirNameUpper . '_' . 'ADMENU_FEEDBACK', 'Feedback');
-\define('CO_' . $moduleDirNameUpper . '_' . 'MIGRATE_OK', 'Database migrated to current schema.');
-\define('CO_' . $moduleDirNameUpper . '_' . 'MIGRATE_WARNING', 'Warning! This is intended for developers only. Confirm write schema file from current database.');
-\define('CO_' . $moduleDirNameUpper . '_' . 'MIGRATE_SCHEMA_OK', 'Current schema file written');
+\define('_CO_MODULEINSTALLER_ADMENU_MIGRATE', 'Migrate');
+\define('_CO_MODULEINSTALLER_FOLDER_YES', 'Folder "%s" exist');
+\define('_CO_MODULEINSTALLER_FOLDER_NO', 'Folder "%s" does not exist. Create the specified folder with CHMOD 777.');
+\define('_CO_MODULEINSTALLER_SHOW_DEV_TOOLS', 'Show Development Tools Button?');
+\define('_CO_MODULEINSTALLER_SHOW_DEV_TOOLS_DESC', 'If yes, the "Migrate" Tab and other Development tools will be visible to the Admin.');
+\define('_CO_MODULEINSTALLER_ADMENU_FEEDBACK', 'Feedback');
+\define('_CO_MODULEINSTALLER_MIGRATE_OK', 'Database migrated to current schema.');
+\define('_CO_MODULEINSTALLER_MIGRATE_WARNING', 'Warning! This is intended for developers only. Confirm write schema file from current database.');
+\define('_CO_MODULEINSTALLER_MIGRATE_SCHEMA_OK', 'Current schema file written');
 
 //Latest Version Check
-\define('CO_' . $moduleDirNameUpper . '_' . 'NEW_VERSION', 'New Version: ');
+\define('_CO_MODULEINSTALLER_NEW_VERSION', 'New Version: ');
 
 //DirectoryChecker
-\define('CO_' . $moduleDirNameUpper . '_' . 'AVAILABLE', "<span style='color: green;'>Available</span>");
-\define('CO_' . $moduleDirNameUpper . '_' . 'NOTAVAILABLE', "<span style='color: red;'>Not available</span>");
-\define('CO_' . $moduleDirNameUpper . '_' . 'NOTWRITABLE', "<span style='color: red;'>Should have permission ( %d ), but it has ( %d )</span>");
-\define('CO_' . $moduleDirNameUpper . '_' . 'CREATETHEDIR', 'Create it');
-\define('CO_' . $moduleDirNameUpper . '_' . 'SETMPERM', 'Set the permission');
-\define('CO_' . $moduleDirNameUpper . '_' . 'DIRCREATED', 'The directory has been created');
-\define('CO_' . $moduleDirNameUpper . '_' . 'DIRNOTCREATED', 'The directory cannot be created');
-\define('CO_' . $moduleDirNameUpper . '_' . 'PERMSET', 'The permission has been set');
-\define('CO_' . $moduleDirNameUpper . '_' . 'PERMNOTSET', 'The permission cannot be set');
+\define('_CO_MODULEINSTALLER_AVAILABLE', "<span style='color: green;'>Available</span>");
+\define('_CO_MODULEINSTALLER_NOTAVAILABLE', "<span style='color: red;'>Not available</span>");
+\define('_CO_MODULEINSTALLER_NOTWRITABLE', "<span style='color: red;'>Should have permission ( %d ), but it has ( %d )</span>");
+\define('_CO_MODULEINSTALLER_CREATETHEDIR', 'Create it');
+\define('_CO_MODULEINSTALLER_SETMPERM', 'Set the permission');
+\define('_CO_MODULEINSTALLER_DIRCREATED', 'The directory has been created');
+\define('_CO_MODULEINSTALLER_DIRNOTCREATED', 'The directory cannot be created');
+\define('_CO_MODULEINSTALLER_PERMSET', 'The permission has been set');
+\define('_CO_MODULEINSTALLER_PERMNOTSET', 'The permission cannot be set');
 
 //FileChecker
-//\define('CO_' . $moduleDirNameUpper . '_' . 'AVAILABLE', "<span style='color: green;'>Available</span>");
-//\define('CO_' . $moduleDirNameUpper . '_' . 'NOTAVAILABLE', "<span style='color: red;'>Not available</span>");
-//\define('CO_' . $moduleDirNameUpper . '_' . 'NOTWRITABLE', "<span style='color: red;'>Should have permission ( %d ), but it has ( %d )</span>");
-//\define('CO_' . $moduleDirNameUpper . '_' . 'COPYTHEFILE', 'Copy it');
-//\define('CO_' . $moduleDirNameUpper . '_' . 'CREATETHEFILE', 'Create it');
-//\define('CO_' . $moduleDirNameUpper . '_' . 'SETMPERM', 'Set the permission');
+//\define('_CO_MODULEINSTALLER_AVAILABLE', "<span style='color: green;'>Available</span>");
+//\define('_CO_MODULEINSTALLER_NOTAVAILABLE', "<span style='color: red;'>Not available</span>");
+//\define('_CO_MODULEINSTALLER_NOTWRITABLE', "<span style='color: red;'>Should have permission ( %d ), but it has ( %d )</span>");
+//\define('_CO_MODULEINSTALLER_COPYTHEFILE', 'Copy it');
+//\define('_CO_MODULEINSTALLER_CREATETHEFILE', 'Create it');
+//\define('_CO_MODULEINSTALLER_SETMPERM', 'Set the permission');
 
-\define('CO_' . $moduleDirNameUpper . '_' . 'FILECOPIED', 'The file has been copied');
-\define('CO_' . $moduleDirNameUpper . '_' . 'FILENOTCOPIED', 'The file cannot be copied');
+\define('_CO_MODULEINSTALLER_FILECOPIED', 'The file has been copied');
+\define('_CO_MODULEINSTALLER_FILENOTCOPIED', 'The file cannot be copied');
 
-//\define('CO_' . $moduleDirNameUpper . '_' . 'PERMSET', 'The permission has been set');
-//\define('CO_' . $moduleDirNameUpper . '_' . 'PERMNOTSET', 'The permission cannot be set');
+//\define('_CO_MODULEINSTALLER_PERMSET', 'The permission has been set');
+//\define('_CO_MODULEINSTALLER_PERMNOTSET', 'The permission cannot be set');
 
 //image config
-\define('CO_' . $moduleDirNameUpper . '_' . 'CONFIG_EXT_IMAGE', 'EXTERNAL Image configuration');
+\define('_CO_MODULEINSTALLER_CONFIG_EXT_IMAGE', 'EXTERNAL Image configuration');
 
-\define('CO_' . $moduleDirNameUpper . '_' . 'CONFIG_STYLING_START', '<span style="color: #FF0000; font-size: Small;  font-weight: bold;">:: ');
-\define('CO_' . $moduleDirNameUpper . '_' . 'CONFIG_STYLING_END', ' ::</span> ');
-\define('CO_' . $moduleDirNameUpper . '_' . 'CONFIG_STYLING_DESC_START', '<span style="color: #FF0000; font-size: Small;">');
-\define('CO_' . $moduleDirNameUpper . '_' . 'CONFIG_STYLING_DESC_END', '</span> ');
+\define('_CO_MODULEINSTALLER_CONFIG_STYLING_START', '<span style="color: #FF0000; font-size: Small;  font-weight: bold;">:: ');
+\define('_CO_MODULEINSTALLER_CONFIG_STYLING_END', ' ::</span> ');
+\define('_CO_MODULEINSTALLER_CONFIG_STYLING_DESC_START', '<span style="color: #FF0000; font-size: Small;">');
+\define('_CO_MODULEINSTALLER_CONFIG_STYLING_DESC_END', '</span> ');
 
-\define('CO_' . $moduleDirNameUpper . '_' . 'PREFERENCE_BREAK_CONFIG_IMAGE', constant('CO_' . $moduleDirNameUpper . '_' . 'CONFIG_STYLING_START') . constant('CO_' . $moduleDirNameUpper . '_' . 'CONFIG_EXT_IMAGE') . constant('CO_' . $moduleDirNameUpper . '_' . 'CONFIG_STYLING_END'));
-\define('CO_' . $moduleDirNameUpper . '_' . 'IMAGE_WIDTH', 'Image Display Width');
-\define('CO_' . $moduleDirNameUpper . '_' . 'IMAGE_WIDTH_DSC', 'Display width for image');
-\define('CO_' . $moduleDirNameUpper . '_' . 'IMAGE_HEIGHT', 'Image Display Height');
-\define('CO_' . $moduleDirNameUpper . '_' . 'IMAGE_HEIGHT_DSC', 'Display height for image');
-\define('CO_' . $moduleDirNameUpper . '_' . 'IMAGE_CONFIG', '<span style="color: #FF0000; font-size: Small;  font-weight: bold;">--- EXTERNAL Image configuration ---</span> ');
-\define('CO_' . $moduleDirNameUpper . '_' . 'IMAGE_CONFIG_DSC', '');
-\define('CO_' . $moduleDirNameUpper . '_' . 'IMAGE_UPLOAD_PATH', 'Image Upload path');
-\define('CO_' . $moduleDirNameUpper . '_' . 'IMAGE_UPLOAD_PATH_DSC', 'Path for uploading images');
+\define('_CO_MODULEINSTALLER_PREFERENCE_BREAK_CONFIG_IMAGE', \_CO_MODULEINSTALLER_CONFIG_STYLING_START . \_CO_MODULEINSTALLER_CONFIG_EXT_IMAGE . \_CO_MODULEINSTALLER_CONFIG_STYLING_END);
+\define('_CO_MODULEINSTALLER_IMAGE_WIDTH', 'Image Display Width');
+\define('_CO_MODULEINSTALLER_IMAGE_WIDTH_DSC', 'Display width for image');
+\define('_CO_MODULEINSTALLER_IMAGE_HEIGHT', 'Image Display Height');
+\define('_CO_MODULEINSTALLER_IMAGE_HEIGHT_DSC', 'Display height for image');
+\define('_CO_MODULEINSTALLER_IMAGE_CONFIG', '<span style="color: #FF0000; font-size: Small;  font-weight: bold;">--- EXTERNAL Image configuration ---</span> ');
+\define('_CO_MODULEINSTALLER_IMAGE_CONFIG_DSC', '');
+\define('_CO_MODULEINSTALLER_IMAGE_UPLOAD_PATH', 'Image Upload path');
+\define('_CO_MODULEINSTALLER_IMAGE_UPLOAD_PATH_DSC', 'Path for uploading images');
 
-\define('CO_' . $moduleDirNameUpper . '_' . 'IMAGE_FILE_SIZE', 'Image File Size (in Bytes)');
-\define('CO_' . $moduleDirNameUpper . '_' . 'IMAGE_FILE_SIZE_DSC','The maximum file size of the image file (in Bytes)');
+\define('_CO_MODULEINSTALLER_IMAGE_FILE_SIZE', 'Image File Size (in Bytes)');
+\define('_CO_MODULEINSTALLER_IMAGE_FILE_SIZE_DSC','The maximum file size of the image file (in Bytes)');
 
 //Module Stats
-\define('CO_' . $moduleDirNameUpper . '_' . 'STATS_SUMMARY', 'Module Statistics');
-\define('CO_' . $moduleDirNameUpper . '_' . 'TOTAL_CATEGORIES', 'Categories:');
-\define('CO_' . $moduleDirNameUpper . '_' . 'TOTAL_ITEMS', 'Items');
-\define('CO_' . $moduleDirNameUpper . '_' . 'TOTAL_OFFLINE', 'Offline');
-\define('CO_' . $moduleDirNameUpper . '_' . 'TOTAL_PUBLISHED', 'Published');
-\define('CO_' . $moduleDirNameUpper . '_' . 'TOTAL_REJECTED', 'Rejected');
-\define('CO_' . $moduleDirNameUpper . '_' . 'TOTAL_SUBMITTED', 'Submitted');
+\define('_CO_MODULEINSTALLER_STATS_SUMMARY', 'Module Statistics');
+\define('_CO_MODULEINSTALLER_TOTAL_CATEGORIES', 'Categories:');
+\define('_CO_MODULEINSTALLER_TOTAL_ITEMS', 'Items');
+\define('_CO_MODULEINSTALLER_TOTAL_OFFLINE', 'Offline');
+\define('_CO_MODULEINSTALLER_TOTAL_PUBLISHED', 'Published');
+\define('_CO_MODULEINSTALLER_TOTAL_REJECTED', 'Rejected');
+\define('_CO_MODULEINSTALLER_TOTAL_SUBMITTED', 'Submitted');
 
-\define('CO_' . $moduleDirNameUpper . '_' . 'ERROR403', 'You are not allowed to view this page!');
+\define('_CO_MODULEINSTALLER_ERROR403', 'You are not allowed to view this page!');
 
 //Preferences
-\define('CO_' . $moduleDirNameUpper . '_' . 'TRUNCATE_LENGTH', 'Number of Characters to truncate to the long text field');
-\define('CO_' . $moduleDirNameUpper . '_' . 'TRUNCATE_LENGTH_DESC', 'Set the maximum number of characters to truncate the long text fields');
+\define('_CO_MODULEINSTALLER_TRUNCATE_LENGTH', 'Number of Characters to truncate to the long text field');
+\define('_CO_MODULEINSTALLER_TRUNCATE_LENGTH_DESC', 'Set the maximum number of characters to truncate the long text fields');
 
-\define('CO_' . $moduleDirNameUpper . '_' . 'DELETE_BLOCK_CONFIRM', 'Are you sure to delete this Block?');
+\define('_CO_MODULEINSTALLER_DELETE_BLOCK_CONFIRM', 'Are you sure to delete this Block?');
 
 //Cloning
-\define('CO_' . $moduleDirNameUpper . '_' . 'CLONE', 'Clone');
-\define('CO_' . $moduleDirNameUpper . '_' . 'CLONE_DSC', 'Cloning a module has never been this easy! Just type in the name you want for it and hit submit button!');
-\define('CO_' . $moduleDirNameUpper . '_' . 'CLONE_TITLE', 'Clone %s');
-\define('CO_' . $moduleDirNameUpper . '_' . 'CLONE_NAME', 'Choose a name for the new module');
-\define('CO_' . $moduleDirNameUpper . '_' . 'CLONE_NAME_DSC', 'Do not use special characters! <br>Do not choose an existing module dirname or database table name!');
-\define('CO_' . $moduleDirNameUpper . '_' . 'CLONE_INVALIDNAME', 'ERROR: Invalid module name, please try another one!');
-\define('CO_' . $moduleDirNameUpper . '_' . 'CLONE_EXISTS', 'ERROR: Module name already taken, please try another one!');
-\define('CO_' . $moduleDirNameUpper . '_' . 'CLONE_CONGRAT', 'Congratulations! %s was sucessfully created!<br>You may want to make changes in language files.');
-\define('CO_' . $moduleDirNameUpper . '_' . 'CLONE_IMAGEFAIL', 'Attention, we failed creating the new module logo. Please consider modifying assets/images/logo_module.png manually!');
-\define('CO_' . $moduleDirNameUpper . '_' . 'CLONE_FAIL', "Sorry, we failed in creating the new clone. Maybe you need to temporally set write permissions (CHMOD 777) to 'modules' folder and try again.");
+\define('_CO_MODULEINSTALLER_CLONE', 'Clone');
+\define('_CO_MODULEINSTALLER_CLONE_DSC', 'Cloning a module has never been this easy! Just type in the name you want for it and hit submit button!');
+\define('_CO_MODULEINSTALLER_CLONE_TITLE', 'Clone %s');
+\define('_CO_MODULEINSTALLER_CLONE_NAME', 'Choose a name for the new module');
+\define('_CO_MODULEINSTALLER_CLONE_NAME_DSC', 'Do not use special characters! <br>Do not choose an existing module dirname or database table name!');
+\define('_CO_MODULEINSTALLER_CLONE_INVALIDNAME', 'ERROR: Invalid module name, please try another one!');
+\define('_CO_MODULEINSTALLER_CLONE_EXISTS', 'ERROR: Module name already taken, please try another one!');
+\define('_CO_MODULEINSTALLER_CLONE_CONGRAT', 'Congratulations! %s was sucessfully created!<br>You may want to make changes in language files.');
+\define('_CO_MODULEINSTALLER_CLONE_IMAGEFAIL', 'Attention, we failed creating the new module logo. Please consider modifying assets/images/logo_module.png manually!');
+\define('_CO_MODULEINSTALLER_CLONE_FAIL', "Sorry, we failed in creating the new clone. Maybe you need to temporally set write permissions (CHMOD 777) to 'modules' folder and try again.");
 
 //JSON-LD generation of www.schema.org
-\define('CO_' . $moduleDirNameUpper . '_' . 'GENERATE_JSONLD', 'Generate Schema Markup through JSON LD');
-\define('CO_' . $moduleDirNameUpper . '_' . 'GENERATE_JSONLD_DESC', 'Mark up your module with structured data to help search engines better understand the content of your web page');
+\define('_CO_MODULEINSTALLER_GENERATE_JSONLD', 'Generate Schema Markup through JSON LD');
+\define('_CO_MODULEINSTALLER_GENERATE_JSONLD_DESC', 'Mark up your module with structured data to help search engines better understand the content of your web page');
 
 //Repository not found
-\define('CO_' . $moduleDirNameUpper . '_' . 'REPO_NOT_FOUND', 'Repository Not Found: ');
+\define('_CO_MODULEINSTALLER_REPO_NOT_FOUND', 'Repository Not Found: ');
 //Release not found
-\define('CO_' . $moduleDirNameUpper . '_' . 'NO_REL_FOUND', 'Released Version Not Found: ');
+\define('_CO_MODULEINSTALLER_NO_REL_FOUND', 'Released Version Not Found: ');
 //rename upload folder on uninstall
-\define('CO_' . $moduleDirNameUpper . '_' . 'ERROR_FOLDER_RENAME_FAILED', 'Could not rename upload folder, please rename manually');
+\define('_CO_MODULEINSTALLER_ERROR_FOLDER_RENAME_FAILED', 'Could not rename upload folder, please rename manually');
 
 //TCPDF
-\define('CO_' . $moduleDirNameUpper . '_' . 'ERROR_NO_PDF', 'TCPDF for XOOPS is not installed in /class/libraries/vendor/tecnickcom/tcpdf/ <br> Please read the /docs/readme.txt or click on the Help tab to learn how to get it!');
+\define('_CO_MODULEINSTALLER_ERROR_NO_PDF', 'TCPDF for XOOPS is not installed in /class/libraries/vendor/tecnickcom/tcpdf/ <br> Please read the /docs/readme.txt or click on the Help tab to learn how to get it!');
 

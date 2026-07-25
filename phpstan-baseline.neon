@@ -1,0 +1,1501 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Function xoops_cp_header not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: admin/about.php
+
+		-
+			message: '#^Function xoops_cp_header not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: admin/activate.php
+
+		-
+			message: '#^Constant _AM_MODULEADMIN_ADMIN_FOOTER not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/admin_footer.php
+
+		-
+			message: '#^Function xoops_cp_footer not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: admin/admin_footer.php
+
+		-
+			message: '#^Call to an undefined method XoopsModules\\Moduleinstaller\\Helper\:\:getModule\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: admin/admin_header.php
+
+		-
+			message: '#^Call to an undefined method XoopsModules\\Moduleinstaller\\Helper\:\:loadLanguage\(\)\.$#'
+			identifier: method.notFound
+			count: 4
+			path: admin/admin_header.php
+
+		-
+			message: '#^Call to static method getInstance\(\) on an unknown class MyTextSanitizer\.$#'
+			identifier: class.notFound
+			count: 1
+			path: admin/admin_header.php
+
+		-
+			message: '#^Class XoopsTpl not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: admin/admin_header.php
+
+		-
+			message: '#^Function redirect_header not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: admin/admin_header.php
+
+		-
+			message: '#^Instantiated class XoopsTpl not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: admin/admin_header.php
+
+		-
+			message: '#^Function xoops_cp_header not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: admin/deactivate.php
+
+		-
+			message: '#^Call to an undefined method object\:\:displayButton\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: admin/index.php
+
+		-
+			message: '#^Call to an undefined method object\:\:displayIndex\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: admin/index.php
+
+		-
+			message: '#^Call to an undefined method object\:\:displayNavigation\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: admin/index.php
+
+		-
+			message: '#^Call to static method hideButtons\(\) on an unknown class XoopsModules\\Mtools\\Common\\TestdataButtons\.$#'
+			identifier: class.notFound
+			count: 1
+			path: admin/index.php
+
+		-
+			message: '#^Call to static method loadButtonConfig\(\) on an unknown class XoopsModules\\Mtools\\Common\\TestdataButtons\.$#'
+			identifier: class.notFound
+			count: 1
+			path: admin/index.php
+
+		-
+			message: '#^Call to static method showButtons\(\) on an unknown class XoopsModules\\Mtools\\Common\\TestdataButtons\.$#'
+			identifier: class.notFound
+			count: 1
+			path: admin/index.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_DASH_ACTIVE not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/index.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_DASH_GO_SETS not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/index.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_DASH_GO_UPDATE not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/index.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_DASH_INSTALLED not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/index.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_DASH_LAST_SNAPSHOT not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/index.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_DASH_NO_SNAPSHOT not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/index.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_DASH_ONDISK not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/index.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_DASH_SETS not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/index.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_DASH_SETS_COUNT not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/index.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_DASH_TITLE not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/index.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_DASH_UPDATES not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/index.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_DASH_UPDATES_COUNT not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/index.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_RESTORE_SNAPSHOT not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/index.php
+
+		-
+			message: '#^Function xoops_cp_header not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: admin/index.php
+
+		-
+			message: '#^Function xoops_cp_header not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: admin/install.php
+
+		-
+			message: '#^Call to an undefined method XoopsModules\\Moduleinstaller\\Helper\:\:getModule\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: admin/menu.php
+
+		-
+			message: '#^Call to an undefined method XoopsModules\\Moduleinstaller\\Helper\:\:loadLanguage\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: admin/menu.php
+
+		-
+			message: '#^Call to an undefined method XoopsModules\\Moduleinstaller\\Helper\:\:url\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: admin/menu.php
+
+		-
+			message: '#^Constant _MI_MODULEINSTALLER_ADMIN_ABOUT not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/menu.php
+
+		-
+			message: '#^Constant _MI_MODULEINSTALLER_MENU_00 not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/menu.php
+
+		-
+			message: '#^Constant _MI_MODULEINSTALLER_MENU_01 not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/menu.php
+
+		-
+			message: '#^Constant _MI_MODULEINSTALLER_MENU_02 not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/menu.php
+
+		-
+			message: '#^Constant _MI_MODULEINSTALLER_MENU_03 not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/menu.php
+
+		-
+			message: '#^Constant _MI_MODULEINSTALLER_MENU_04 not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/menu.php
+
+		-
+			message: '#^Constant _MI_MODULEINSTALLER_MENU_05 not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/menu.php
+
+		-
+			message: '#^Constant _MI_MODULEINSTALLER_MENU_06 not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/menu.php
+
+		-
+			message: '#^Implicit array creation is not allowed \- variable \$adminmenu might not exist\.$#'
+			identifier: variable.implicitArray
+			count: 1
+			path: admin/menu.php
+
+		-
+			message: '#^Call to an undefined method XoopsModules\\Moduleinstaller\\Helper\:\:loadLanguage\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: admin/sets.php
+
+		-
+			message: '#^Call to an undefined method object\:\:addItemButton\(\)\.$#'
+			identifier: method.notFound
+			count: 5
+			path: admin/sets.php
+
+		-
+			message: '#^Call to an undefined method object\:\:displayButton\(\)\.$#'
+			identifier: method.notFound
+			count: 4
+			path: admin/sets.php
+
+		-
+			message: '#^Call to an undefined method object\:\:displayNavigation\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_BADGE_ACTIVE not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_BADGE_INACTIVE not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_BADGE_MISSING not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_BADGE_NOT_INSTALLED not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_BADGE_PROTECTED not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_FILTER_HINT not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SELECT_ALL not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SELECT_NONE not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_ACTION not found\.$#'
+			identifier: constant.notFound
+			count: 2
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_ACTIONS not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_ACT_ACTIVATE not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_ACT_DEACTIVATE not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_ACT_FOCUS not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_ACT_INSTALL not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_ACT_UNINSTALL not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_APPLY not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_APPLY_DONE not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_APPLY_INTRO not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_APPLY_TITLE not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_BACK_LIST not found\.$#'
+			identifier: constant.notFound
+			count: 3
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_CONFIRM_FOCUS not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_CONFIRM_UNINSTALL not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_DELETED not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_DELETE_CONFIRM not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_DESC not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_DUPLICATE not found\.$#'
+			identifier: constant.notFound
+			count: 3
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_DUPLICATED not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_EDIT not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_EMPTY not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_ERR_ACTION not found\.$#'
+			identifier: constant.notFound
+			count: 2
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_ERR_CONFIRM not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_ERR_IMPORT not found\.$#'
+			identifier: constant.notFound
+			count: 3
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_ERR_NAME not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_ERR_NOTFOUND not found\.$#'
+			identifier: constant.notFound
+			count: 7
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_EXPORT not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_FILTER not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_FILTER_NONE not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_FILTER_PLACEHOLDER not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_FROM_ACTIVE not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_FROM_ACTIVE_DEFAULT not found\.$#'
+			identifier: constant.notFound
+			count: 2
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_FROM_ACTIVE_DESC not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_IMPORT not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_IMPORTED not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_IMPORT_BTN not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_INTRO not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_IN_SET not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_MEMBER_STATUS not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_MISSING not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_MISSING_COUNT not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_MISSING_HINT not found\.$#'
+			identifier: constant.notFound
+			count: 2
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_MISSING_NOTICE not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_MODULE not found\.$#'
+			identifier: constant.notFound
+			count: 3
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_MODULES not found\.$#'
+			identifier: constant.notFound
+			count: 2
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_NAME not found\.$#'
+			identifier: constant.notFound
+			count: 3
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_NEW not found\.$#'
+			identifier: constant.notFound
+			count: 2
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_NOTICE not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_NOTICES not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_OPEN_SNAPSHOT not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_PLAN_SUMMARY not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_PREVIEW not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_PREVIEW_COUNT not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_PREVIEW_EMPTY not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_REASON not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_RESTORE_SNAPSHOT not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_RUN not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_SAVED not found\.$#'
+			identifier: constant.notFound
+			count: 2
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_SNAPSHOT_SAVED not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_STATUS not found\.$#'
+			identifier: constant.notFound
+			count: 2
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_TIP_APPLY not found\.$#'
+			identifier: constant.notFound
+			count: 2
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_TIP_FOCUS not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SET_TIP_UNINSTALL not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _CANCEL not found\.$#'
+			identifier: constant.notFound
+			count: 4
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _DELETE not found\.$#'
+			identifier: constant.notFound
+			count: 3
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _EDIT not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Constant _SUBMIT not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
+			identifier: empty.notAllowed
+			count: 4
+			path: admin/sets.php
+
+		-
+			message: '#^Function redirect_header not found\.$#'
+			identifier: function.notFound
+			count: 4
+			path: admin/sets.php
+
+		-
+			message: '#^Function xoops_cp_header not found\.$#'
+			identifier: function.notFound
+			count: 2
+			path: admin/sets.php
+
+		-
+			message: '#^Only booleans are allowed in &&, array\<string, mixed\>\|null given on the left side\.$#'
+			identifier: booleanAnd.leftNotBoolean
+			count: 2
+			path: admin/sets.php
+
+		-
+			message: '#^Only booleans are allowed in a ternary operator condition, array\<string, mixed\>\|null given\.$#'
+			identifier: ternary.condNotBoolean
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Only booleans are allowed in an if condition, int\<0, max\>\|false given\.$#'
+			identifier: if.condNotBoolean
+			count: 1
+			path: admin/sets.php
+
+		-
+			message: '#^Only booleans are allowed in an if condition, int\|false given\.$#'
+			identifier: if.condNotBoolean
+			count: 2
+			path: admin/sets.php
+
+		-
+			message: '#^Function xoops_cp_header not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: admin/uninstall.php
+
+		-
+			message: '#^Function xoops_cp_header not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: admin/update.php
+
+		-
+			message: '#^Call to an undefined method object\:\:addItemButton\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: class/AdminBulkPage.php
+
+		-
+			message: '#^Call to an undefined method object\:\:addScript\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: class/AdminBulkPage.php
+
+		-
+			message: '#^Call to an undefined method object\:\:addStylesheet\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: class/AdminBulkPage.php
+
+		-
+			message: '#^Call to an undefined method object\:\:check\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: class/AdminBulkPage.php
+
+		-
+			message: '#^Call to an undefined method object\:\:displayButton\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: class/AdminBulkPage.php
+
+		-
+			message: '#^Call to an undefined method object\:\:displayNavigation\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: class/AdminBulkPage.php
+
+		-
+			message: '#^Call to an undefined method object\:\:getTokenHTML\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: class/AdminBulkPage.php
+
+		-
+			message: '#^Call to an undefined method object\:\:getVar\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: class/AdminBulkPage.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_PRESELECTED_UPDATES not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: class/AdminBulkPage.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SELECT_ALL not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: class/AdminBulkPage.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SELECT_NONE not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: class/AdminBulkPage.php
+
+		-
+			message: '#^Constant _AM_MODULEINSTALLER_SHOW_UPDATES_ONLY not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: class/AdminBulkPage.php
+
+		-
+			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
+			identifier: empty.notAllowed
+			count: 1
+			path: class/AdminBulkPage.php
+
+		-
+			message: '#^Call to an undefined method XoopsModules\\Moduleinstaller\\Helper\:\:addLog\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: class/Helper.php
+
+		-
+			message: '#^Call to an undefined method XoopsModules\\Moduleinstaller\\Helper\:\:dirname\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: class/Helper.php
+
+		-
+			message: '#^Call to an undefined static method Xmf\\Module\\Helper\:\:__construct\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: class/Helper.php
+
+		-
+			message: '#^Call to static method getDatabaseConnection\(\) on an unknown class XoopsDatabaseFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: class/Helper.php
+
+		-
+			message: '#^Call to an undefined method XoopsModule\:\:isActive\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: class/ModuleActionService.php
+
+		-
+			message: '#^Function xoops_load not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: class/ModuleActionService.php
+
+		-
+			message: '#^Function xoops_loadLanguage not found\.$#'
+			identifier: function.notFound
+			count: 2
+			path: class/ModuleActionService.php
+
+		-
+			message: '#^Function xoops_module_activate not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: class/ModuleActionService.php
+
+		-
+			message: '#^Function xoops_module_deactivate not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: class/ModuleActionService.php
+
+		-
+			message: '#^Function xoops_module_install not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: class/ModuleActionService.php
+
+		-
+			message: '#^Function xoops_module_uninstall not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: class/ModuleActionService.php
+
+		-
+			message: '#^Function xoops_module_update not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: class/ModuleActionService.php
+
+		-
+			message: '#^Call to an undefined method XoopsModule\:\:isActive\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: class/ModuleCatalog.php
+
+		-
+			message: '#^Call to method create\(\) on an unknown class XoopsModuleHandler\.$#'
+			identifier: class.notFound
+			count: 2
+			path: class/ModuleCatalog.php
+
+		-
+			message: '#^Call to method getByDirname\(\) on an unknown class XoopsModuleHandler\.$#'
+			identifier: class.notFound
+			count: 1
+			path: class/ModuleCatalog.php
+
+		-
+			message: '#^Call to method getObjects\(\) on an unknown class XoopsModuleHandler\.$#'
+			identifier: class.notFound
+			count: 1
+			path: class/ModuleCatalog.php
+
+		-
+			message: '#^Call to static method getModulesList\(\) on an unknown class XoopsLists\.$#'
+			identifier: class.notFound
+			count: 1
+			path: class/ModuleCatalog.php
+
+		-
+			message: '#^Call to static method load\(\) on an unknown class XoopsLoad\.$#'
+			identifier: class.notFound
+			count: 1
+			path: class/ModuleCatalog.php
+
+		-
+			message: '#^Function xoops_getHandler not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: class/ModuleCatalog.php
+
+		-
+			message: '#^Loose comparison via "\!\=" is not allowed\.$#'
+			identifier: notEqual.notAllowed
+			count: 1
+			path: class/ModuleCatalog.php
+
+		-
+			message: '#^Method XoopsModules\\Moduleinstaller\\ModuleCatalog\:\:getModuleHandler\(\) has invalid return type XoopsModuleHandler\.$#'
+			identifier: class.notFound
+			count: 1
+			path: class/ModuleCatalog.php
+
+		-
+			message: '#^Only booleans are allowed in a negated boolean, int\|false given\.$#'
+			identifier: booleanNot.exprNotBoolean
+			count: 1
+			path: class/ModuleCatalog.php
+
+		-
+			message: '#^Parameter \$moduleHandler of method XoopsModules\\Moduleinstaller\\ModuleCatalog\:\:__construct\(\) has invalid type XoopsModuleHandler\.$#'
+			identifier: class.notFound
+			count: 1
+			path: class/ModuleCatalog.php
+
+		-
+			message: '#^Property XoopsModules\\Moduleinstaller\\ModuleCatalog\:\:\$moduleHandler has unknown class XoopsModuleHandler as its type\.$#'
+			identifier: class.notFound
+			count: 1
+			path: class/ModuleCatalog.php
+
+		-
+			message: '#^Only booleans are allowed in a negated boolean, int\|false given\.$#'
+			identifier: booleanNot.exprNotBoolean
+			count: 1
+			path: class/Set/ModuleSet.php
+
+		-
+			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
+			identifier: empty.notAllowed
+			count: 1
+			path: class/Set/ModuleSetRepository.php
+
+		-
+			message: '#^Short ternary operator is not allowed\. Use null coalesce operator if applicable or consider using long ternary\.$#'
+			identifier: ternary.shortNotAllowed
+			count: 1
+			path: class/Set/ModuleSetRepository.php
+
+		-
+			message: '#^Constant XOOPS_UPLOAD_PATH not found\.$#'
+			identifier: constant.notFound
+			count: 8
+			path: config/config.php
+
+		-
+			message: '#^Constant XOOPS_UPLOAD_URL not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: config/config.php
+
+		-
+			message: '#^Constant _ADD not found\.$#'
+			identifier: constant.notFound
+			count: 2
+			path: config/icons.php
+
+		-
+			message: '#^Constant _CLONE not found\.$#'
+			identifier: constant.notFound
+			count: 2
+			path: config/icons.php
+
+		-
+			message: '#^Constant _DELETE not found\.$#'
+			identifier: constant.notFound
+			count: 2
+			path: config/icons.php
+
+		-
+			message: '#^Constant _EDIT not found\.$#'
+			identifier: constant.notFound
+			count: 2
+			path: config/icons.php
+
+		-
+			message: '#^Constant _OFF not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: config/icons.php
+
+		-
+			message: '#^Constant _ON not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: config/icons.php
+
+		-
+			message: '#^Constant _PDF not found\.$#'
+			identifier: constant.notFound
+			count: 2
+			path: config/icons.php
+
+		-
+			message: '#^Constant _PREVIEW not found\.$#'
+			identifier: constant.notFound
+			count: 2
+			path: config/icons.php
+
+		-
+			message: '#^Constant _PRINT not found\.$#'
+			identifier: constant.notFound
+			count: 2
+			path: config/icons.php
+
+		-
+			message: '#^Implicit array creation is not allowed \- variable \$modversion might not exist\.$#'
+			identifier: variable.implicitArray
+			count: 1
+			path: config/imageconfig.php
+
+		-
+			message: '#^Constant XOOPS_UPLOAD_PATH not found\.$#'
+			identifier: constant.notFound
+			count: 4
+			path: config/paths.php
+
+		-
+			message: '#^Constant XOOPS_UPLOAD_URL not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: config/paths.php
+
+		-
+			message: '#^Call to an undefined method XoopsModules\\Moduleinstaller\\Helper\:\:getModule\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: include/common.php
+
+		-
+			message: '#^Call to an undefined method XoopsModules\\Moduleinstaller\\Helper\:\:loadLanguage\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: include/common.php
+
+		-
+			message: '#^Call to an undefined method XoopsModules\\Moduleinstaller\\Helper\:\:url\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: include/common.php
+
+		-
+			message: '#^Call to method assign\(\) on an unknown class XoopsTpl\.$#'
+			identifier: class.notFound
+			count: 3
+			path: include/common.php
+
+		-
+			message: '#^Call to static method fromHelper\(\) on an unknown class XoopsModules\\Mtools\\Module\\ModuleContext\.$#'
+			identifier: class.notFound
+			count: 1
+			path: include/common.php
+
+		-
+			message: '#^Call to static method getDatabaseConnection\(\) on an unknown class XoopsDatabaseFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: include/common.php
+
+		-
+			message: '#^Call to static method getInstance\(\) on an unknown class MyTextSanitizer\.$#'
+			identifier: class.notFound
+			count: 1
+			path: include/common.php
+
+		-
+			message: '#^Class XoopsTpl not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: include/common.php
+
+		-
+			message: '#^Constant _ADD not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: include/common.php
+
+		-
+			message: '#^Constant _CLONE not found\.$#'
+			identifier: constant.notFound
+			count: 3
+			path: include/common.php
+
+		-
+			message: '#^Constant _DELETE not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: include/common.php
+
+		-
+			message: '#^Constant _EDIT not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: include/common.php
+
+		-
+			message: '#^Constant _PREVIEW not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: include/common.php
+
+		-
+			message: '#^Function xoops_loadLanguage not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: include/common.php
+
+		-
+			message: '#^Instantiated class XoopsTpl not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: include/common.php
+
+		-
+			message: '#^Call to an undefined method XoopsModule\:\:setErrors\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: include/oninstall.php
+
+		-
+			message: '#^Call to an undefined method XoopsModules\\Moduleinstaller\\Helper\:\:loadLanguage\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: include/oninstall.php
+
+		-
+			message: '#^Call to method addRight\(\) on an unknown class XoopsGroupPermHandler\.$#'
+			identifier: class.notFound
+			count: 5
+			path: include/oninstall.php
+
+		-
+			message: '#^Call to static method install\(\) on an unknown class XoopsModules\\Mtools\\Module\\Installer\.$#'
+			identifier: class.notFound
+			count: 1
+			path: include/oninstall.php
+
+		-
+			message: '#^Call to static method prepare\(\) on an unknown class XoopsModules\\Mtools\\Module\\Installer\.$#'
+			identifier: class.notFound
+			count: 1
+			path: include/oninstall.php
+
+		-
+			message: '#^Constant XOOPS_GROUP_ADMIN not found\.$#'
+			identifier: constant.notFound
+			count: 3
+			path: include/oninstall.php
+
+		-
+			message: '#^Constant XOOPS_GROUP_ANONYMOUS not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: include/oninstall.php
+
+		-
+			message: '#^Constant XOOPS_GROUP_USERS not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: include/oninstall.php
+
+		-
+			message: '#^Function xoops_getHandler not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: include/oninstall.php
+
+		-
+			message: '#^Instantiated class XoopsModules\\Mtools\\Common\\Configurator not found\.$#'
+			identifier: class.notFound
+			count: 2
+			path: include/oninstall.php
+
+		-
+			message: '#^PHPDoc tag @var for variable \$grouppermHandler contains unknown class XoopsGroupPermHandler\.$#'
+			identifier: class.notFound
+			count: 1
+			path: include/oninstall.php
+
+		-
+			message: '#^Call to an undefined method XoopsModule\:\:setErrors\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: include/onuninstall.php
+
+		-
+			message: '#^Call to an undefined method XoopsModules\\Moduleinstaller\\Helper\:\:loadLanguage\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: include/onuninstall.php
+
+		-
+			message: '#^Call to static method rrmdir\(\) on an unknown class XoopsModules\\Mtools\\Common\\FilesManagement\.$#'
+			identifier: class.notFound
+			count: 1
+			path: include/onuninstall.php
+
+		-
+			message: '#^Call to an undefined method XoopsModule\:\:setErrors\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: include/onupdate.php
+
+		-
+			message: '#^Call to an undefined method XoopsModules\\Moduleinstaller\\Helper\:\:loadLanguage\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: include/onupdate.php
+
+		-
+			message: '#^Call to method deleteByModule\(\) on an unknown class XoopsGroupPermHandler\.$#'
+			identifier: class.notFound
+			count: 1
+			path: include/onupdate.php
+
+		-
+			message: '#^Call to static method copyBlankFiles\(\) on an unknown class XoopsModules\\Mtools\\Module\\Installer\.$#'
+			identifier: class.notFound
+			count: 1
+			path: include/onupdate.php
+
+		-
+			message: '#^Call to static method createUploadFolders\(\) on an unknown class XoopsModules\\Mtools\\Module\\Installer\.$#'
+			identifier: class.notFound
+			count: 2
+			path: include/onupdate.php
+
+		-
+			message: '#^Call to static method purgeHtmlTemplates\(\) on an unknown class XoopsModules\\Mtools\\Module\\Installer\.$#'
+			identifier: class.notFound
+			count: 1
+			path: include/onupdate.php
+
+		-
+			message: '#^Call to static method removeOldAssets\(\) on an unknown class XoopsModules\\Mtools\\Module\\Installer\.$#'
+			identifier: class.notFound
+			count: 1
+			path: include/onupdate.php
+
+		-
+			message: '#^Function xoops_getHandler not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: include/onupdate.php
+
+		-
+			message: '#^Instantiated class XoopsModules\\Mtools\\Common\\Configurator not found\.$#'
+			identifier: class.notFound
+			count: 2
+			path: include/onupdate.php
+
+		-
+			message: '#^PHPDoc tag @var for variable \$grouppermHandler contains unknown class XoopsGroupPermHandler\.$#'
+			identifier: class.notFound
+			count: 1
+			path: include/onupdate.php
+
+		-
+			message: '#^Call to an undefined method XoopsModules\\Moduleinstaller\\Helper\:\:loadLanguage\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: testdata/index.php
+
+		-
+			message: '#^Call to an undefined method XoopsModules\\Moduleinstaller\\Helper\:\:url\(\)\.$#'
+			identifier: method.notFound
+			count: 4
+			path: testdata/index.php
+
+		-
+			message: '#^Call to function array_filter\(\) requires parameter \#2 to be passed to avoid loose comparison semantics\.$#'
+			identifier: arrayFilter.strict
+			count: 1
+			path: testdata/index.php
+
+		-
+			message: '#^Constant _CO_MODULEINSTALLER_CLEAR_SAMPLEDATA_CONFIRM not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: testdata/index.php
+
+		-
+			message: '#^Constant _CO_MODULEINSTALLER_CLEAR_SAMPLEDATA_OK not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: testdata/index.php
+
+		-
+			message: '#^Constant _CO_MODULEINSTALLER_CONFIRM not found\.$#'
+			identifier: constant.notFound
+			count: 3
+			path: testdata/index.php
+
+		-
+			message: '#^Constant _CO_MODULEINSTALLER_EXPORT_SCHEMA_ERROR not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: testdata/index.php
+
+		-
+			message: '#^Constant _CO_MODULEINSTALLER_LOAD_SAMPLEDATA_CONFIRM not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: testdata/index.php
+
+		-
+			message: '#^Constant _CO_MODULEINSTALLER_LOAD_SAMPLEDATA_FAILURE not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: testdata/index.php
+
+		-
+			message: '#^Constant _CO_MODULEINSTALLER_LOAD_SAMPLEDATA_SUCCESS not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: testdata/index.php
+
+		-
+			message: '#^Constant _CO_MODULEINSTALLER_SAVE_SAMPLEDATA_CONFIRM not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: testdata/index.php
+
+		-
+			message: '#^Constant _CO_MODULEINSTALLER_SAVE_SAMPLEDATA_SUCCESS not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: testdata/index.php
+
+		-
+			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
+			identifier: empty.notAllowed
+			count: 3
+			path: testdata/index.php
+
+		-
+			message: '#^Function redirect_header not found\.$#'
+			identifier: function.notFound
+			count: 11
+			path: testdata/index.php
+
+		-
+			message: '#^Function xoops_confirm not found\.$#'
+			identifier: function.notFound
+			count: 3
+			path: testdata/index.php
+
+		-
+			message: '#^Function xoops_cp_footer not found\.$#'
+			identifier: function.notFound
+			count: 3
+			path: testdata/index.php
+
+		-
+			message: '#^Function xoops_cp_header not found\.$#'
+			identifier: function.notFound
+			count: 3
+			path: testdata/index.php
+
+		-
+			message: '#^Short ternary operator is not allowed\. Use null coalesce operator if applicable or consider using long ternary\.$#'
+			identifier: ternary.shortNotAllowed
+			count: 1
+			path: testdata/index.php
+
+		-
+			message: '#^Dynamic call to static method PHPUnit\\Framework\\Assert\:\:markTestIncomplete\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 3
+			path: tests/Unit/class/HelperTest.php
+
+		-
+			message: '#^Short ternary operator is not allowed\. Use null coalesce operator if applicable or consider using long ternary\.$#'
+			identifier: ternary.shortNotAllowed
+			count: 1
+			path: tests/Unit/class/Set/ModuleSetApplierTest.php
+
+		-
+			message: '#^Short ternary operator is not allowed\. Use null coalesce operator if applicable or consider using long ternary\.$#'
+			identifier: ternary.shortNotAllowed
+			count: 1
+			path: tests/Unit/class/Set/ModuleSetRepositoryTest.php
+
+		-
+			message: '#^Dynamic call to static method PHPUnit\\Framework\\Assert\:\:markTestIncomplete\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: tests/Unit/preloads/ModuleinstallerCorePreloadTest.php
+
+		-
+			message: '#^Constant _MI_MODULEINSTALLER_DESC not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: xoops_version.php
+
+		-
+			message: '#^Constant _MI_MODULEINSTALLER_NAME not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: xoops_version.php
+
+		-
+			message: '#^Implicit array creation is not allowed \- variable \$modversion might not exist\.$#'
+			identifier: variable.implicitArray
+			count: 1
+			path: xoops_version.php
