@@ -34,6 +34,8 @@ How-to: [docs/TUTORIAL.md](docs/TUTORIAL.md)
 | [mtools](https://github.com/XoopsModules25x/mtools) | **1.2.0+** (must be **installed**; does not need to be active) |
 | MySQL | 5.5+                                                       |
 
+> ⚠️ **mtools must be _installed_, not just present.** Extracting the mtools files into `modules/mtools/` is **not** enough — ModuleInstaller verifies mtools' *installed* version (≥ 1.2.0) via **Admin → System → Modules** and refuses to install if mtools is present on disk but not installed. mtools does **not** need to be activated (installed-but-inactive is fine).
+
 > **1.5.1** required only PHP 7.4+ and XOOPS 2.5.10+ and did not depend on mtools.
 
 ---

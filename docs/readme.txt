@@ -22,7 +22,8 @@ Requirements
 
 Install / uninstall
 -------------------
-1. Install mtools >= 1.2.0 first.
+1. Install mtools >= 1.2.0 first. It must be INSTALLED (Admin -> System -> Modules),
+   not merely present in modules/mtools/; it does not need to be activated.
 2. Extract this module into ../modules/moduleinstaller
 3. Install through Admin → System Module → Modules.
 
