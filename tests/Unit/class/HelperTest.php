@@ -49,18 +49,18 @@ final class HelperTest extends TestCase
     public function testGetInstance(): void
     {
         /** @todo This test is incomplete. */
-        $this->markTestIncomplete();
+        self::markTestIncomplete();
     }
 
     public function testGetDirname(): void
     {
         /** @todo This test is incomplete. */
-        $this->markTestIncomplete();
+        self::markTestIncomplete();
     }
 
     public function testGetHandler(): void
     {
         /** @todo This test is incomplete. */
-        $this->markTestIncomplete();
+        self::markTestIncomplete();
     }
 }

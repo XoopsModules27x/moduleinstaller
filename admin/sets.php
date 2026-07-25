@@ -124,10 +124,11 @@ if ('POST' === ($_SERVER['REQUEST_METHOD'] ?? 'GET')) {
                 break;
 
             case 'import':
-                if (empty($_FILES['import_file']['tmp_name']) || ! \is_uploaded_file($_FILES['import_file']['tmp_name'])) {
+                $tmpName = (string) ($_FILES['import_file']['tmp_name'] ?? '');
+                if ('' === $tmpName || ! \is_uploaded_file($tmpName)) {
                     throw new RuntimeException(_AM_MODULEINSTALLER_SET_ERR_IMPORT);
                 }
-                $raw = (string) \file_get_contents($_FILES['import_file']['tmp_name']);
+                $raw = (string) \file_get_contents($tmpName);
                 $set = installer_import_set_from_yaml($repository, $raw);
                 $redirect(\sprintf(_AM_MODULEINSTALLER_SET_IMPORTED, $set->getName()));
 
@@ -152,7 +153,7 @@ if ('POST' === ($_SERVER['REQUEST_METHOD'] ?? 'GET')) {
                 }
 
                 $outcome = $applier->execute($set, $action, true);
-                if (! empty($outcome['snapshot_id'])) {
+                if (null !== $outcome['snapshot_id'] && '' !== $outcome['snapshot_id']) {
                     $_SESSION['installer_last_snapshot_id'] = $outcome['snapshot_id'];
                 }
                 // Fall through to result display (no redirect)
@@ -172,7 +173,7 @@ if ('POST' === ($_SERVER['REQUEST_METHOD'] ?? 'GET')) {
                     }
                     echo '</ul></div>';
                 }
-                if (! empty($outcome['snapshot_id'])) {
+                if (null !== $outcome['snapshot_id'] && '' !== $outcome['snapshot_id']) {
                     $snapId = $outcome['snapshot_id'];
                     echo "<div class='x2-note successMsg'>" . \sprintf(
                         _AM_MODULEINSTALLER_SET_SNAPSHOT_SAVED,
@@ -420,14 +421,14 @@ function renderSetEditForm(
         $cellBg = $inSet ? 'background-color:var(--installer-selected,#E6EFC2);' : '';
         $rowStyle = $inSet ? ' style="background-color:var(--installer-selected,#E6EFC2);"' : '';
 
-        $label = $info
+        $label = null !== $info
             ? \htmlspecialchars($info['name'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . ' <span class="small">(/' . \htmlspecialchars($dirname, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . ')</span>'
             : '<code>' . \htmlspecialchars($dirname, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</code>';
 
         $statusLabel = installer_status_badge($row['state']);
 
         $img = '';
-        if ($info && '' !== $info['image']) {
+        if (null !== $info && '' !== $info['image']) {
             $img = '<img class="installer-mod-logo" src="' . \XOOPS_URL . '/modules/' . \rawurlencode($info['dirname']) . '/' . \htmlspecialchars($info['image'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '" alt="">';
         }
 
@@ -441,7 +442,7 @@ function renderSetEditForm(
         echo '<tr class="' . $rowClass . '"' . $rowStyle . ' data-dirname="' . $dirnameEsc . '" data-search="' . $searchBlob . '">';
         echo '<td class="center img installer-mod-toggle" title="Toggle selection">' . $img . '</td>';
         echo '<td class="installer-mod-toggle installer-mod-desc" title="Toggle selection">' . $label;
-        if ($info && '' !== $info['description']) {
+        if (null !== $info && '' !== $info['description']) {
             echo '<br><span class="small installer-mod-desc-text">' . \htmlspecialchars($info['description'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</span>';
         }
         echo '</td>';
@@ -837,19 +838,19 @@ function installer_import_set_from_yaml(ModuleSetRepository $repository, string 
     if (! \is_array($data)) {
         // Minimal fallback parse for modules: list
         $data = [];
-        if (\preg_match('/^name:\s*(.+)$/mi', $raw, $m)) {
+        if (1 === \preg_match('/^name:\s*(.+)$/mi', $raw, $m)) {
             $data['name'] = \trim($m[1], " \t\"'");
         }
-        if (\preg_match('/^description:\s*(.+)$/mi', $raw, $m)) {
+        if (1 === \preg_match('/^description:\s*(.+)$/mi', $raw, $m)) {
             $data['description'] = \trim($m[1], " \t\"'");
         }
         $mods = [];
-        if (\preg_match_all('/^\s*-\s+([a-zA-Z0-9_-]+)\s*$/m', $raw, $mm)) {
+        if (\preg_match_all('/^\s*-\s+([a-zA-Z0-9_-]+)\s*$/m', $raw, $mm) > 0) {
             $mods = $mm[1];
         }
         $data['modules'] = $mods;
     }
-    if (empty($data['name'])) {
+    if (! isset($data['name']) || '' === (string) $data['name']) {
         throw new RuntimeException(_AM_MODULEINSTALLER_SET_ERR_IMPORT);
     }
     $name = (string) $data['name'];

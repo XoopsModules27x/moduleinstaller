@@ -24,7 +24,8 @@ final class ModuleSetRepositoryTest extends TestCase
     protected function tearDown(): void
     {
         if (\is_dir($this->tmpDir)) {
-            foreach (\glob($this->tmpDir . '/*') ?: [] as $file) {
+            $files = \glob($this->tmpDir . '/*');
+            foreach (false === $files ? [] : $files as $file) {
                 @\unlink($file);
             }
             @\rmdir($this->tmpDir);

@@ -31,6 +31,7 @@ if (is_object($helper->getModule()) && false !== $helper->getModule()->getInfo('
     $pathModIcon32 = $helper->url($helper->getModule()->getInfo('modicons32'));
 }
 
+$adminmenu = [];
 $adminmenu[] = [
     'title' => _MI_MODULEINSTALLER_MENU_00,
     'link' => 'admin/index.php',

@@ -72,7 +72,7 @@ class ModuleCatalog
     public function existsOnDisk(string $dirname): bool
     {
         $dirname = \trim($dirname);
-        if ('' === $dirname || ! \preg_match('/^[a-zA-Z0-9_-]+$/', $dirname)) {
+        if ('' === $dirname || 1 !== \preg_match('/^[a-zA-Z0-9_-]+$/', $dirname)) {
             return false;
         }
 
@@ -202,11 +202,11 @@ class ModuleCatalog
         if (null === $info) {
             return false;
         }
-        $dbVersion = $installed->getVar('version');
+        $dbVersion = (string) $installed->getVar('version');
         $diskVersion = \str_replace("\n", '', (string) $info['version']);
         $legacyInt = (string) (int) \round(((float) $diskVersion) * 100);
 
-        return ($diskVersion != $dbVersion && $legacyInt !== (string) $dbVersion);
+        return $dbVersion !== $diskVersion && $dbVersion !== $legacyInt;
     }
 
     /**

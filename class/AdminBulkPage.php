@@ -304,7 +304,7 @@ final class AdminBulkPage
             $highlight = false;
             if (null !== $rowDecorator) {
                 $meta = $rowDecorator($file, $info);
-                if (\is_array($meta) && ! empty($meta['highlight'])) {
+                if (\is_array($meta) && (bool) ($meta['highlight'] ?? false)) {
                     $highlight = true;
                 }
             }

@@ -44,6 +44,6 @@ final class ModuleinstallerCorePreloadTest extends TestCase
     public function testEventCoreIncludeCommonEnd(): void
     {
         /** @todo This test is incomplete. */
-        $this->markTestIncomplete();
+        self::markTestIncomplete();
     }
 }

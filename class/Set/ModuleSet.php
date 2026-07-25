@@ -190,7 +190,7 @@ final class ModuleSet
             if ('' === $dirname) {
                 continue;
             }
-            if (! \preg_match('/^[a-zA-Z0-9_-]+$/', $dirname)) {
+            if (1 !== \preg_match('/^[a-zA-Z0-9_-]+$/', $dirname)) {
                 continue;
             }
             $out[$dirname] = $dirname;
