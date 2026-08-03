@@ -10,6 +10,48 @@ Baseline comparison for **1.6.0**: previous public tree `1.5.1-Final`
 
 ---
 
+## [1.7.0 Alpha 1] — 2026-07-30
+
+### Added
+
+- Structured reporting package with typed log fragments, events, severities,
+  outcomes, operation results, a legacy adapter, and a safe HTML renderer
+- `ModuleActionResult::events()`, `messageText()`, and `toOperationResult()` for
+  HTML-independent report consumption
+- `ModuleActionService::operationResult()` and `operationResults()` for callers
+  adopting `Report\ModuleOperationResult`
+- 27 translatable admin-report strings with safe English fallbacks
+
+### Changed
+
+- Install-action reports are now structured data that can be rendered to HTML or
+  consumed as plain text, CLI output, logs, or JSON
+- `ModuleActionResult` is deprecated in favor of `Report\ModuleOperationResult`;
+  existing `runOne()` and `runMany()` callers remain supported through XOOPS 2.8
+- RTL output now isolates counters, versions, statuses, folders, and plan summaries
+- Admin report layout uses logical CSS properties, removes module-owned inline
+  styles, improves long-log scrolling, and avoids duplicate screen-reader labels
+- Expanded cross-platform tests for hostile log input, structured-result contracts,
+  translations, logo paths, UTF-8, crashes, and timeouts
+
+### Fixed
+
+- Invalid UTF-8 caused by byte-based NBSP trimming
+- Duplicate failure transcripts in structured results
+- Blank pages caused by exceptions while loading a module manifest after an action
+- Fatal or unusable admin output from missing, blank, non-scalar, or malformed
+  language strings
+- Incorrect protected-module action wording
+
+### Security
+
+- Replaced direct install-log markup rendering with an escape-once parser that emits
+  only fixed module-owned markup and drops executable or raw-text element bodies
+- Centralized module-logo URL validation and rejection of remote, missing, absolute,
+  traversal, and otherwise unsafe paths
+
+---
+
 ## [1.6.0] — 2026-07-23
 
 ### Added

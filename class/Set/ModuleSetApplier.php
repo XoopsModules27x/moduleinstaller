@@ -14,6 +14,7 @@ namespace XoopsModules\Moduleinstaller\Set;
  * @author    Michael Beck (mamba)
  */
 
+use XoopsModules\Moduleinstaller\Lang;
 use XoopsModules\Moduleinstaller\ModuleActionResult;
 use XoopsModules\Moduleinstaller\ModuleActionService;
 use XoopsModules\Moduleinstaller\ModuleCatalog;
@@ -94,11 +95,20 @@ class ModuleSetApplier
             try {
                 $snapshot = $this->createSnapshot($set);
                 $snapshotId = $snapshot->getId();
-                $notices[] = 'Saved snapshot: ' . $snapshot->getName() . ' (' . $snapshotId . ')';
+                $notices[] = Lang::format(
+                    '_AM_MODULEINSTALLER_SET_SNAPSHOT_NOTICE',
+                    'Saved snapshot: %1$s (%2$s)',
+                    $snapshot->getName(),
+                    $snapshotId
+                );
             } catch (\Throwable $e) {
                 // The snapshot is the ONLY way to undo a Focus. If it cannot be saved,
                 // abort before deactivating anything so the operation stays recoverable.
-                $notices[] = 'Aborted: could not save recovery snapshot before Focus (' . $e->getMessage() . ')';
+                $notices[] = Lang::format(
+                    '_AM_MODULEINSTALLER_SET_SNAPSHOT_ABORTED',
+                    'Aborted: could not save recovery snapshot before Focus (%s)',
+                    $e->getMessage()
+                );
 
                 return [
                     'results' => [],
@@ -124,7 +134,7 @@ class ModuleSetApplier
                 $results[] = new ModuleActionResult(
                     $dirname,
                     ModuleActionResult::STATUS_SKIP,
-                    (string) ($row['notice'] ?? 'Missing on disk'),
+                    (string) ($row['notice'] ?? Lang::text('_AM_MODULEINSTALLER_BADGE_MISSING', 'Missing on disk')),
                     $action
                 );
             }
@@ -145,13 +155,23 @@ class ModuleSetApplier
     public function createSnapshot(ModuleSet $beforeFocusSet): ModuleSet
     {
         $active = $this->catalog->listInstalled(true);
-        $name = 'Snapshot before Focus: ' . $beforeFocusSet->getName();
+        // Stored with the snapshot and displayed later, possibly under a different
+        // locale: localised at creation time on purpose, rather than storing a key.
+        $name = Lang::format(
+            '_AM_MODULEINSTALLER_SET_SNAPSHOT_NAME',
+            'Snapshot before Focus: %s',
+            $beforeFocusSet->getName()
+        );
         $id = $this->repository->uniqueId('snapshot-' . \gmdate('Ymd-His'));
 
         $set = new ModuleSet(
             $id,
             $name,
-            'Auto-created before applying Focus on set "' . $beforeFocusSet->getId() . '"',
+            Lang::format(
+                '_AM_MODULEINSTALLER_SET_SNAPSHOT_DESC',
+                'Auto-created before applying Focus on set "%s"',
+                $beforeFocusSet->getId()
+            ),
             $active,
         );
         $this->repository->save($set);
@@ -207,7 +227,7 @@ class ModuleSetApplier
                 $plan[] = [
                     'dirname' => $dirname,
                     'action' => $action,
-                    'reason' => 'Member of set',
+                    'reason' => Lang::text('_AM_MODULEINSTALLER_SET_REASON_MEMBER', 'Member of set'),
                 ];
             }
         }
@@ -235,7 +255,7 @@ class ModuleSetApplier
                 $plan[] = [
                     'dirname' => $row['dirname'],
                     'action' => self::ACTION_ACTIVATE,
-                    'reason' => 'Focus: activate set member',
+                    'reason' => Lang::text('_AM_MODULEINSTALLER_SET_REASON_FOCUS_ON', 'Focus: activate set member'),
                 ];
             }
         }
@@ -251,7 +271,7 @@ class ModuleSetApplier
             $plan[] = [
                 'dirname' => $dirname,
                 'action' => self::ACTION_DEACTIVATE,
-                'reason' => 'Focus: deactivate non-member',
+                'reason' => Lang::text('_AM_MODULEINSTALLER_SET_REASON_FOCUS_OFF', 'Focus: deactivate non-member'),
             ];
         }
 

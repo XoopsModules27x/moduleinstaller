@@ -118,3 +118,44 @@ define('_AM_MODULEINSTALLER_BADGE_INACTIVE', 'Installed (inactive)');
 define('_AM_MODULEINSTALLER_BADGE_NOT_INSTALLED', 'Not installed');
 define('_AM_MODULEINSTALLER_BADGE_MISSING', 'Missing on disk');
 define('_AM_MODULEINSTALLER_BADGE_PROTECTED', 'Protected');
+
+// Bulk result report — one line per module in the report produced by
+// ModuleActionService. These were English literals inside the service until now,
+// which made the report untranslatable regardless of the language pack installed.
+define('_AM_MODULEINSTALLER_RES_EMPTY_DIRNAME', 'Empty dirname');
+define('_AM_MODULEINSTALLER_RES_PROTECTED', 'Protected module "%1$s": action "%2$s" is not allowed.');
+define('_AM_MODULEINSTALLER_RES_UNKNOWN_ACTION', 'Unknown action: %s');
+define('_AM_MODULEINSTALLER_RES_EXCEPTION', 'Exception: %s');
+define('_AM_MODULEINSTALLER_RES_NOT_ON_DISK', 'Not found on disk');
+define('_AM_MODULEINSTALLER_RES_ALREADY_INSTALLED', 'Already installed');
+define('_AM_MODULEINSTALLER_RES_NOT_INSTALLED', 'Not installed');
+define('_AM_MODULEINSTALLER_RES_NOT_INSTALLED_ACTIVATE', 'Not installed (cannot activate)');
+define('_AM_MODULEINSTALLER_RES_NOT_INSTALLED_DEACTIVATE', 'Not installed (cannot deactivate)');
+define('_AM_MODULEINSTALLER_RES_ALREADY_ACTIVE', 'Already active');
+define('_AM_MODULEINSTALLER_RES_ALREADY_INACTIVE', 'Already inactive');
+define('_AM_MODULEINSTALLER_RES_INVALID_MID', 'Invalid module id');
+define('_AM_MODULEINSTALLER_RES_UNVERIFIED', 'Result could not be verified (module state unreadable): %s');
+define('_AM_MODULEINSTALLER_RES_FAIL_INSTALL', 'Install did not complete');
+define('_AM_MODULEINSTALLER_RES_FAIL_UNINSTALL', 'Uninstall did not complete');
+define('_AM_MODULEINSTALLER_RES_FAIL_ACTIVATE', 'Activation did not take effect');
+define('_AM_MODULEINSTALLER_RES_FAIL_DEACTIVATE', 'Deactivation did not take effect (start-page or protected module?)');
+define('_AM_MODULEINSTALLER_RES_FAIL_UPDATE', 'Update did not complete');
+
+// Set-resolver notices — same report, same reason they need constants.
+define('_AM_MODULEINSTALLER_RES_ORPHANED', 'Installed in database but folder missing on disk');
+define('_AM_MODULEINSTALLER_RES_REMOVED', 'Not found on disk (removed module)');
+define('_AM_MODULEINSTALLER_RES_ON_DISK_NOT_INSTALLED', 'Present on disk but not installed');
+
+// Module list chrome + module-set notices (round 4: the last English literals
+// outside the language files).
+define('_AM_MODULEINSTALLER_TOGGLE_SELECTION', 'Toggle selection');
+define('_AM_MODULEINSTALLER_FOLDER_LABEL', 'folder: /%s');
+define('_AM_MODULEINSTALLER_SET_SNAPSHOT_NOTICE', 'Saved snapshot: %1$s (%2$s)');
+define('_AM_MODULEINSTALLER_SET_SNAPSHOT_NAME', 'Snapshot before Focus: %s');
+define('_AM_MODULEINSTALLER_SET_REASON_MEMBER', 'Member of set');
+define('_AM_MODULEINSTALLER_SET_REASON_FOCUS_ON', 'Focus: activate set member');
+define('_AM_MODULEINSTALLER_SET_REASON_FOCUS_OFF', 'Focus: deactivate non-member');
+
+// Set-apply recovery snapshot (round 5: the last hardcoded strings on this path).
+define('_AM_MODULEINSTALLER_SET_SNAPSHOT_ABORTED', 'Aborted: could not save recovery snapshot before Focus (%s)');
+define('_AM_MODULEINSTALLER_SET_SNAPSHOT_DESC', 'Auto-created before applying Focus on set "%s"');

@@ -8,3 +8,47 @@ Below are language differences from a version to next version.
 /language/english/admin.php
 added define('_AM_MODULEINSTALLER_SELECT_ALL' , "Select All");
 added define('_AM_MODULEINSTALLER_SELECT_NONE' , "Un-Select All");
+
+1.7.0
+-------------------
+/language/english/admin.php
+added define('_AM_MODULEINSTALLER_RES_EMPTY_DIRNAME' , 'Empty dirname');
+added define('_AM_MODULEINSTALLER_RES_PROTECTED' , 'Protected module "%1$s": action "%2$s" is not allowed.');
+added define('_AM_MODULEINSTALLER_RES_UNKNOWN_ACTION' , 'Unknown action: %s');
+added define('_AM_MODULEINSTALLER_RES_EXCEPTION' , 'Exception: %s');
+added define('_AM_MODULEINSTALLER_RES_NOT_ON_DISK' , 'Not found on disk');
+added define('_AM_MODULEINSTALLER_RES_ALREADY_INSTALLED' , 'Already installed');
+added define('_AM_MODULEINSTALLER_RES_NOT_INSTALLED' , 'Not installed');
+added define('_AM_MODULEINSTALLER_RES_NOT_INSTALLED_ACTIVATE' , 'Not installed (cannot activate)');
+added define('_AM_MODULEINSTALLER_RES_NOT_INSTALLED_DEACTIVATE' , 'Not installed (cannot deactivate)');
+added define('_AM_MODULEINSTALLER_RES_ALREADY_ACTIVE' , 'Already active');
+added define('_AM_MODULEINSTALLER_RES_ALREADY_INACTIVE' , 'Already inactive');
+added define('_AM_MODULEINSTALLER_RES_INVALID_MID' , 'Invalid module id');
+added define('_AM_MODULEINSTALLER_RES_UNVERIFIED' , 'Result could not be verified (module state unreadable): %s');
+added define('_AM_MODULEINSTALLER_RES_FAIL_INSTALL' , 'Install did not complete');
+added define('_AM_MODULEINSTALLER_RES_FAIL_UNINSTALL' , 'Uninstall did not complete');
+added define('_AM_MODULEINSTALLER_RES_FAIL_ACTIVATE' , 'Activation did not take effect');
+added define('_AM_MODULEINSTALLER_RES_FAIL_DEACTIVATE' , 'Deactivation did not take effect (start-page or protected module?)');
+added define('_AM_MODULEINSTALLER_RES_FAIL_UPDATE' , 'Update did not complete');
+added define('_AM_MODULEINSTALLER_RES_ORPHANED' , 'Installed in database but folder missing on disk');
+added define('_AM_MODULEINSTALLER_RES_REMOVED' , 'Not found on disk (removed module)');
+added define('_AM_MODULEINSTALLER_RES_ON_DISK_NOT_INSTALLED' , 'Present on disk but not installed');
+added define('_AM_MODULEINSTALLER_TOGGLE_SELECTION' , 'Toggle selection');
+added define('_AM_MODULEINSTALLER_FOLDER_LABEL' , 'folder: /%s');
+added define('_AM_MODULEINSTALLER_SET_SNAPSHOT_NOTICE' , 'Saved snapshot: %1$s (%2$s)');
+added define('_AM_MODULEINSTALLER_SET_SNAPSHOT_NAME' , 'Snapshot before Focus: %s');
+added define('_AM_MODULEINSTALLER_SET_REASON_MEMBER' , 'Member of set');
+added define('_AM_MODULEINSTALLER_SET_REASON_FOCUS_ON' , 'Focus: activate set member');
+added define('_AM_MODULEINSTALLER_SET_REASON_FOCUS_OFF' , 'Focus: deactivate non-member');
+added define('_AM_MODULEINSTALLER_SET_SNAPSHOT_ABORTED' , 'Aborted: could not save recovery snapshot before Focus (%s)');
+added define('_AM_MODULEINSTALLER_SET_SNAPSHOT_DESC' , 'Auto-created before applying Focus on set "%s"');
+
+Notes
+- The RES_* block makes the bulk result report translatable. Those strings were
+  English literals inside class/ModuleActionService.php until now, so the report
+  was untranslatable regardless of the language pack installed.
+- Every lookup goes through class/Lang.php, which carries the English text as a
+  fallback: a language pack that omits one of these degrades to English instead of
+  fataling (an undefined constant is a fatal Error on PHP 8, not a notice).
+- Translators: %1$s / %2$s ordering may be reordered freely; Lang::format() passes
+  the arguments positionally.

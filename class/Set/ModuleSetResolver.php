@@ -14,6 +14,7 @@ namespace XoopsModules\Moduleinstaller\Set;
  * @author    Michael Beck (mamba)
  */
 
+use XoopsModules\Moduleinstaller\Lang;
 use XoopsModules\Moduleinstaller\ModuleCatalog;
 
 /**
@@ -75,18 +76,18 @@ class ModuleSetResolver
             // Installed in the DB but its folder is gone: a distinct state so bulk
             // planning never tries to activate/install a module with no files.
             $state = self::STATE_ORPHANED;
-            $notice = 'Installed in database but folder missing on disk';
+            $notice = Lang::text('_AM_MODULEINSTALLER_RES_ORPHANED', 'Installed in database but folder missing on disk');
         } elseif (! $onDisk && ! $installed) {
             $state = self::STATE_MISSING;
-            $notice = 'Not found on disk (removed module)';
+            $notice = Lang::text('_AM_MODULEINSTALLER_RES_REMOVED', 'Not found on disk (removed module)');
         } elseif ($protected) {
             $state = self::STATE_PROTECTED;
-            $notice = 'Protected module';
+            $notice = Lang::text('_AM_MODULEINSTALLER_BADGE_PROTECTED', 'Protected module');
         } elseif (! $installed) {
             // Reached only when on disk (the installed && !on_disk case is ORPHANED above,
             // and !on_disk && !installed is MISSING), so the folder is always present here.
             $state = self::STATE_NOT_INSTALLED;
-            $notice = 'Present on disk but not installed';
+            $notice = Lang::text('_AM_MODULEINSTALLER_RES_ON_DISK_NOT_INSTALLED', 'Present on disk but not installed');
         } elseif ($active) {
             $state = self::STATE_ACTIVE;
             $notice = null;
