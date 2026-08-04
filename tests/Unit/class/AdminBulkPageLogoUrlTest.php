@@ -76,13 +76,19 @@ final class AdminBulkPageLogoUrlTest extends TestCase
         self::assertNull(AdminBulkPage::moduleLogoUrl('quotes', $this->info($image)));
     }
 
-    /** A well-formed request for a module that is not on disk still resolves to null. */
+    /**
+     * A well-formed request for a module that is not on disk still resolves to null.
+     *
+     * The suffix is random per run, not a fixed literal: the point of the case is
+     * "a dirname that certainly does not exist", and a hard-coded name quietly
+     * stops testing that the day a fixture or a real module happens to use it.
+     */
     #[Test]
     public function absentModuleDirectoryIsRejected(): void
     {
-        self::assertNull(
-            AdminBulkPage::moduleLogoUrl('no_such_module_' . \bin2hex('x'), $this->info('assets/logo.png'))
-        );
+        $absent = 'no_such_module_' . \bin2hex(\random_bytes(16));
+
+        self::assertNull(AdminBulkPage::moduleLogoUrl($absent, $this->info('assets/logo.png')));
     }
 
     /**

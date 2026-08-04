@@ -94,6 +94,13 @@ final class LegacyModuleReportAdapter
             $m . 'E',
             $text
         );
+        // Every OTHER span gets an open marker too. It carries no severity, but it
+        // does carry a </span>, and without a matching open that close would be
+        // read as ending the red span enclosing it — silently stopping the error
+        // run and repainting the rest of the transcript as ordinary output. Core
+        // does nest spans, so this is the common case, not a hostile one. Runs
+        // AFTER the red-span pass, which has already consumed those tags.
+        $text = (string) \preg_replace('#<span(?:\s[^>]*)?>#i', $m . 'O', $text);
         $text = (string) \preg_replace('#</span\s*>#i', $m . 'e', $text);
         $text = (string) \preg_replace('#<(?:strong|b|em|i)(?:\s[^>]*)?>#i', $m . 'S', $text);
         $text = (string) \preg_replace('#</(?:strong|b|em|i)\s*>#i', $m . 's', $text);
@@ -114,8 +121,14 @@ final class LegacyModuleReportAdapter
      * still applies to both lines. That reproduces what the string renderer did (one
      * <strong> spanning the break) while producing per-line balanced markup instead,
      * and core does emit spans that wrap a <br>. The cost is that an UNCLOSED span
-     * colours every line after it; the depth counters bottom out at zero rather than
-     * going negative, so a stray close tag cannot invert the state.
+     * colours every line after it; a stray close pops nothing rather than going
+     * negative, so it cannot invert the state.
+     *
+     * Spans are tracked as a STACK, not a counter, because only the red ones carry
+     * severity while all of them share one closing tag. A counter had to guess which
+     * span a </span> belonged to, and guessed the innermost open one — so an
+     * ordinary span nested inside a red one closed the red one, ending the error run
+     * early. The stack records what each open span was, so each close ends its own.
      *
      * @return list<LogEvent>
      */
@@ -123,19 +136,20 @@ final class LegacyModuleReportAdapter
     {
         $events = [];
         $emphasisDepth = 0;
-        $errorDepth = 0;
+        /** @var list<bool> $spanStack true for a red (error) span, false for an ordinary one */
+        $spanStack = [];
 
         foreach (\explode("\n", $marked) as $line) {
             $fragments = [];
             $buffer = '';
             // Seeded from the state carried in, so a line that only CLOSES a span core
-            // opened before the <br> still takes the severity. Reading $errorDepth
-            // after the loop instead would miss it: the closing marker has already
-            // decremented it back to zero by then.
-            $lineHadError = $errorDepth > 0;
+            // opened before the <br> still takes the severity. Reading the stack after
+            // the loop instead would miss it: the closing marker has already popped
+            // that span by then.
+            $lineHadError = \in_array(true, $spanStack, true);
 
             $parts = \preg_split(
-                '/(' . self::M . '[SsEe])/',
+                '/(' . self::M . '[SsEeO])/',
                 $line,
                 -1,
                 \PREG_SPLIT_DELIM_CAPTURE | \PREG_SPLIT_NO_EMPTY
@@ -154,12 +168,20 @@ final class LegacyModuleReportAdapter
 
                         break;
                     case self::M . 'E':
-                        ++$errorDepth;
+                        $spanStack[] = true;
                         $lineHadError = true;
 
                         break;
+                    case self::M . 'O':
+                        // Ordinary span: no severity, but it owns the next close.
+                        $spanStack[] = false;
+
+                        break;
                     case self::M . 'e':
-                        $errorDepth = \max(0, $errorDepth - 1);
+                        // Ends the innermost span, whatever kind it was. A close with
+                        // nothing open pops nothing, which is how a stray </span> from
+                        // core's unbalanced fragments stays harmless.
+                        \array_pop($spanStack);
 
                         break;
                     default:
@@ -168,7 +190,9 @@ final class LegacyModuleReportAdapter
             }
             $this->flushBuffer($buffer, $fragments, $emphasisDepth);
 
-            $severity = ($lineHadError || $errorDepth > 0) ? LogSeverity::Error : LogSeverity::Info;
+            $severity = ($lineHadError || \in_array(true, $spanStack, true))
+                ? LogSeverity::Error
+                : LogSeverity::Info;
             $event = $this->withIndentExtracted($severity, $fragments);
 
             // Blank lines are an artifact of core's unbalanced </div></a> fragments,

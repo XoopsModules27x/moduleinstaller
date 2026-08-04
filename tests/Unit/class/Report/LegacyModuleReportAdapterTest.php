@@ -99,6 +99,55 @@ final class LegacyModuleReportAdapterTest extends TestCase
         self::assertSame(LogSeverity::Error, $events[2]->severity);
     }
 
+    /**
+     * Core nests spans, and only the red one carries severity. Since every span
+     * shares one closing tag, an inner ordinary span's </span> must not be read
+     * as closing the red span around it — that silently ends the error run and
+     * repaints the rest of the transcript as ordinary output, which also drops
+     * the result from Warning back to Success.
+     */
+    #[Test]
+    public function nestedOrdinarySpanDoesNotCloseTheEnclosingErrorSpan(): void
+    {
+        $events = (new LegacyModuleReportAdapter())->parse(
+            '<span style="color:red">bad <span>detail</span><br>still bad</span>'
+        );
+
+        self::assertSame(['bad detail', 'still bad'], self::texts($events));
+        self::assertSame(LogSeverity::Error, $events[0]->severity);
+        self::assertSame(
+            LogSeverity::Error,
+            $events[1]->severity,
+            'the red span is still open on line 2; the inner span closed itself'
+        );
+    }
+
+    /** Several ordinary spans, and one closing after the break, still pair correctly. */
+    #[Test]
+    public function deeplyNestedOrdinarySpansPairWithThemselves(): void
+    {
+        $events = (new LegacyModuleReportAdapter())->parse(
+            '<span style="color:red">a<span><span>b</span></span><br>c</span><span>d</span>'
+        );
+
+        self::assertSame(['ab', 'cd'], self::texts($events));
+        self::assertSame(LogSeverity::Error, $events[0]->severity);
+        // The red span closes after "c", so "d" — outside it — is ordinary. Both
+        // facts have to hold at once for the pairing to be right rather than lucky.
+        self::assertSame(LogSeverity::Error, $events[1]->severity);
+    }
+
+    /** An ordinary span opened before a break must not colour anything. */
+    #[Test]
+    public function ordinarySpanAloneNeverProducesAnError(): void
+    {
+        $events = (new LegacyModuleReportAdapter())->parse('<span>plain<br>also plain</span>');
+
+        self::assertSame(['plain', 'also plain'], self::texts($events));
+        self::assertSame(LogSeverity::Info, $events[0]->severity);
+        self::assertSame(LogSeverity::Info, $events[1]->severity);
+    }
+
     /** A stray close tag must not drive the counter negative and invert the state. */
     #[Test]
     public function strayClosingSpanDoesNotInvertSeverity(): void
