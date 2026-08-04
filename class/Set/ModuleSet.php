@@ -20,7 +20,7 @@ namespace XoopsModules\Moduleinstaller\Set;
 final class ModuleSet
 {
     /** @var list<string> */
-    private array $modules = [];
+    private array $modules;
 
     /**
      * @param array<int|string, mixed> $modules Raw dirnames; normalized (validated, de-duped, sorted) on construction.
