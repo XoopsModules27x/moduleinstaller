@@ -14,7 +14,14 @@
     --installer-badge-inactive: #6c757d;
     --installer-badge-missing: #dc3545;
     --installer-badge-protected: #0d6efd;
-    --installer-badge-notinst: #fd7e14;
+    /* Darker than the Bootstrap orange this used to be (#fd7e14). That value is a
+       FILL colour: it carries white badge text at 2.4:1 and, since
+       .installer-log-warning draws warning transcript text in it, normal-size body
+       text at 2.6:1 — both under the 4.5:1 AA floor. #b35309 clears it at 5.05:1 in
+       both directions. The var() fallbacks further down already named this colour;
+       they never applied, because a fallback is only used when the property is
+       UNDEFINED, and this :root block always defines it. */
+    --installer-badge-notinst: #b35309;
 }
 
 /*
