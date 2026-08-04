@@ -43,23 +43,29 @@ use XoopsModules\Moduleinstaller\Report\LogEventHtmlRenderer;
  * {@see AdminBulkPage::moduleLogoUrl()}, never from this message, so dropping the
  * log's own <img> loses nothing.
  *
- * @deprecated Being replaced by {@see Report\ModuleOperationResult}, which carries
- *             the transcript as data instead of as a string of HTML. The migration
- *             path now exists in code, not only in prose:
- *             {@see ModuleActionService::operationResult()} and operationResults()
- *             return the new type, and {@see self::toOperationResult()} converts a
- *             result you already hold — so no new code has to name this class.
+ * LEGACY COMPATIBILITY TYPE. Being replaced by {@see Report\ModuleOperationResult},
+ * which carries the transcript as data instead of as a string of HTML. The migration
+ * path exists in code, not only in prose: {@see ModuleActionService::operationResult()}
+ * and operationResults() return the new type, and {@see self::toOperationResult()}
+ * converts a result you already hold — so no new code has to name this class.
  *
- *             No removal version is named, and that is still deliberate. This shape
- *             is what every third-party caller of ModuleActionService uses, so it is
- *             supported for the whole XOOPS 2.8 line; removal becomes a question at
- *             XOOPS 4.0, where core emits the structured type itself and this class
- *             and the adapter disappear together. New code should take the Report
- *             types.
+ * No removal version is named, and that is deliberate. This shape is what every
+ * third-party caller of ModuleActionService uses, so it is supported for the whole
+ * XOOPS 2.8 line; removal becomes a question at XOOPS 4.0, where core emits the
+ * structured type itself and this class and the adapter disappear together. New code
+ * should take the Report types.
+ *
+ * Intentionally NOT tagged `@deprecated` yet. runOne()/runMany() — the primary public
+ * API of ModuleActionService — still return this type, and AdminBulkPage still renders
+ * from it, so the formal tag would mark as deprecated a type whose replacement no
+ * caller in this module has adopted. That is not a documentation nicety: it makes
+ * every internal use a deprecation violation (116 of them, which is what turned the
+ * QA gate red), training readers to ignore the tag on the release where it finally
+ * means something. The tag goes on when the internal consumers have moved.
  */
 final readonly class ModuleActionResult
 {
-    public const STATUS_OK   = 'ok';
+    public const STATUS_OK = 'ok';
     public const STATUS_SKIP = 'skip';
     public const STATUS_FAIL = 'fail';
 
@@ -129,7 +135,7 @@ final readonly class ModuleActionResult
     /**
      * This result, projected onto the shape that replaces it.
      *
-     * The projection lives HERE, on the deprecated type, and not in the Report package
+     * The projection lives HERE, on the legacy type, and not in the Report package
      * — deliberately. A strangler fig only works if the dependency points from the old
      * code to the new: Report\* must never mention ModuleActionResult, or deleting this
      * class would mean editing the package that outlives it. When core emits events

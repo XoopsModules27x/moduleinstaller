@@ -34,7 +34,7 @@ namespace XoopsModules\Moduleinstaller\Report;
 final class LegacyModuleReportAdapter
 {
     /** Markers, private to the parse. Input control bytes are stripped first. */
-    private const M    = "\x01";
+    private const M = "\x01";
     private const NBSP = "\u{00A0}";
 
     /** @return list<LogEvent> */
@@ -57,9 +57,9 @@ final class LegacyModuleReportAdapter
         $events = $this->parse($legacyHtml);
 
         return match ($outcome) {
-            Outcome::Ok      => ModuleOperationResult::ok($dirname, $action, $events),
+            Outcome::Ok => ModuleOperationResult::ok($dirname, $action, $events),
             Outcome::Skipped => ModuleOperationResult::skipped($dirname, $action, $reason ?? ''),
-            Outcome::Failed  => ModuleOperationResult::failed($dirname, $action, $reason ?? '', $events),
+            Outcome::Failed => ModuleOperationResult::failed($dirname, $action, $reason ?? '', $events),
         };
     }
 
@@ -121,13 +121,13 @@ final class LegacyModuleReportAdapter
      */
     private function toEvents(string $marked): array
     {
-        $events        = [];
+        $events = [];
         $emphasisDepth = 0;
-        $errorDepth    = 0;
+        $errorDepth = 0;
 
         foreach (\explode("\n", $marked) as $line) {
             $fragments = [];
-            $buffer    = '';
+            $buffer = '';
             // Seeded from the state carried in, so a line that only CLOSES a span core
             // opened before the <br> still takes the severity. Reading $errorDepth
             // after the loop instead would miss it: the closing marker has already
@@ -141,38 +141,35 @@ final class LegacyModuleReportAdapter
                 \PREG_SPLIT_DELIM_CAPTURE | \PREG_SPLIT_NO_EMPTY
             );
 
-            $flush = static function () use (&$buffer, &$fragments, &$emphasisDepth): void {
-                if ('' !== $buffer) {
-                    $fragments[] = new LogFragment($buffer, $emphasisDepth > 0);
-                    $buffer      = '';
-                }
-            };
-
             foreach ((array) $parts as $part) {
                 switch ($part) {
                     case self::M . 'S':
-                        $flush();
+                        $this->flushBuffer($buffer, $fragments, $emphasisDepth);
                         ++$emphasisDepth;
+
                         break;
                     case self::M . 's':
-                        $flush();
+                        $this->flushBuffer($buffer, $fragments, $emphasisDepth);
                         $emphasisDepth = \max(0, $emphasisDepth - 1);
+
                         break;
                     case self::M . 'E':
                         ++$errorDepth;
                         $lineHadError = true;
+
                         break;
                     case self::M . 'e':
                         $errorDepth = \max(0, $errorDepth - 1);
+
                         break;
                     default:
                         $buffer .= $part;
                 }
             }
-            $flush();
+            $this->flushBuffer($buffer, $fragments, $emphasisDepth);
 
             $severity = ($lineHadError || $errorDepth > 0) ? LogSeverity::Error : LogSeverity::Info;
-            $event    = $this->withIndentExtracted($severity, $fragments);
+            $event = $this->withIndentExtracted($severity, $fragments);
 
             // Blank lines are an artifact of core's unbalanced </div></a> fragments,
             // not information. Dropping them here is why the renderer needs no
@@ -183,6 +180,28 @@ final class LegacyModuleReportAdapter
         }
 
         return $events;
+    }
+
+    /**
+     * Move the pending text into a fragment, carrying the emphasis state it was
+     * accumulated under, and reset the buffer.
+     *
+     * A method rather than the by-reference closure this used to be. The closure was
+     * rebuilt on every line of every transcript, and — because static analysis reads a
+     * closure body against the state at its DECLARATION, where the buffer has just
+     * been set to '' — the `'' !== $buffer` guard was reported as always false. The
+     * guard is real at runtime; it was the shape that could not be verified.
+     *
+     * @param list<LogFragment> $fragments
+     */
+    private function flushBuffer(string &$buffer, array &$fragments, int $emphasisDepth): void
+    {
+        if ('' === $buffer) {
+            return;
+        }
+
+        $fragments[] = new LogFragment($buffer, $emphasisDepth > 0);
+        $buffer = '';
     }
 
     /**
@@ -220,10 +239,10 @@ final class LegacyModuleReportAdapter
             return new LogEvent($severity, $fragments, 0);
         }
 
-        $units     = (int) \mb_strlen($lead[0], 'UTF-8');
-        $depth     = \intdiv($units, 2);
+        $units = \mb_strlen($lead[0], 'UTF-8');
+        $depth = \intdiv($units, 2);
         $remainder = \str_repeat(self::NBSP, $units % 2);
-        $rest      = $remainder . \substr($first->text, \strlen($lead[0]));
+        $rest = $remainder . \substr($first->text, \strlen($lead[0]));
 
         $fragments[0] = new LogFragment($rest, $first->emphasised);
         if ('' === $rest) {
