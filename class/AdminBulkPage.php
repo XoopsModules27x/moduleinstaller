@@ -338,23 +338,10 @@ final class AdminBulkPage
             $dirnameEsc = \htmlspecialchars($file, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8');
             $nameEsc = \htmlspecialchars($info['name'], \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8');
 
-            // The dirname lands in two different contexts and needs two different
-            // escapers. htmlspecialchars() is right for id='…'; it is WRONG inside the
-            // onclick JS string literal, because the browser HTML-decodes an attribute
-            // value BEFORE compiling it as JavaScript — so &#039; arrives at the JS
-            // parser as a bare quote and closes the literal. Core applies no character
-            // filter here (XoopsLists::getDirListAsArray() skips only dot-entries and
-            // 'cvs'), so a directory named  foo'); alert(1);//  reaches this line
-            // verbatim. json_encode() emits a complete, already-quoted JS literal, and
-            // the HEX flags keep <, >, &, ' and " out of the attribute altogether.
-            $dirnameJs = \json_encode(
-                $file,
-                \JSON_HEX_TAG | \JSON_HEX_AMP | \JSON_HEX_APOS | \JSON_HEX_QUOT
-            );
-            // false only for invalid UTF-8. An inert handler beats a malformed one.
-            $toggleJs = false === $dirnameJs
-                ? 'void 0'
-                : 'toggleModuleRow(' . $dirnameJs . ')';
+            // The dirname lands in two contexts and needs two escapers:
+            // htmlspecialchars() for id='…', and jsCall() for the handler — see there
+            // for why HTML escaping is the wrong tool inside an inline handler.
+            $toggleJs = self::jsCall('toggleModuleRow', $file);
             $searchBlob = \htmlspecialchars(
                 \mb_strtolower($info['name'] . ' ' . $file . ' ' . $info['description']),
                 \ENT_QUOTES | \ENT_SUBSTITUTE,
@@ -498,7 +485,7 @@ final class AdminBulkPage
         $nameAttr = 'modules[' . \htmlspecialchars($dirname, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . ']';
         $idYes = $safeId . '_1';
         $idNo = $safeId . '_2';
-        $onclick = "selectModule('" . \htmlspecialchars($dirname, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . "', this)";
+        $onclick = self::jsCall('selectModule', $dirname, 'this');
         // Core constants from language/<lang>/global.php, so a different domain.
         $yesLabel = Lang::core('_YES', 'Yes');
         $noLabel = Lang::core('_NO', 'No');
@@ -621,6 +608,60 @@ final class AdminBulkPage
         }
 
         return $html . '</ul>';
+    }
+
+    /**
+     * An inline-handler call whose string argument is safe in a JS context.
+     *
+     * Centralised because getting this wrong is silent, and this file got it wrong
+     * twice: htmlspecialchars() is an HTML escaper, and inside an event-handler
+     * attribute the browser HTML-DECODES the value before the JavaScript is
+     * compiled. An entity-escaped apostrophe therefore arrives at the JS parser as
+     * a bare quote and closes the string literal, so a folder named
+     *
+     *     foo'); alert(1);//
+     *
+     * became a live call. Core filters nothing — XoopsLists::getDirListAsArray()
+     * skips only dot-entries and 'cvs' — and an apostrophe is a legal filename
+     * character on NTFS and ext4 alike, so the name reaches the renderer verbatim.
+     *
+     * BOTH layers are needed, and the returned value is ATTRIBUTE-READY:
+     *
+     *   1. json_encode() for the JavaScript layer. The HEX flags keep <, >, &, '
+     *      and " out of the string BODY, so nothing in the value can end the
+     *      literal or open a tag.
+     *   2. htmlspecialchars() for the HTML layer, over the whole call. This is not
+     *      redundant: the HEX flags do not touch json_encode's own delimiters, so
+     *      the result still begins and ends with a literal double quote, which
+     *      would close a double-quoted attribute and turn the remainder into stray
+     *      attributes on the element. Escaping to &quot; keeps the attribute
+     *      intact, and the browser decodes it back to a plain quote before the
+     *      JavaScript is compiled — which is exactly the decode step that makes
+     *      HTML-escaping alone unsafe, used here in the direction that is correct.
+     *
+     * Any new inline handler in this class must go through here.
+     *
+     * @param string $function  JS function name — a literal in this file, never input
+     * @param string $argument  the untrusted value, encoded as a JS string literal
+     * @param string $extraArgs additional raw JS arguments, e.g. 'this'
+     *
+     * @return string ready to interpolate into a quoted HTML attribute as-is
+     */
+    private static function jsCall(string $function, string $argument, string $extraArgs = ''): string
+    {
+        $encoded = \json_encode(
+            $argument,
+            \JSON_HEX_TAG | \JSON_HEX_AMP | \JSON_HEX_APOS | \JSON_HEX_QUOT
+        );
+
+        // false only for invalid UTF-8. An inert handler beats a malformed one.
+        if (false === $encoded) {
+            return 'void 0';
+        }
+
+        $call = $function . '(' . $encoded . ('' === $extraArgs ? '' : ', ' . $extraArgs) . ')';
+
+        return \htmlspecialchars($call, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8');
     }
 
     /**
