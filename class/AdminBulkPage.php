@@ -53,7 +53,7 @@ final class AdminBulkPage
             if (! self::checkCsrf()) {
                 $pageHasForm = false;
                 $msg = Lang::text('_AM_MODULEINSTALLER_ERR_TOKEN', 'Invalid security token. Please try again.');
-                $content = "<div class='errorMsg'>" . \htmlspecialchars((string) $msg, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</div>';
+                $content = "<div class='errorMsg'>" . \htmlspecialchars($msg, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</div>';
             } else {
                 $handled = self::handlePost($action, self::successTitleFor($action));
                 $pageHasForm = $handled['pageHasForm'];
@@ -179,7 +179,7 @@ final class AdminBulkPage
     {
         $msg = Lang::text('_AM_MODULEINSTALLER_NO_MODULES', 'No modules found.');
 
-        return "<div class='x2-note confirmMsg'>" . \htmlspecialchars((string) $msg, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</div>';
+        return "<div class='x2-note confirmMsg'>" . \htmlspecialchars($msg, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</div>';
     }
 
     private static function successTitleFor(string $action): string
@@ -276,25 +276,32 @@ final class AdminBulkPage
         // Selected count is shown on the page title (.CPbigTitle) and sticky bar only.
         $content = '<div class="installer-list-toolbar">';
         $content .= '<label class="installer-filter-label" for="installer-module-filter">'
-            . \htmlspecialchars((string) $filterLbl, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</label> ';
+            . \htmlspecialchars($filterLbl, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</label> ';
         // type=text (not search) so theme/input styles apply; size gives a visible fallback width
         $content .= '<input type="text" id="installer-module-filter" class="installer-module-filter form-control" '
             . 'size="36" '
-            . 'placeholder="' . \htmlspecialchars((string) $filterPh, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '" '
-            . 'autocomplete="off" aria-label="' . \htmlspecialchars((string) $filterLbl, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '">';
+            . 'placeholder="' . \htmlspecialchars($filterPh, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '" '
+            . 'autocomplete="off" aria-label="' . \htmlspecialchars($filterLbl, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '">';
         if ('' !== $filterHint) {
             $content .= ' <span class="small installer-filter-hint">'
-                . \htmlspecialchars((string) $filterHint, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</span>';
+                . \htmlspecialchars($filterHint, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</span>';
         }
         $content .= '</div>';
         $content .= '<p id="installer-filter-empty" class="x2-note confirmMsg installer-hidden">'
-            . \htmlspecialchars((string) $noneMsg, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</p>';
+            . \htmlspecialchars($noneMsg, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</p>';
         // No ul/li wrapper: list markers broke first-row radio layout (black square + stretched Yes/No)
         $content .= "<div class='installer-module-list'>"
             . "<table class='outer module installer-module-table width100'>\n"
             . "<colgroup><col class='installer-col-img'><col class='installer-col-desc'><col class='installer-col-yesno'></colgroup>\n";
         $count = 0;
         $even = false;
+
+        // Row-invariant: the same lookup and the same escape for every row.
+        $toggleTitle = \htmlspecialchars(
+            Lang::text('_AM_MODULEINSTALLER_TOGGLE_SELECTION', 'Toggle selection'),
+            \ENT_QUOTES | \ENT_SUBSTITUTE,
+            'UTF-8'
+        );
 
         foreach ($dirnames as $file) {
             $file = \trim((string) $file);
@@ -330,7 +337,24 @@ final class AdminBulkPage
             $imgSrc = self::moduleLogoUrl($file, $info) ?? '';
             $dirnameEsc = \htmlspecialchars($file, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8');
             $nameEsc = \htmlspecialchars($info['name'], \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8');
-            $toggleJs = "toggleModuleRow('" . $dirnameEsc . "')";
+
+            // The dirname lands in two different contexts and needs two different
+            // escapers. htmlspecialchars() is right for id='…'; it is WRONG inside the
+            // onclick JS string literal, because the browser HTML-decodes an attribute
+            // value BEFORE compiling it as JavaScript — so &#039; arrives at the JS
+            // parser as a bare quote and closes the literal. Core applies no character
+            // filter here (XoopsLists::getDirListAsArray() skips only dot-entries and
+            // 'cvs'), so a directory named  foo'); alert(1);//  reaches this line
+            // verbatim. json_encode() emits a complete, already-quoted JS literal, and
+            // the HEX flags keep <, >, &, ' and " out of the attribute altogether.
+            $dirnameJs = \json_encode(
+                $file,
+                \JSON_HEX_TAG | \JSON_HEX_AMP | \JSON_HEX_APOS | \JSON_HEX_QUOT
+            );
+            // false only for invalid UTF-8. An inert handler beats a malformed one.
+            $toggleJs = false === $dirnameJs
+                ? 'void 0'
+                : 'toggleModuleRow(' . $dirnameJs . ')';
             $searchBlob = \htmlspecialchars(
                 \mb_strtolower($info['name'] . ' ' . $file . ' ' . $info['description']),
                 \ENT_QUOTES | \ENT_SUBSTITUTE,
@@ -340,15 +364,13 @@ final class AdminBulkPage
             $stripe = $even ? 'even' : 'odd';
             $rowClass = \trim($stripe . ($value !== 0 ? ' installer-row-selected' : ''));
             $content .= "<tr id='" . $dirnameEsc . "' class='" . $rowClass . "' data-search=\"" . $searchBlob . '"' . ">\n";
-            $toggleTitle = \htmlspecialchars(
-                Lang::text('_AM_MODULEINSTALLER_TOGGLE_SELECTION', 'Toggle selection'),
-                \ENT_QUOTES | \ENT_SUBSTITUTE,
-                'UTF-8'
-            );
             $content .= "    <td class='img installer-mod-toggle' onclick=\"" . $toggleJs . "\" title='" . $toggleTitle . "'>";
+            // alt='' for the same reason renderReport() uses it: the module name is
+            // rendered in the very next cell, so a described image makes a screen
+            // reader announce the name twice on every row. The logo is decorative.
             $content .= '' !== $imgSrc
                 ? "<img class='installer-mod-logo' src='" . \htmlspecialchars($imgSrc, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8')
-                    . "' alt='" . $nameEsc . "'>"
+                    . "' alt=''>"
                 : "<span class='installer-mod-logo'></span>";
             $content .= "</td>\n";
             $content .= "    <td class='installer-mod-toggle installer-mod-desc' onclick=\"" . $toggleJs . "\" title='" . $toggleTitle . "'>" . $spanOpen;
@@ -442,7 +464,7 @@ final class AdminBulkPage
         // <bdi>: the counter is a neutral numeral at a direction boundary, so in an
         // RTL admin '%d selected' rendered as "selected 1". The element is built here,
         // where it is a constant, rather than passed into the splitter.
-        [$before, $after] = self::selectedCountParts((string) $countTpl);
+        [$before, $after] = self::selectedCountParts($countTpl);
         $label = $before
             . '<bdi class="installer-selected-count-num" id="installer-selected-count">0</bdi>'
             . $after;
@@ -456,7 +478,7 @@ final class AdminBulkPage
             . '<div class="installer-sticky-countline">'
             . '<strong class="installer-selected-label">' . $label . '</strong>'
             . '<span id="installer-empty-warn" class="installer-empty-warn installer-hidden">'
-            . \htmlspecialchars((string) $noneMsg, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8')
+            . \htmlspecialchars($noneMsg, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8')
             . '</span></div>'
             . $actions
             . '</div>';
@@ -488,12 +510,12 @@ final class AdminBulkPage
             . '<label class="installer-yesno-opt" for="' . $idYes . '">'
             . '<input type="radio" name="' . $nameAttr . '" id="' . $idYes . '" value="1"'
             . $yesChk . ' onclick="' . $onclick . '">&nbsp;'
-            . \htmlspecialchars((string) $yesLabel, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8')
+            . \htmlspecialchars($yesLabel, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8')
             . '</label>&nbsp;&nbsp;'
             . '<label class="installer-yesno-opt" for="' . $idNo . '">'
             . '<input type="radio" name="' . $nameAttr . '" id="' . $idNo . '" value="0"'
             . $noChk . ' onclick="' . $onclick . '">&nbsp;'
-            . \htmlspecialchars((string) $noLabel, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8')
+            . \htmlspecialchars($noLabel, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8')
             . '</label></span>';
     }
 
@@ -511,7 +533,7 @@ final class AdminBulkPage
 
             return [
                 'pageHasForm' => false,
-                'content' => "<div class='errorMsg'>" . \htmlspecialchars((string) $msg, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</div>',
+                'content' => "<div class='errorMsg'>" . \htmlspecialchars($msg, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</div>',
                 'results' => [],
             ];
         }
@@ -535,7 +557,7 @@ final class AdminBulkPage
         if ([] === $results) {
             $msg = Lang::text('_AM_MODULEINSTALLER_NO_SELECTION_REPORT', 'No modules selected.');
 
-            return "<div class='x2-note confirmMsg'>" . \htmlspecialchars((string) $msg, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</div>';
+            return "<div class='x2-note confirmMsg'>" . \htmlspecialchars($msg, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</div>';
         }
 
         $html = '';
@@ -608,6 +630,15 @@ final class AdminBulkPage
      * not inserted into an HTML attribute directly. Result reports call this
      * helper to keep the legacy logo while preventing traversal or URL injection.
      *
+     * The dirname allowlist is deliberately NOT widened to accept dots. It is not a
+     * logo rule — it is this module's dirname contract, applied identically by
+     * ModuleCatalog::existsOnDisk() and ModuleSet::withDirnames(). A module whose
+     * folder contains a dot is rejected by the catalog before a row is ever built,
+     * so relaxing it here alone would suppress nothing that currently renders; it
+     * would only make the one security-relevant path disagree with the other two.
+     * Widening is a module-wide decision that needs core's agreement and its own
+     * tests, not a local edit to the helper that happens to be reviewed.
+     *
      * @param array{
      *     dirname:string,
      *     name:string,
@@ -627,8 +658,16 @@ final class AdminBulkPage
             return null;
         }
 
+        // 1 === preg_match(), not a bare truth test: preg_match() returns int|false,
+        // and its false-on-error is falsy — so a bare call would let a control
+        // character through on the one occasion the guard actually mattered. Matches
+        // the form the dirname check above already uses.
         $image = \str_replace('\\', '/', \trim($info['image']));
-        if ('' === $image || \str_starts_with($image, '/') || \preg_match('/[\x00-\x1F\x7F]/', $image)) {
+        if (
+            '' === $image
+            || \str_starts_with($image, '/')
+            || 1 === \preg_match('/[\x00-\x1F\x7F]/', $image)
+        ) {
             return null;
         }
 
@@ -657,6 +696,17 @@ final class AdminBulkPage
             ? \str_starts_with(\mb_strtolower($logoPath), \mb_strtolower($rootPrefix))
             : \str_starts_with($logoPath, $rootPrefix);
         if (! $inside) {
+            return null;
+        }
+
+        // Containment proves the target is inside the module, not that it is an image.
+        // A manifest is third-party PHP and may name any contained file, and the value
+        // becomes an <img src> the browser will GET — pointing it at a .php in the same
+        // folder would execute that script server-side on every report render. An
+        // extension allowlist is the cheap half of that; the module's own files are
+        // web-reachable regardless, so this bounds what THIS page will ask for.
+        $extension = \mb_strtolower(\pathinfo($logoPath, \PATHINFO_EXTENSION));
+        if (! \in_array($extension, ['png', 'gif', 'jpg', 'jpeg', 'webp', 'svg', 'ico'], true)) {
             return null;
         }
 
@@ -724,15 +774,15 @@ final class AdminBulkPage
 
         $html = '<div id="installer-set-toolbar" class="installer-set-toolbar clearfix">';
         $html .= '<label for="installer-set-select" class="installer-set-toolbar-label" title="'
-            . \htmlspecialchars((string) $hint, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '">'
-            . \htmlspecialchars((string) $label, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</label> ';
+            . \htmlspecialchars($hint, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '">'
+            . \htmlspecialchars($label, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</label> ';
         $html .= '<select id="installer-set-select" name="installer_set_select" class="form-control installer-set-select" '
             . 'data-sets="' . $jsonAttr . '" title="'
-            . \htmlspecialchars((string) $hint, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '">';
-        $html .= '<option value="">' . \htmlspecialchars((string) $placeholder, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</option>';
+            . \htmlspecialchars($hint, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '">';
+        $html .= '<option value="">' . \htmlspecialchars($placeholder, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</option>';
 
         if ([] === $sets) {
-            $html .= '<option value="" disabled>' . \htmlspecialchars((string) $emptyHint, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</option>';
+            $html .= '<option value="" disabled>' . \htmlspecialchars($emptyHint, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</option>';
         } else {
             foreach ($sets as $set) {
                 $count = $set->countModules();
@@ -745,7 +795,7 @@ final class AdminBulkPage
 
         $html .= '</select>';
         $html .= ' <span class="small installer-set-toolbar-hint">'
-            . \htmlspecialchars((string) $hint, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</span>';
+            . \htmlspecialchars($hint, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8') . '</span>';
         $html .= '</div>';
 
         // Self-contained handler: works even if xo-installer.js is missing or cached stale.
