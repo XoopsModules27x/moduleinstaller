@@ -40,7 +40,6 @@ class ModuleActionService
         return $this->catalog;
     }
 
-
     /**
      * Ensure system modulesadmin helpers are loaded.
      */

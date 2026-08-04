@@ -23,19 +23,19 @@ namespace XoopsModules\Moduleinstaller\Report;
  */
 enum LogSeverity: string
 {
-    case Info    = 'info';
+    case Info = 'info';
     case Success = 'success';
     case Warning = 'warning';
-    case Error   = 'error';
+    case Error = 'error';
 
     /** CSS class the renderer emits. Empty for Info, which needs no marking. */
     public function cssClass(): string
     {
         return match ($this) {
-            self::Info    => '',
+            self::Info => '',
             self::Success => 'installer-log-success',
             self::Warning => 'installer-log-warning',
-            self::Error   => 'installer-log-error',
+            self::Error => 'installer-log-error',
         };
     }
 }

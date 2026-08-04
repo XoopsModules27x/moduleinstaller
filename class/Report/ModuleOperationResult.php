@@ -104,9 +104,20 @@ final readonly class ModuleOperationResult
         );
     }
 
-    public function isOk(): bool      { return Outcome::Ok === $this->outcome; }
-    public function isSkipped(): bool { return Outcome::Skipped === $this->outcome; }
-    public function isFailed(): bool  { return Outcome::Failed === $this->outcome; }
+    public function isOk(): bool
+    {
+        return Outcome::Ok === $this->outcome;
+    }
+
+    public function isSkipped(): bool
+    {
+        return Outcome::Skipped === $this->outcome;
+    }
+
+    public function isFailed(): bool
+    {
+        return Outcome::Failed === $this->outcome;
+    }
 
     /**
      * True when any transcript line reported an error, even on an Ok outcome.
@@ -154,10 +165,10 @@ final readonly class ModuleOperationResult
     public function severity(): LogSeverity
     {
         return match (true) {
-            $this->isFailed()        => LogSeverity::Error,
-            $this->isSkipped()       => LogSeverity::Warning,
-            $this->hasErrorEvents()  => LogSeverity::Warning,
-            default                  => LogSeverity::Success,
+            $this->isFailed() => LogSeverity::Error,
+            $this->isSkipped() => LogSeverity::Warning,
+            $this->hasErrorEvents() => LogSeverity::Warning,
+            default => LogSeverity::Success,
         };
     }
 
@@ -171,18 +182,18 @@ final readonly class ModuleOperationResult
     public function toArray(): array
     {
         return [
-            'dirname'  => $this->dirname,
-            'action'   => $this->action,
-            'outcome'  => $this->outcome->value,
+            'dirname' => $this->dirname,
+            'action' => $this->action,
+            'outcome' => $this->outcome->value,
             // The combined verdict, so a JSON consumer does not have to re-implement
             // the outcome/transcript precedence rule to colour one row.
             'severity' => $this->severity()->value,
-            'reason'   => $this->reason,
-            'events'   => \array_map(
+            'reason' => $this->reason,
+            'events' => \array_map(
                 static fn (LogEvent $e): array => [
                     'severity' => $e->severity->value,
-                    'depth'    => $e->depth,
-                    'text'     => $e->plainText(),
+                    'depth' => $e->depth,
+                    'text' => $e->plainText(),
                 ],
                 $this->events
             ),

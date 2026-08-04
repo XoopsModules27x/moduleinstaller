@@ -23,17 +23,17 @@ namespace XoopsModules\Moduleinstaller\Report;
  */
 enum Outcome: string
 {
-    case Ok      = 'ok';
+    case Ok = 'ok';
     case Skipped = 'skip';
-    case Failed  = 'fail';
+    case Failed = 'fail';
 
     /** CSS class for the report row — the match that currently lives in AdminBulkPage. */
     public function cssClass(): string
     {
         return match ($this) {
-            self::Ok      => 'success',
+            self::Ok => 'success',
             self::Skipped => 'warning',
-            self::Failed  => 'error',
+            self::Failed => 'error',
         };
     }
 }
