@@ -49,6 +49,7 @@ Notes
   was untranslatable regardless of the language pack installed.
 - Every lookup goes through class/Lang.php, which carries the English text as a
   fallback: a language pack that omits one of these degrades to English instead of
-  fataling (an undefined constant is a fatal Error on PHP 8, not a notice).
+  causing a fatal error (an undefined constant is a fatal Error on PHP 8, not a
+  notice).
 - Translators: %1$s / %2$s ordering may be reordered freely; Lang::format() passes
   the arguments positionally.

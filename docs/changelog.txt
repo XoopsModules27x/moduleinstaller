@@ -37,7 +37,7 @@ Structured reports and compatibility
   the distinction between the operation outcome and errors reported by core.
 
 Internationalisation and admin UI
-- Added 27 translatable admin-report strings and Lang helpers with safe English
+- Added 30 translatable admin-report strings and Lang helpers with safe English
   fallbacks for missing, blank, non-scalar, or malformed translations.
 - Added bidirectional isolation for counters, versions, statuses, folders, and
   plan summaries in RTL admin interfaces.
@@ -45,9 +45,12 @@ Internationalisation and admin UI
   to logical properties and removed module-owned inline style attributes.
 
 Tests
-- Expanded the suite to 169 tests covering hostile log input, structured-result
-  contracts, language fallbacks, logo-path validation, UTF-8, and real timeout/
-  crash handling on POSIX and Windows.
+- Expanded the suite to 109 tests / 264 assertions covering hostile log input,
+  structured-result contracts, language fallbacks, logo-path rejection and UTF-8
+  boundary handling.
+- The module-logo POSITIVE path and the image-extension allowlist are not unit
+  covered: both need a real file under XOOPS_ROOT_PATH/modules/<dirname>/, so they
+  belong to the integration suite. Only the rejection contract is asserted here.
 
 --------------------------------------------------------------------------------
 1.6.0 Stable  [2026-07-23]

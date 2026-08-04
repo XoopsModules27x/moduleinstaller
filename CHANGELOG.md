@@ -20,7 +20,7 @@ Baseline comparison for **1.6.0**: previous public tree `1.5.1-Final`
   HTML-independent report consumption
 - `ModuleActionService::operationResult()` and `operationResults()` for callers
   adopting `Report\ModuleOperationResult`
-- 27 translatable admin-report strings with safe English fallbacks
+- 30 translatable admin-report strings with safe English fallbacks
 
 ### Changed
 
@@ -31,8 +31,9 @@ Baseline comparison for **1.6.0**: previous public tree `1.5.1-Final`
 - RTL output now isolates counters, versions, statuses, folders, and plan summaries
 - Admin report layout uses logical CSS properties, removes module-owned inline
   styles, improves long-log scrolling, and avoids duplicate screen-reader labels
-- Expanded cross-platform tests for hostile log input, structured-result contracts,
-  translations, logo paths, UTF-8, crashes, and timeouts
+- Expanded tests (109 tests / 264 assertions) for hostile log input,
+  structured-result contracts, translation fallbacks, module-logo path rejection,
+  and UTF-8 boundary handling
 
 ### Fixed
 
