@@ -75,7 +75,9 @@ final class Lang
      *     and which renders as an invisible button or an empty table header. A blank
      *     label is not a deliberate translation choice often enough to be worth
      *     honouring, and English text in an Arabic admin is recoverable where a
-     *     missing control is not;
+     *     missing control is not. "Whitespace" here includes the Unicode blanks — a
+     *     lone NBSP is what a translation tool emits for "intentionally empty", and it
+     *     renders exactly as invisibly as a space does;
      *   - defined as something that is not SCALAR. Casting an array to string in PHP 8
      *     emits a warning and yields the literal "Array"; a language file is ordinary
      *     PHP, so this is reachable by a typo rather than by malice.
@@ -104,7 +106,24 @@ final class Lang
 
         $value = (string) $value;
 
-        return '' === \trim($value) ? null : $value;
+        if ('' === \trim($value)) {
+            return null;
+        }
+
+        // trim() knows only ASCII whitespace, so the test above still passes a value
+        // built solely from Unicode blanks — an NBSP-only constant being the common
+        // one. Rejected with a pattern rather than by widening the trim() charlist:
+        // trim() matches BYTES, and \xA0 is an ordinary UTF-8 continuation byte, so
+        // trimming "\xC2\xA0" truncates any value ending in a character that happens
+        // to end in \xA0 — "†" (\xE2\x80\xA0) becomes invalid UTF-8. That would put a
+        // mojibake bug in the one class whose job is surviving bad language packs.
+        // preg_match() returns false (not 1) on invalid UTF-8, which leaves such a
+        // value usable — the same answer the ASCII test above already gave it.
+        if (1 === \preg_match('/^[\s\p{Z}\x{FEFF}]+$/u', $value)) {
+            return null;
+        }
+
+        return $value;
     }
 
     /**
@@ -177,17 +196,30 @@ final class Lang
      * Prefer Xmf\Language::load(): it picks the configured language, falls back to
      * english on its own, and validates the path. xoops_loadLanguage() is the
      * fallback for a core build without Xmf.
+     *
+     * Both routes `include` third-party PHP. A language pack is ordinary PHP, so it
+     * can throw — or be a parse error, which is a catchable `ParseError` on PHP 8.
+     * Uncaught, that would propagate out of text()/core() and take the admin page
+     * down, which is precisely the failure this class exists to prevent: a pack bad
+     * enough to throw is exactly the pack whose English fallback matters most. The
+     * attempt flag is set by the callers BEFORE this runs, so swallowing here cannot
+     * produce a retry loop — the next lookup goes straight to the fallback.
      */
     private static function load(string $name, string $domain): void
     {
-        if (\class_exists(\Xmf\Language::class)) {
-            \Xmf\Language::load($name, $domain);
+        try {
+            if (\class_exists(\Xmf\Language::class)) {
+                \Xmf\Language::load($name, $domain);
 
-            return;
-        }
+                return;
+            }
 
-        if (\function_exists('xoops_loadLanguage')) {
-            \xoops_loadLanguage($name, $domain);
+            if (\function_exists('xoops_loadLanguage')) {
+                \xoops_loadLanguage($name, $domain);
+            }
+        } catch (\Throwable) {
+            // Deliberately swallowed: usable() reports the constant as unavailable and
+            // every caller already carries the English text it needs.
         }
     }
 }
