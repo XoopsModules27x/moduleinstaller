@@ -6,10 +6,10 @@ and deactivate modules in bulk, and to manage Module Sets for focused testing.
 
 Version
 -------
-1.6.0 Stable (2026-07-23)
+1.7.0 Alpha 1 (2026-07-30)
 Previous public baseline: 1.5.1 Final (2022-12-15)
 
-See CHANGELOG.md and docs/changelog.txt for the full 1.5.1 → 1.6.0 delta.
+See CHANGELOG.md and docs/changelog.txt for the full history, and docs/lang_diff.txt for language changes.
 
 
 Requirements

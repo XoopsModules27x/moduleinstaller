@@ -107,14 +107,19 @@ class ModuleActionService
         $action = \mb_strtolower(\trim($action));
 
         if ('' === $dirname) {
-            return new ModuleActionResult($dirname, ModuleActionResult::STATUS_SKIP, 'Empty dirname', $action);
+            return new ModuleActionResult($dirname, ModuleActionResult::STATUS_SKIP, Lang::text('_AM_MODULEINSTALLER_RES_EMPTY_DIRNAME', 'Empty dirname'), $action);
         }
 
         if ($this->catalog->isProtected($dirname) && \in_array($action, [self::ACTION_UNINSTALL, self::ACTION_DEACTIVATE], true)) {
             return new ModuleActionResult(
                 $dirname,
                 ModuleActionResult::STATUS_SKIP,
-                \sprintf('Protected module "%s" cannot be %sd', $dirname, $action),
+                Lang::format(
+                    '_AM_MODULEINSTALLER_RES_PROTECTED',
+                    'Protected module "%1$s": action "%2$s" is not allowed.',
+                    $dirname,
+                    $action
+                ),
                 $action
             );
         }
@@ -128,16 +133,62 @@ class ModuleActionService
                 self::ACTION_ACTIVATE => $this->doActivate($dirname),
                 self::ACTION_DEACTIVATE => $this->doDeactivate($dirname),
                 self::ACTION_UPDATE => $this->doUpdate($dirname),
-                default => new ModuleActionResult($dirname, ModuleActionResult::STATUS_FAIL, 'Unknown action: ' . $action, $action),
+                default => new ModuleActionResult(
+                    $dirname,
+                    ModuleActionResult::STATUS_FAIL,
+                    Lang::format('_AM_MODULEINSTALLER_RES_UNKNOWN_ACTION', 'Unknown action: %s', $action),
+                    $action
+                ),
             };
         } catch (\Throwable $e) {
             return new ModuleActionResult(
                 $dirname,
                 ModuleActionResult::STATUS_FAIL,
-                'Exception: ' . $e->getMessage(),
+                Lang::format('_AM_MODULEINSTALLER_RES_EXCEPTION', 'Exception: %s', $e->getMessage()),
                 $action
             );
         }
+    }
+
+    /**
+     * The same run, as a structured result.
+     *
+     * ADDITIVE, deliberately. runOne() keeps its signature and its return type for the
+     * whole XOOPS 2.8 line, because every third-party caller in existence calls it and
+     * a service method is a published contract even when nobody published it. This is
+     * the door out: new code takes {@see Report\ModuleOperationResult}, old code keeps
+     * working unchanged, and neither has to know about the other.
+     *
+     * Until core returns structured data, this is a projection of the legacy shape
+     * rather than a second implementation — there is exactly one place that decides
+     * what an action did (runOne), and it stays that way. When core 4.0 emits events
+     * directly, the arrow reverses: this becomes the real method and messageHtml()
+     * becomes the projection.
+     *
+     * The conversion itself is NOT here. It is a pure function of one result, so it
+     * lives on {@see ModuleActionResult::toOperationResult()} where a unit test can
+     * reach it without a running XOOPS. It was written here first, and that is exactly
+     * why its duplicated-transcript bug survived a green suite: no test could construct
+     * a service, so nothing exercised the composition of two individually-tested
+     * classes. A projection that only exists inside a service is a projection nobody
+     * can test.
+     */
+    public function operationResult(string $action, string $dirname): Report\ModuleOperationResult
+    {
+        return $this->runOne($action, $dirname)->toOperationResult();
+    }
+
+    /**
+     * @param list<string> $dirnames
+     *
+     * @return list<Report\ModuleOperationResult>
+     */
+    public function operationResults(string $action, array $dirnames): array
+    {
+        return \array_map(
+            static fn (ModuleActionResult $r): Report\ModuleOperationResult => $r->toOperationResult(),
+            $this->runMany($action, $dirnames)
+        );
     }
 
     /**
@@ -157,77 +208,77 @@ class ModuleActionService
     private function doInstall(string $dirname): ModuleActionResult
     {
         if (! $this->catalog->existsOnDisk($dirname)) {
-            return new ModuleActionResult($dirname, ModuleActionResult::STATUS_SKIP, 'Not found on disk', self::ACTION_INSTALL);
+            return new ModuleActionResult($dirname, ModuleActionResult::STATUS_SKIP, Lang::text('_AM_MODULEINSTALLER_RES_NOT_ON_DISK', 'Not found on disk'), self::ACTION_INSTALL);
         }
         if ($this->catalog->isInstalled($dirname)) {
-            return new ModuleActionResult($dirname, ModuleActionResult::STATUS_SKIP, 'Already installed', self::ACTION_INSTALL);
+            return new ModuleActionResult($dirname, ModuleActionResult::STATUS_SKIP, Lang::text('_AM_MODULEINSTALLER_RES_ALREADY_INSTALLED', 'Already installed'), self::ACTION_INSTALL);
         }
 
         $msg = \xoops_module_install($dirname);
 
-        return $this->verifiedResult($dirname, self::ACTION_INSTALL, (string) $msg, true, null, 'Install did not complete');
+        return $this->verifiedResult($dirname, self::ACTION_INSTALL, (string) $msg, true, null, Lang::text('_AM_MODULEINSTALLER_RES_FAIL_INSTALL', 'Install did not complete'));
     }
 
     private function doUninstall(string $dirname): ModuleActionResult
     {
         if (! $this->catalog->isInstalled($dirname)) {
-            return new ModuleActionResult($dirname, ModuleActionResult::STATUS_SKIP, 'Not installed', self::ACTION_UNINSTALL);
+            return new ModuleActionResult($dirname, ModuleActionResult::STATUS_SKIP, Lang::text('_AM_MODULEINSTALLER_RES_NOT_INSTALLED', 'Not installed'), self::ACTION_UNINSTALL);
         }
 
         $msg = \xoops_module_uninstall($dirname);
 
-        return $this->verifiedResult($dirname, self::ACTION_UNINSTALL, (string) $msg, false, null, 'Uninstall did not complete');
+        return $this->verifiedResult($dirname, self::ACTION_UNINSTALL, (string) $msg, false, null, Lang::text('_AM_MODULEINSTALLER_RES_FAIL_UNINSTALL', 'Uninstall did not complete'));
     }
 
     private function doActivate(string $dirname): ModuleActionResult
     {
         $module = $this->catalog->getInstalled($dirname);
         if (! $module instanceof \XoopsModule) {
-            return new ModuleActionResult($dirname, ModuleActionResult::STATUS_SKIP, 'Not installed (cannot activate)', self::ACTION_ACTIVATE);
+            return new ModuleActionResult($dirname, ModuleActionResult::STATUS_SKIP, Lang::text('_AM_MODULEINSTALLER_RES_NOT_INSTALLED_ACTIVATE', 'Not installed (cannot activate)'), self::ACTION_ACTIVATE);
         }
         if ($module->isActive()) {
-            return new ModuleActionResult($dirname, ModuleActionResult::STATUS_SKIP, 'Already active', self::ACTION_ACTIVATE);
+            return new ModuleActionResult($dirname, ModuleActionResult::STATUS_SKIP, Lang::text('_AM_MODULEINSTALLER_RES_ALREADY_ACTIVE', 'Already active'), self::ACTION_ACTIVATE);
         }
 
         $mid = (int) $module->getVar('mid');
         if ($mid <= 0) {
-            return new ModuleActionResult($dirname, ModuleActionResult::STATUS_FAIL, 'Invalid module id', self::ACTION_ACTIVATE);
+            return new ModuleActionResult($dirname, ModuleActionResult::STATUS_FAIL, Lang::text('_AM_MODULEINSTALLER_RES_INVALID_MID', 'Invalid module id'), self::ACTION_ACTIVATE);
         }
 
         $msg = \xoops_module_activate($mid);
 
-        return $this->verifiedResult($dirname, self::ACTION_ACTIVATE, (string) $msg, true, true, 'Activation did not take effect');
+        return $this->verifiedResult($dirname, self::ACTION_ACTIVATE, (string) $msg, true, true, Lang::text('_AM_MODULEINSTALLER_RES_FAIL_ACTIVATE', 'Activation did not take effect'));
     }
 
     private function doDeactivate(string $dirname): ModuleActionResult
     {
         $module = $this->catalog->getInstalled($dirname);
         if (! $module instanceof \XoopsModule) {
-            return new ModuleActionResult($dirname, ModuleActionResult::STATUS_SKIP, 'Not installed (cannot deactivate)', self::ACTION_DEACTIVATE);
+            return new ModuleActionResult($dirname, ModuleActionResult::STATUS_SKIP, Lang::text('_AM_MODULEINSTALLER_RES_NOT_INSTALLED_DEACTIVATE', 'Not installed (cannot deactivate)'), self::ACTION_DEACTIVATE);
         }
         if (! $module->isActive()) {
-            return new ModuleActionResult($dirname, ModuleActionResult::STATUS_SKIP, 'Already inactive', self::ACTION_DEACTIVATE);
+            return new ModuleActionResult($dirname, ModuleActionResult::STATUS_SKIP, Lang::text('_AM_MODULEINSTALLER_RES_ALREADY_INACTIVE', 'Already inactive'), self::ACTION_DEACTIVATE);
         }
 
         $mid = (int) $module->getVar('mid');
         if ($mid <= 0) {
-            return new ModuleActionResult($dirname, ModuleActionResult::STATUS_FAIL, 'Invalid module id', self::ACTION_DEACTIVATE);
+            return new ModuleActionResult($dirname, ModuleActionResult::STATUS_FAIL, Lang::text('_AM_MODULEINSTALLER_RES_INVALID_MID', 'Invalid module id'), self::ACTION_DEACTIVATE);
         }
 
         $msg = \xoops_module_deactivate($mid);
 
         // Core silently refuses to deactivate system/start-page modules; a clean
         // deactivation must leave the module installed AND inactive (not vanished).
-        return $this->verifiedResult($dirname, self::ACTION_DEACTIVATE, (string) $msg, true, false, 'Deactivation did not take effect (start-page or protected module?)');
+        return $this->verifiedResult($dirname, self::ACTION_DEACTIVATE, (string) $msg, true, false, Lang::text('_AM_MODULEINSTALLER_RES_FAIL_DEACTIVATE', 'Deactivation did not take effect (start-page or protected module?)'));
     }
 
     private function doUpdate(string $dirname): ModuleActionResult
     {
         if (! $this->catalog->isInstalled($dirname)) {
-            return new ModuleActionResult($dirname, ModuleActionResult::STATUS_SKIP, 'Not installed', self::ACTION_UPDATE);
+            return new ModuleActionResult($dirname, ModuleActionResult::STATUS_SKIP, Lang::text('_AM_MODULEINSTALLER_RES_NOT_INSTALLED', 'Not installed'), self::ACTION_UPDATE);
         }
         if (! $this->catalog->existsOnDisk($dirname)) {
-            return new ModuleActionResult($dirname, ModuleActionResult::STATUS_SKIP, 'Not found on disk', self::ACTION_UPDATE);
+            return new ModuleActionResult($dirname, ModuleActionResult::STATUS_SKIP, Lang::text('_AM_MODULEINSTALLER_RES_NOT_ON_DISK', 'Not found on disk'), self::ACTION_UPDATE);
         }
 
         $msg = \xoops_module_update($dirname);
@@ -237,7 +288,7 @@ class ModuleActionService
         // update callback leaves the module installed at the new version. That failure
         // is therefore not detectable from DB state — we can only confirm the module
         // did not vanish.
-        return $this->verifiedResult($dirname, self::ACTION_UPDATE, (string) $msg, true, null, 'Update did not complete');
+        return $this->verifiedResult($dirname, self::ACTION_UPDATE, (string) $msg, true, null, Lang::text('_AM_MODULEINSTALLER_RES_FAIL_UPDATE', 'Update did not complete'));
     }
 
     /**
@@ -254,7 +305,16 @@ class ModuleActionService
             // Post-action state could not be read (no DB / query failed). For a
             // destructive bulk tool an unverifiable outcome is reported as a failure so
             // a genuinely failed operation is never silently presented as success.
-            return new ModuleActionResult($dirname, ModuleActionResult::STATUS_FAIL, 'Result could not be verified (module state unreadable): ' . $msg, $action);
+            return new ModuleActionResult(
+                $dirname,
+                ModuleActionResult::STATUS_FAIL,
+                Lang::format(
+                    '_AM_MODULEINSTALLER_RES_UNVERIFIED',
+                    'Result could not be verified (module state unreadable): %s',
+                    $msg
+                ),
+                $action
+            );
         }
 
         $reached = $state['installed'] === $wantInstalled

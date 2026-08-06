@@ -1,6 +1,56 @@
 ModuleInstaller CHANGELOG
 =========================
-Compared to previous public baseline 1.5.1-Final (L:\GitHub\00mambax7\moduleinstaller / 2022-12-15).
+
+--------------------------------------------------------------------------------
+1.7.0 Alpha 1  [2026-07-30]
+Dev: XOOPS 2.7.0+, PHP 8.2+, mtools 1.2.0+
+--------------------------------------------------------------------------------
+
+Highlights
+- Rebuilt install-action reporting as structured data that can be rendered safely
+  to HTML or consumed as plain text, CLI output, logs, or JSON.
+- Hardened admin reports against unsafe module-supplied markup, paths, malformed
+  manifests, invalid UTF-8, and incomplete or malformed language packs.
+- Improved translated and RTL admin output, accessibility, and responsive styling
+  without breaking existing ModuleActionService callers.
+
+Security / correctness
+- The install-log renderer now parses untrusted core HTML into typed events,
+  escapes every value exactly once, emits only fixed module-owned markup, and
+  discards executable or raw-text element bodies.
+- Module logo URLs now use one validated, platform-aware path resolver; unsafe,
+  remote, missing, and traversal paths are rejected.
+- Manifest loading failures no longer replace a completed operation report with a
+  blank page.
+- Fixed invalid UTF-8 caused by byte-based NBSP trimming and duplicate failure
+  transcripts in structured output.
+
+Structured reports and compatibility
+- Added the class/Report/ package with typed log fragments, events, severities,
+  outcomes, operation results, a legacy adapter, and the HTML renderer.
+- ModuleActionResult now exposes events(), messageText(), and
+  toOperationResult(); ModuleActionService adds operationResult() and
+  operationResults().
+- ModuleActionResult is deprecated in favor of Report\ModuleOperationResult, while
+  existing runOne()/runMany() signatures remain supported through XOOPS 2.8.
+- Structured results expose a combined severity for consumers while preserving
+  the distinction between the operation outcome and errors reported by core.
+
+Internationalisation and admin UI
+- Added 30 translatable admin-report strings and Lang helpers with safe English
+  fallbacks for missing, blank, non-scalar, or malformed translations.
+- Added bidirectional isolation for counters, versions, statuses, folders, and
+  plan summaries in RTL admin interfaces.
+- Improved long-report scrolling and screen-reader ordering; converted module CSS
+  to logical properties and removed module-owned inline style attributes.
+
+Tests
+- Expanded the suite to 109 tests / 264 assertions covering hostile log input,
+  structured-result contracts, language fallbacks, logo-path rejection and UTF-8
+  boundary handling.
+- The module-logo POSITIVE path and the image-extension allowlist are not unit
+  covered: both need a real file under XOOPS_ROOT_PATH/modules/<dirname>/, so they
+  belong to the integration suite. Only the rejection contract is asserted here.
 
 --------------------------------------------------------------------------------
 1.6.0 Stable  [2026-07-23]
@@ -66,7 +116,7 @@ Quality / tooling (new vs 1.5.1)
 - phpstan.neon and phpstan analysis notes.
 - Expanded language strings (admin sets UI, apply-set hints).
 
-UX polish (still 1.6.0)
+UX polish (introduced in 1.6.0)
 - Apply Set form: clearer vertical spacing between intro, Action, Preview plan,
   Set member status, confirm checkbox, and Run/Cancel.
 - Module Set edit: selected members highlighted with light green (#E6EFC2),
@@ -75,7 +125,7 @@ UX polish (still 1.6.0)
   selection (same as radio / checkbox).
 - docs/TUTORIAL.md end-user walkthrough.
 
-Phase 1–2 UX (still 1.6.0, 2026-07-23)
+Phase 1–2 UX (introduced in 1.6.0, 2026-07-23)
 - Bulk + set-edit filter box; keyboard / and A; sticky “N selected” bar;
   empty Yes selection blocked on submit.
 - Status badges; Apply plan summary counts; Focus/Uninstall confirm copy split;
@@ -87,7 +137,7 @@ Phase 1–2 UX (still 1.6.0, 2026-07-23)
 - ModuleCatalog::candidatesFor / needsUpdate helpers.
 - docs/TODO.md updated; docs/MTOOLS-INVESTIGATION.md (Phase 3 prerequisite).
 
-Phase 3 structure & polish (still 1.6.0, 2026-07-23)
+Phase 3 structure & polish (introduced in 1.6.0, 2026-07-23)
 - Bulk tabs: AdminBulkPage::serve() only (no install_tpl / InstallWizard dual chrome).
 - Thin admin wrappers; CSRF on bulk POST; renderReport in presentation layer.
 - Removed extras/, wizard files (InstallWizard, common.inc, install_tpl, page.php,

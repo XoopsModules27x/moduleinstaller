@@ -241,7 +241,7 @@ function renderSetList(ModuleSetRepository $repository, ModuleSetResolver $resol
     $adminObject->addItemButton(_AM_MODULEINSTALLER_SET_FROM_ACTIVE, 'javascript:document.getElementById("form-from-active").submit();', 'button_ok');
     $adminObject->displayButton('left');
 
-    echo '<form id="form-from-active" method="post" action="sets.php" style="display:none;">';
+    echo '<form id="form-from-active" method="post" action="sets.php" class="installer-hidden">';
     echo $GLOBALS['xoopsSecurity']->getTokenHTML();
     echo '<input type="hidden" name="op" value="create_from_active">';
     echo '<input type="hidden" name="name" value="' . \htmlspecialchars(_AM_MODULEINSTALLER_SET_FROM_ACTIVE_DEFAULT, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '">';
@@ -292,7 +292,7 @@ function renderSetList(ModuleSetRepository $repository, ModuleSetResolver $resol
         }
         echo '</td>';
         echo '<td class="center">' . $set->countModules() . '</td>';
-        echo '<td class="center">' . ($missing > 0 ? '<span style="color:#c00;font-weight:bold;">' . $missing . '</span>' : '0') . '</td>';
+        echo '<td class="center">' . ($missing > 0 ? '<span class="installer-log-error">' . $missing . '</span>' : '0') . '</td>';
         echo '<td class="center">';
         echo '<a href="sets.php?op=apply_form&amp;id=' . \rawurlencode($set->getId()) . '" title="' . \htmlspecialchars(_AM_MODULEINSTALLER_SET_TIP_APPLY, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '">' . _AM_MODULEINSTALLER_SET_APPLY . '</a> | ';
         echo '<a href="sets.php?op=edit&amp;id=' . \rawurlencode($set->getId()) . '">' . _EDIT . '</a> | ';
@@ -392,7 +392,7 @@ function renderSetEditForm(
     echo ' <span class="small installer-filter-hint">' . _AM_MODULEINSTALLER_FILTER_HINT . '</span>';
     echo '</div>';
     echo '</div>';
-    echo '<p id="installer-filter-empty" class="x2-note confirmMsg" style="display:none;">' . _AM_MODULEINSTALLER_SET_FILTER_NONE . '</p>';
+    echo '<p id="installer-filter-empty" class="x2-note confirmMsg installer-hidden">' . _AM_MODULEINSTALLER_SET_FILTER_NONE . '</p>';
 
     $onDisk = $catalog->listOnDisk();
     // Include missing members so user can uncheck/remove them
@@ -418,8 +418,9 @@ function renderSetEditForm(
         $inSet = isset($selectedMap[$dirname]);
         $checked = $inSet ? ' checked' : '';
         $rowClass = $class . ' set-mod-row' . ($inSet ? ' installer-row-selected' : '');
-        $cellBg = $inSet ? 'background-color:var(--installer-selected,#E6EFC2);' : '';
-        $rowStyle = $inSet ? ' style="background-color:var(--installer-selected,#E6EFC2);"' : '';
+        // Row and cell colour come from .installer-row-selected in admin.css, which
+        // declares them with !important for tr and for tr > td alike, so the inline
+        // copies that used to be built here were redundant AND already overridden.
 
         $label = null !== $info
             ? \htmlspecialchars($info['name'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . ' <span class="small">(/' . \htmlspecialchars($dirname, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . ')</span>'
@@ -429,7 +430,12 @@ function renderSetEditForm(
 
         $img = '';
         if (null !== $info && '' !== $info['image']) {
-            $img = '<img class="installer-mod-logo" src="' . \XOOPS_URL . '/modules/' . \rawurlencode($info['dirname']) . '/' . \htmlspecialchars($info['image'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '" alt="">';
+            // One logo authority for the whole module: AdminBulkPage::moduleLogoUrl()
+            // proves the manifest's image is a real file inside the module directory.
+            $logoUrl = \XoopsModules\Moduleinstaller\AdminBulkPage::moduleLogoUrl((string) $info['dirname'], $info);
+            $img = null === $logoUrl
+                ? '<span class="installer-mod-logo"></span>'
+                : '<img class="installer-mod-logo" src="' . \htmlspecialchars($logoUrl, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '" alt="">';
         }
 
         $dirnameEsc = \htmlspecialchars($dirname, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
@@ -438,16 +444,22 @@ function renderSetEditForm(
             ENT_QUOTES | ENT_SUBSTITUTE,
             'UTF-8'
         );
-        $tdStyle = $cellBg !== '' ? ' style="' . $cellBg . '"' : '';
-        echo '<tr class="' . $rowClass . '"' . $rowStyle . ' data-dirname="' . $dirnameEsc . '" data-search="' . $searchBlob . '">';
-        echo '<td class="center img installer-mod-toggle" title="Toggle selection">' . $img . '</td>';
-        echo '<td class="installer-mod-toggle installer-mod-desc" title="Toggle selection">' . $label;
+        echo '<tr class="' . $rowClass . '" data-dirname="' . $dirnameEsc . '" data-search="' . $searchBlob . '">';
+        // _AM_MODULEINSTALLER_TOGGLE_SELECTION already exists and is used by
+        // AdminBulkPage; these two were the last places still hardcoding it.
+        $toggleTitle = \htmlspecialchars(
+            \XoopsModules\Moduleinstaller\Lang::text('_AM_MODULEINSTALLER_TOGGLE_SELECTION', 'Toggle selection'),
+            ENT_QUOTES | ENT_SUBSTITUTE,
+            'UTF-8'
+        );
+        echo '<td class="center img installer-mod-toggle" title="' . $toggleTitle . '">' . $img . '</td>';
+        echo '<td class="installer-mod-toggle installer-mod-desc" title="' . $toggleTitle . '">' . $label;
         if (null !== $info && '' !== $info['description']) {
             echo '<br><span class="small installer-mod-desc-text">' . \htmlspecialchars($info['description'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</span>';
         }
         echo '</td>';
-        echo '<td' . $tdStyle . '>' . $statusLabel . '</td>';
-        echo '<td class="center installer-set-cb-cell"' . $tdStyle . '><input type="checkbox" class="set-module-cb" name="modules[' . $dirnameEsc . ']" value="1"' . $checked . '></td>';
+        echo '<td>' . $statusLabel . '</td>';
+        echo '<td class="center installer-set-cb-cell"><input type="checkbox" class="set-module-cb" name="modules[' . $dirnameEsc . ']" value="1"' . $checked . '></td>';
         echo '</tr>';
     }
     echo '</tbody></table></div>';
@@ -621,14 +633,18 @@ function renderApplyForm(
         echo "<div class='x2-note confirmMsg'>" . _AM_MODULEINSTALLER_SET_PREVIEW_EMPTY . '</div>';
     } else {
         $counts = installer_plan_counts($plan);
-        echo '<div class="installer-plan-summary">' . \sprintf(
+        // Five numerals separated by '·' in one sentence: the worst bidi case in the
+        // module. The counts cannot be wrapped individually — the format string uses
+        // %1$d..%5$d and a numeric placeholder casts its argument to int, discarding
+        // any markup — so the rendered sentence is isolated as a unit instead.
+        echo '<div class="installer-plan-summary"><bdi>' . \sprintf(
             _AM_MODULEINSTALLER_SET_PLAN_SUMMARY,
             $counts['activate'],
             $counts['deactivate'],
             $counts['install'],
             $counts['uninstall'],
             $counts['other']
-        ) . '</div>';
+        ) . '</bdi></div>';
         echo '<table class="outer width100" cellspacing="1"><thead><tr>';
         echo '<th>' . _AM_MODULEINSTALLER_SET_MODULE . '</th><th>' . _AM_MODULEINSTALLER_SET_ACTION . '</th><th>' . _AM_MODULEINSTALLER_SET_REASON . '</th>';
         echo '</tr></thead><tbody>';

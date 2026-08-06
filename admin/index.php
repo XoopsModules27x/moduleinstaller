@@ -71,12 +71,15 @@ echo '<div class="installer-dash-grid">';
 
 echo '<div class="installer-dash-card"><h4>' . _AM_MODULEINSTALLER_DASH_SETS . '</h4>';
 echo '<div class="num">' . \count($sets) . '</div>';
-echo '<p>' . \sprintf(_AM_MODULEINSTALLER_DASH_SETS_COUNT, \count($sets)) . '</p>';
+// Isolate the rendered sentence, NOT the numeral: a %d placeholder casts its
+// argument to int, so markup passed into it is silently discarded. Without the
+// isolate, '%d saved set(s)' renders as "saved set(s) 0" in an RTL admin.
+echo '<p><bdi>' . \sprintf(_AM_MODULEINSTALLER_DASH_SETS_COUNT, \count($sets)) . '</bdi></p>';
 echo '<p><a href="sets.php">' . _AM_MODULEINSTALLER_DASH_GO_SETS . '</a></p></div>';
 
 echo '<div class="installer-dash-card"><h4>' . _AM_MODULEINSTALLER_DASH_UPDATES . '</h4>';
 echo '<div class="num">' . \count($needsUpdate) . '</div>';
-echo '<p>' . \sprintf(_AM_MODULEINSTALLER_DASH_UPDATES_COUNT, \count($needsUpdate)) . '</p>';
+echo '<p><bdi>' . \sprintf(_AM_MODULEINSTALLER_DASH_UPDATES_COUNT, \count($needsUpdate)) . '</bdi></p>';
 echo '<p><a href="update.php?needs_only=1">' . _AM_MODULEINSTALLER_DASH_GO_UPDATE . '</a></p></div>';
 
 echo '<div class="installer-dash-card"><h4>' . _AM_MODULEINSTALLER_DASH_ACTIVE . '</h4>';

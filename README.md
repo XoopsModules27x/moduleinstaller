@@ -15,12 +15,12 @@ uninstalling).
 
 | | |
 |---|---|
-| **Current version** | 1.6.0 Stable (2026-07-23) |
+| **Current version** | 1.7.0 Alpha 1 (2026-07-30) |
 | **Previous baseline** | 1.5.1 Final (2022-12-15) |
 | **License** | GNU GPL 2.0 |
 | **Author** | Michael Beck (Mamba) |
 
-Full history: [CHANGELOG.md](CHANGELOG.md) · [docs/changelog.txt](docs/changelog.txt)  
+Full history: [CHANGELOG.md](CHANGELOG.md) · [docs/changelog.txt](docs/changelog.txt) · [docs/lang_diff.txt](docs/lang_diff.txt)  
 How-to: [docs/TUTORIAL.md](docs/TUTORIAL.md)
 
 ---

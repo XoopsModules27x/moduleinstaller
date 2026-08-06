@@ -17,9 +17,9 @@ require_once __DIR__ . '/preloads/autoloader.php';
 $moduleDirName = basename(__DIR__);
 
 $modversion = [];
-$modversion['version']             = '1.6.0-Stable';
-$modversion['module_status']       = '';
-$modversion['release_date']        = '2026/07/23';
+$modversion['version']             = '1.7.0-Alpha1';
+$modversion['module_status']       = 'Alpha 1';
+$modversion['release_date']        = '2026/07/30';
 $modversion['name']                = _MI_MODULEINSTALLER_NAME;
 $modversion['description']         = _MI_MODULEINSTALLER_DESC;
 $modversion['author']              = 'Michael Beck';

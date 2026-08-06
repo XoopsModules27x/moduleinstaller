@@ -14,7 +14,14 @@
     --installer-badge-inactive: #6c757d;
     --installer-badge-missing: #dc3545;
     --installer-badge-protected: #0d6efd;
-    --installer-badge-notinst: #fd7e14;
+    /* Darker than the Bootstrap orange this used to be (#fd7e14). That value is a
+       FILL colour: it carries white badge text at 2.4:1 and, since
+       .installer-log-warning draws warning transcript text in it, normal-size body
+       text at 2.6:1 — both under the 4.5:1 AA floor. #b35309 clears it at 5.05:1 in
+       both directions. The var() fallbacks further down already named this colour;
+       they never applied, because a fallback is only used when the property is
+       UNDEFINED, and this :root block always defines it. */
+    --installer-badge-notinst: #b35309;
 }
 
 /*
@@ -74,7 +81,7 @@ table.outer.module tr.installer-row-selected > td {
 
 .installer-apply-stack .installer-apply-action label {
     font-weight: bold;
-    margin-right: 0.5em;
+    margin-inline-end: 0.5em;
 }
 
 .installer-apply-stack .installer-apply-count {
@@ -95,9 +102,9 @@ table.outer.module tr.installer-row-selected > td {
 }
 
 .installer-form-actions {
-    margin-top: 1.25em;
-    padding-top: 0.75em;
-    text-align: right;
+    margin-block-start: 1.25em;
+    padding-block-start: 0.75em;
+    text-align: end;
     clear: both;
 }
 
@@ -105,14 +112,102 @@ table.outer.module tr.installer-row-selected > td {
     margin-top: 1.25em;
 }
 
+/* No max-height/overflow: the report must scroll with the PAGE, not inside a
+   28em cage that hides the tail of a long install log. For very large batch runs
+   collapse each row's transcript behind a <details> instead of capping height. */
 .installer-result-log {
     list-style: none;
     margin: 0.75em 0;
     padding: 0.5em 0.75em;
     border: 1px solid #d0d0d0;
     border-radius: 6px;
-    max-height: 28em;
-    overflow: auto;
+}
+
+/* Logo column first, matching the DOM order AdminBulkPage now emits. */
+.installer-result-log .installer-result-item {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 1em;
+    align-items: start;
+    margin: 0;
+    padding: 0.9em 0.75em;
+    border-block-end: 1px solid #ddd;
+    border-inline-start: 4px solid #6c757d;
+    background-image: none;
+}
+
+.installer-result-log .installer-result-item:last-child {
+    border-block-end: 0;
+}
+
+.installer-result-log .installer-result-item.success {
+    border-inline-start-color: var(--installer-badge-active);
+}
+
+.installer-result-log .installer-result-item.warning {
+    border-inline-start-color: var(--installer-badge-notinst);
+}
+
+.installer-result-log .installer-result-item.error {
+    border-inline-start-color: var(--installer-badge-missing);
+}
+
+.installer-result-body {
+    min-width: 0;
+}
+
+.installer-result-label {
+    margin-block-end: 0.5em;
+    font-size: 1.05em;
+}
+
+.installer-result-dirname {
+    color: #666;
+    font-size: 0.9em;
+}
+
+/* The install transcript. Monospace because core's &nbsp; indentation only lines
+   up in a fixed-pitch font; text-align is logical (start), never left, so the
+   report reads correctly in an RTL admin language. */
+.installer-result-message {
+    text-align: start;
+    line-height: 1.45;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 0.92em;
+    overflow-wrap: anywhere;
+}
+
+/* The module's severity palette. ModuleActionResult emits these instead of core's
+   inline color:#ff0000, so the colours live here and can be re-themed, dark-moded
+   or overridden by a site stylesheet — none of which is possible with a style
+   attribute, and all three are blocked outright by a strict style-src CSP.
+
+   Deliberately NOT scoped under .installer-result-message: they were, and that made
+   them unusable anywhere else, which is why two inline colours survived elsewhere in
+   the module. All three severities LogSeverity can emit are styled — a class the
+   renderer can produce with no rule behind it is a silent styling failure the first
+   time something constructs it. LogSeverity::Info emits no class, so it needs none. */
+.installer-log-error {
+    color: var(--installer-badge-missing, #c0392b);
+    font-weight: 600;
+}
+
+.installer-log-warning {
+    color: var(--installer-badge-notinst, #b35309);
+    font-weight: 600;
+}
+
+.installer-log-success {
+    color: var(--installer-badge-active, #14713b);
+    font-weight: 600;
+}
+
+.installer-result-logo {
+    width: auto;
+    height: auto;
+    max-width: 96px;
+    max-height: 96px;
+    object-fit: contain;
 }
 
 /* Filter + list chrome (module-scoped only) */
@@ -125,7 +220,7 @@ table.outer.module tr.installer-row-selected > td {
     font-weight: 700;
     font-style: italic;
     color: #333;
-    margin-left: 0.15em;
+    margin-inline-start: 0.15em;
 }
 
 /* Count next to page title — light accent, does not restyle .CPbigTitle itself */
@@ -135,7 +230,7 @@ table.outer.module tr.installer-row-selected > td {
     font-weight: 600;
     font-style: normal;
     color: #555;
-    margin-left: 0.35em;
+    margin-inline-start: 0.35em;
     white-space: nowrap;
 }
 
@@ -188,7 +283,7 @@ table.outer.module tr.installer-row-selected > td {
 }
 
 .installer-set-toolbar-hint {
-    margin-left: 0.15em;
+    margin-inline-start: 0.15em;
     color: #495057;
 }
 
@@ -203,7 +298,7 @@ table.outer.module tr.installer-row-selected > td {
 
 .installer-filter-label {
     font-weight: bold;
-    margin-right: 0.25em;
+    margin-inline-end: 0.25em;
 }
 
 .installer-module-filter,
@@ -326,7 +421,7 @@ table.module td.yesno,
     min-width: 7.5em !important;
     white-space: nowrap !important;
     vertical-align: middle !important;
-    text-align: left !important;
+    text-align: start !important;
     overflow: hidden;
 }
 
@@ -470,12 +565,12 @@ td.installer-yesno-cell {
     margin: 0.5em 0 1em 0;
     padding: 0.6em 0.85em;
     background: #e7f1ff;
-    border-left: 4px solid #0d6efd;
+    border-inline-start: 4px solid #0d6efd;
 }
 
 .installer-dash-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(14em, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(14em, 1fr));
     gap: 1em;
     margin: 1em 0;
 }
@@ -499,8 +594,8 @@ td.installer-yesno-cell {
 
 .installer-tip {
     cursor: help;
-    border-bottom: 1px dotted #666;
-    margin-left: 0.25em;
+    border-block-end: 1px dotted #666;
+    margin-inline-start: 0.25em;
     color: #0d6efd;
     font-weight: bold;
 }
@@ -611,4 +706,20 @@ input.installer-set-input {
         max-width: 52px;
         max-height: 52px;
     }
+}
+
+/*
+ * Initial-state utilities, so markup carries no style attribute.
+ *
+ * xo-installer.js toggles these elements by writing element.style.display, which is
+ * an inline style and therefore beats this class — so the class decides only the
+ * state the page is SERVED in, which is the part a strict style-src 'self' policy
+ * would otherwise block.
+ */
+.installer-hidden {
+    display: none;
+}
+
+.installer-footer-center {
+    text-align: center;
 }

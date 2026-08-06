@@ -1,4 +1,4 @@
-# ModuleInstaller Tutorial (1.6.0)
+# ModuleInstaller Tutorial (1.7.0 Alpha 1)
 
 ## What this module does
 
@@ -160,5 +160,5 @@ After Focus, a success notice may include a link to open the **auto-snapshot** s
 ## See also
 
 - [README.md](../README.md) — overview, architecture, development  
-- [CHANGELOG.md](../CHANGELOG.md) / [changelog.txt](changelog.txt) — release history  
+- [CHANGELOG.md](../CHANGELOG.md) / [changelog.txt](changelog.txt) — release history · [lang_diff.txt](lang_diff.txt) — language changes  
 - Tutorial (GitBook): https://xoops.gitbook.io/xoops-moduleinstaller/  
